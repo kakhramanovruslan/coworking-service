@@ -25,5 +25,5 @@
 - assertj
 
 # Связаться со мной:
-kahramanovruslan085@gmail.com
-telegram: @kakhramanovruslan
+- kahramanovruslan085@gmail.com
+- telegram: @kakhramanovruslan
