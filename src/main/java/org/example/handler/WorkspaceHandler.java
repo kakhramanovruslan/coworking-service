@@ -16,7 +16,11 @@ public class WorkspaceHandler {
         System.out.println("Введите имя workspace: ");
         String workspaceName = userHandler.scanner.nextLine();
         Workspace workspace = coworkingService.getWorkspace(workspaceName);
-        System.out.println("Подробная информация: \nId: "+workspace.getId() + ", Name: " + workspace.getName());
+        if (workspace!=null){
+            System.out.println("Подробная информация: \nId: "+workspace.getId() + ", Name: " + workspace.getName());
+        }else{
+            System.out.println("Workspace с именем " + workspaceName +" не существует");
+        }
     }
 
     public void createWorkspaceMenu(CoworkingService coworkingService, UserHandler userHandler){
