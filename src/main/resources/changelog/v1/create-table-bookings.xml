@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.10.xsd">
+
+
+
+    <changeSet id="4-create-table-bookings" author="ruslan">
+        <createTable schemaName="coworking" tableName="bookings">
+            <column name="id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="workspace_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_time" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_time" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableSchemaName="coworking" baseTableName="bookings" baseColumnNames="user_id"
+                                 constraintName="fk_bookings_users"
+                                 referencedTableSchemaName="coworking" referencedTableName="users" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableSchemaName="coworking" baseTableName="bookings" baseColumnNames="workspace_id"
+                                 constraintName="fk_bookings_workspaces"
+                                 referencedTableSchemaName="coworking" referencedTableName="workspaces" referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>

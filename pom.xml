@@ -16,6 +16,8 @@
         <junit.jupiter.version>5.8.1</junit.jupiter.version>
         <mockito.version>3.12.4</mockito.version>
         <assertj.version>3.21.0</assertj.version>
+        <postgres.version>42.6.0</postgres.version>
+        <liquibase.version>4.24.0</liquibase.version>
     </properties>
 
     <build>
@@ -52,6 +54,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>${liquibase.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit.jupiter.version}</version>
@@ -72,6 +80,12 @@
             <artifactId>assertj-core</artifactId>
             <version>${assertj.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgres.version}</version>
         </dependency>
     </dependencies>
 
