@@ -1,18 +1,20 @@
 package org.example.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Workspace {
-    static Long generatedId = 0L;
+
     private Long id;
+
     private String name;
 
-    public Workspace(String name) {
-        generatedId++;
-        this.id = generatedId;
-        this.name = name;
-    }
 }

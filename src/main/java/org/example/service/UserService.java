@@ -1,51 +1,42 @@
 package org.example.service;
 
+import org.example.dao.impl.UserDaoImpl;
 import org.example.entity.User;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 
 public class UserService {
 
-    private Map<String, User> users;
+    private static UserService userService = new UserService();
 
-    public UserService(){
-        this.users = new HashMap<>();
-        users.put("admin", new User("admin", "admin"));
-    }
-
-    /**
-     * Регистрация нового пользователя с указанным именем и паролем.
-     *
-     * @return true, если регистрация успешно выполнена, иначе false.
-     */
+    private final UserDaoImpl userDao = UserDaoImpl.getInstance();
 
     public boolean register(String username, String password){
-        if (!users.containsKey(username)) {
-            User newUser = new User(username, password);
-            users.put(username, newUser);
-            System.out.println("Привет, " + username + ". Вы успешно зарегистрировались.");
+        Optional<User> existingUser = userDao.findByUsername(username);
+        if(existingUser.isEmpty()){
+            userDao.save(User.builder()
+                            .username(username)
+                            .password(password)
+                            .build());
             return true;
         } else {
-            System.out.println("Пользователь с именем " + username + " уже существует. Повторите попытку регистрации еще раз!");
             return false;
         }
     }
 
-    /**
-     * Метод аутентифицирует пользователя по имени и паролю.
-     *
-     * @return true, если аутентификация успешно выполнена, иначе false.
-     */
-
     public boolean authenticate(String username, String password){
-        User user = users.get(username);
-        if (user != null && user.getPassword().equals(password)) {
-            System.out.println("Вы успешно вошли в систему.");
+        Optional<User> user = userDao.findByUsername(username);
+        if(user.isPresent() && user.get().getPassword().equals(password))
             return true;
-        } else {
-            System.out.println("Ошибка авторизации. Пожалуйста, проверьте имя пользователя или пароль.");
+        else
             return false;
-        }
+    }
+
+    public Optional<User> getUserById(Long id){
+        return userDao.findById(id);
+    }
+
+    public static UserService getInstance() {
+        return userService;
     }
 }

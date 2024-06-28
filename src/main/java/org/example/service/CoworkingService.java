@@ -99,9 +99,6 @@ public class CoworkingService {
                 .collect(Collectors.toList());
     }
 
-    private boolean isBookingOverlapping(Booking booking, LocalDateTime dateTime) {
-        return !dateTime.isBefore(booking.getStartTime()) && !dateTime.isAfter(booking.getEndTime());
-    }
 
     public boolean bookWorkspace(String workspaceName, LocalDateTime startTime, LocalDateTime endTime, String username) {
         // Проверяем, существует ли рабочее место

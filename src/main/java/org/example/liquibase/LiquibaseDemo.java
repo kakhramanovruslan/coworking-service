@@ -20,6 +20,8 @@ public class LiquibaseDemo {
      */
     private static final LiquibaseDemo liquibaseDemo = new LiquibaseDemo();
 
+    private static final String SQL_CREATE_SCHEMA = "CREATE SCHEMA IF NOT EXISTS migration";
+
     /**
      * Runs database migrations using Liquibase.
      */

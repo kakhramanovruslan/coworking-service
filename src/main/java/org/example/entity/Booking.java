@@ -1,28 +1,27 @@
 package org.example.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Booking {
 
-    static Long generatedId= Long.valueOf(0);
+    private Long id;
 
-    Long id;
-    String workspaceName;
+    private Long workspaceId;
 
-    String username;
-    LocalDateTime startTime;
-    LocalDateTime endTime;
+    private Long userId;
 
-    public Booking(String workspaceName, LocalDateTime startTime, LocalDateTime endTime, String username) {
-        generatedId++;
-        this.id = generatedId;
-        System.out.println(id);
-        this.workspaceName = workspaceName;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.username = username;
-    }
+    private LocalDateTime startTime;
+
+    private LocalDateTime endTime;
+
 }

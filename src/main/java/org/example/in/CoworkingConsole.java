@@ -1,14 +1,13 @@
 package org.example.in;
 
 
-import org.example.entity.User;
 import org.example.entity.Workspace;
 import org.example.handler.AdminHandler;
 import org.example.handler.MainHandler;
 import org.example.handler.UserHandler;
 import org.example.handler.WorkspaceHandler;
 import org.example.service.CoworkingService;
-import org.example.service.UserService;
+import org.example.service.UserService1;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,7 +16,7 @@ import java.util.Scanner;
 
 public class CoworkingConsole {
 
-    UserService userService;
+    UserService1 userService;
     CoworkingService coworkingService;
     static String loggedUsername = null; // username активного пользователя
     static boolean logged = false; // отслеживание авторизации
@@ -26,7 +25,7 @@ public class CoworkingConsole {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public CoworkingConsole() {
-        this.userService = new UserService();
+        this.userService = new UserService1();
         this.coworkingService = new CoworkingService();
     }
 

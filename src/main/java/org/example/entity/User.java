@@ -1,23 +1,17 @@
 package org.example.entity;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
-    static Long generatedId = 0L;
 
     private Long id;
 
-
     private String username;
-    private String password;
 
-    public User(String username, String password) {
-        generatedId++;
-        this.id = generatedId;
-        this.username = username;
-        this.password = password;
-    }
+    private String password;
 
 }

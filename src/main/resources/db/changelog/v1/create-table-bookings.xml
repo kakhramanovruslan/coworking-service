@@ -17,10 +17,10 @@
             <column name="user_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="start_time" type="datetime">
+            <column name="start_time" type="timestamp">
                 <constraints nullable="false"/>
             </column>
-            <column name="end_time" type="datetime">
+            <column name="end_time" type="timestamp">
                 <constraints nullable="false"/>
             </column>
         </createTable>
