@@ -76,19 +76,23 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
     }
 
     @Override
-    public Booking save(Booking booking){
+    public Booking save(Booking booking) {
+        if (isWorkspaceBooked(booking.getWorkspaceId(), booking.getStartTime(), booking.getEndTime())) {
+            return null;
+        }
+
         String sqlSave = """
-                INSERT INTO coworking.bookings(workspace_id, user_id, start_time, end_time)
-                VALUES (?,?,?,?);
-                """;
+            INSERT INTO coworking.bookings(workspace_id, user_id, start_time, end_time)
+            VALUES (?,?,?,?);
+            """;
 
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlSave, Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setObject(1, booking.getWorkspaceId());
             preparedStatement.setObject(2, booking.getUserId());
-            preparedStatement.setObject(2, booking.getStartTime());
-            preparedStatement.setObject(2, booking.getEndTime());
+            preparedStatement.setObject(3, booking.getStartTime());
+            preparedStatement.setObject(4, booking.getEndTime());
 
             preparedStatement.executeUpdate();
             ResultSet keys = preparedStatement.getGeneratedKeys();
@@ -114,7 +118,7 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
             SELECT w.id, w.name
             FROM coworking.workspaces w
             LEFT JOIN coworking.bookings b ON w.id = b.workspace_id
-            AND (b.startTime < ? AND b.endTime > ?)
+            AND (b.start_time < ? AND b.end_time > ?)
             WHERE b.workspace_id IS NULL;
             """;
 
@@ -184,7 +188,7 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
 
     public List<Booking> getFilteredBookingsByUsername(String username) {
         String sqlQuery = """
-                SELECT b.workspace_id, b.user_id, b.start_time, b.end_time
+                SELECT b.id, b.workspace_id, b.user_id, b.start_time, b.end_time
                 FROM coworking.bookings b
                 JOIN coworking.users u ON b.user_id = u.id
                 WHERE u.username = ?;
@@ -201,6 +205,7 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
 
             while (resultSet.next()) {
                 Booking booking = new Booking();
+                booking.setId(resultSet.getLong("id"));
                 booking.setWorkspaceId(resultSet.getLong("workspace_id"));
                 booking.setUserId(resultSet.getLong("user_id"));
                 booking.setStartTime(resultSet.getTimestamp("start_time").toLocalDateTime());
@@ -217,7 +222,7 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
 
     public List<Booking> getFilteredBookingsByWorkspace(String workspaceName) {
         String sqlQuery = """
-                SELECT b.workspace_id, b.user_id, b.start_time, b.end_time
+                SELECT b.id, b.workspace_id, b.user_id, b.start_time, b.end_time
                 FROM coworking.bookings b
                 JOIN coworking.workspaces w ON b.workspace_id = w.id
                 WHERE w.name = ?;
@@ -234,6 +239,7 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
 
             while (resultSet.next()) {
                 Booking booking = new Booking();
+                booking.setId(resultSet.getLong("id"));
                 booking.setWorkspaceId(resultSet.getLong("workspace_id"));
                 booking.setUserId(resultSet.getLong("user_id"));
                 booking.setStartTime(resultSet.getTimestamp("start_time").toLocalDateTime());
@@ -246,6 +252,40 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
         }
 
         return bookings;
+    }
+
+    private boolean isWorkspaceBooked(Long workspaceId, LocalDateTime startTime, LocalDateTime endTime) {
+        String sqlCheck = """
+            SELECT COUNT(*) AS count
+            FROM coworking.bookings
+            WHERE workspace_id = ?
+            AND ((start_time <= ? AND end_time > ?)
+                OR (start_time < ? AND end_time >= ?)
+                OR (start_time >= ? AND end_time <= ?));
+            """;
+
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sqlCheck)) {
+
+            preparedStatement.setLong(1, workspaceId);
+            preparedStatement.setTimestamp(2, Timestamp.valueOf(startTime));
+            preparedStatement.setTimestamp(3, Timestamp.valueOf(startTime));
+            preparedStatement.setTimestamp(4, Timestamp.valueOf(endTime));
+            preparedStatement.setTimestamp(5, Timestamp.valueOf(endTime));
+            preparedStatement.setTimestamp(6, Timestamp.valueOf(startTime));
+            preparedStatement.setTimestamp(7, Timestamp.valueOf(endTime));
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                int count = resultSet.getInt("count");
+                return count > 0;
+            }
+        } catch (SQLException e) {
+            System.err.println("Ошибка при выполнении SQL-запроса для проверки бронирования: " + e.getMessage());
+        }
+
+        return false; // В случае ошибки возвращаем false для предотвращения бронирования
     }
 
 

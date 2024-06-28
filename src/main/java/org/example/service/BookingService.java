@@ -1,32 +1,37 @@
 package org.example.service;
 
 import org.example.dao.impl.BookingDaoImpl;
-import org.example.dao.impl.WorkspaceDaoImpl;
 import org.example.entity.Booking;
+import org.example.entity.User;
 import org.example.entity.Workspace;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 public class BookingService {
     private static BookingService bookingService = new BookingService();
 
+    private final WorkspaceService workspaceService = WorkspaceService.getInstance();
+    private final UserService userService = UserService.getInstance();
+
     private final BookingDaoImpl bookingDao = BookingDaoImpl.getInstance();
 
     public List<Workspace> getAvailableWorkspacesAtNow() {
-        return bookingDao.findAllAvailableWorkspaces(LocalDateTime.now(), LocalDateTime.now());
+        LocalDateTime currentTime = LocalDateTime.now();
+        return bookingDao.findAllAvailableWorkspaces(currentTime, currentTime);
     }
 
     public List<Workspace> getAvailableWorkspacesForTimePeriod(LocalDateTime startTime, LocalDateTime endTime) {
         return bookingDao.findAllAvailableWorkspaces(startTime, endTime);
     }
 
-    public Booking bookWorkspace(Long workspaceId, Long userId, LocalDateTime startTime, LocalDateTime endTime) {
+    public Booking bookWorkspace(String workspaceName, String username, LocalDateTime startTime, LocalDateTime endTime) {
+        Optional<Workspace> workspace = workspaceService.getWorkspace(workspaceName);
+        Optional<User> user = userService.getUser(username);
         Booking booking = bookingDao.save(Booking.builder()
-                        .workspaceId(workspaceId)
-                        .userId(userId)
+                        .workspaceId(workspace.get().getId())
+                        .userId(user.get().getId())
                         .startTime(startTime)
                         .endTime(endTime)
                         .build());

@@ -32,8 +32,12 @@ public class UserService {
             return false;
     }
 
-    public Optional<User> getUserById(Long id){
+    public Optional<User> getUser(Long id){
         return userDao.findById(id);
+    }
+
+    public Optional<User> getUser(String username){
+        return userDao.findByUsername(username);
     }
 
     public static UserService getInstance() {
