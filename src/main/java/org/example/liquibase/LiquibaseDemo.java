@@ -6,6 +6,7 @@ import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
+import org.example.utils.ConfigUtil;
 import org.example.utils.ConnectionManager;
 
 import java.sql.Connection;
@@ -20,7 +21,7 @@ public class LiquibaseDemo {
      */
     private static final LiquibaseDemo liquibaseDemo = new LiquibaseDemo();
 
-    private static final String SQL_CREATE_SCHEMA = "CREATE SCHEMA IF NOT EXISTS migration";
+    private static final String CHANGELOG_PATH = ConfigUtil.getProperty("liquibase.changeLogFile");
 
     /**
      * Runs database migrations using Liquibase.
@@ -29,7 +30,7 @@ public class LiquibaseDemo {
         try {
             Connection connection = ConnectionManager.getConnection();
             Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-            Liquibase liquibase = new Liquibase("db/changelog/changelog.xml", new ClassLoaderResourceAccessor(), database);
+            Liquibase liquibase = new Liquibase(CHANGELOG_PATH, new ClassLoaderResourceAccessor(), database);
             liquibase.update();
             System.out.println("Миграции успешно выполнены!");
         } catch (Exception e) {

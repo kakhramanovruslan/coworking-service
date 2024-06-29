@@ -8,14 +8,15 @@ import java.sql.SQLException;
 
 
 @UtilityClass
-public class ConnectionManager {
-    private final String URL = "jdbc:postgresql://localhost:5433/coworking_service_db";
-    private final String USER_NAME = "ruslan";
-    private final String PASSWORD = "123";
+public final class ConnectionManager {
+
+    private final String URL = ConfigUtil.getProperty("db.url");
+    private final String USERNAME = ConfigUtil.getProperty("db.username");
+    private final String PASSWORD = ConfigUtil.getProperty("db.password");
 
     public Connection getConnection() {
         try {
-            return DriverManager.getConnection(URL, USER_NAME, PASSWORD);
+            return DriverManager.getConnection(URL, USERNAME, PASSWORD);
         } catch (SQLException e) {
             throw new RuntimeException("Failed to get a database connection.", e);
         }
