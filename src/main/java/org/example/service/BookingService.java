@@ -7,6 +7,7 @@ import org.example.entity.Workspace;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
@@ -45,15 +46,16 @@ public class BookingService {
      * @param endTime End time of the booking
      * @return The booking entity that was created
      */
-    public Booking bookWorkspace(String workspaceName, String username, LocalDateTime startTime, LocalDateTime endTime) {
+    public Booking bookWorkspace(String workspaceName, String username, LocalDateTime startTime, LocalDateTime endTime) throws NoSuchElementException{
         Optional<Workspace> workspace = workspaceService.getWorkspace(workspaceName);
+        if (workspace.isEmpty()) throw new NoSuchElementException();
         Optional<User> user = userService.getUser(username);
         Booking booking = bookingDao.save(Booking.builder()
-                        .workspaceId(workspace.get().getId())
-                        .userId(user.get().getId())
-                        .startTime(startTime)
-                        .endTime(endTime)
-                        .build());
+                    .workspaceId(workspace.get().getId())
+                    .userId(user.get().getId())
+                    .startTime(startTime)
+                    .endTime(endTime)
+                    .build());
         return booking;
     }
 

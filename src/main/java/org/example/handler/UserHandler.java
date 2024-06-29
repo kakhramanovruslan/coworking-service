@@ -11,6 +11,7 @@ import org.example.utils.ScannerManager;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
@@ -106,18 +107,22 @@ public class UserHandler {
      * The user enters the workspace name and time period in format: workspaceName yyyy-MM-dd HH:mm yyyy-MM-dd HH:mm.
      */
     public void displayBookingWorkspace() {
-        System.out.println("Заполните данные для бронирования в формате приведенном ниже: ");
-        System.out.println("someWorkspaceName 2024-06-21 11:30 2024-06-21 12:30");
-        String[] row = scanner.nextLine().split(" ");
-        String workspaceName = row[0];
-        LocalDateTime startTime = LocalDateTime.parse(row[1]+" "+row[2], formatter);
-        LocalDateTime endTime = LocalDateTime.parse(row[3]+" "+row[4], formatter);
+        try {
+            System.out.println("Заполните данные для бронирования в формате приведенном ниже: ");
+            System.out.println("someWorkspaceName 2024-06-21 11:30 2024-06-21 12:30");
+            String[] row = scanner.nextLine().split(" ");
+            String workspaceName = row[0];
+            LocalDateTime startTime = LocalDateTime.parse(row[1]+" "+row[2], formatter);
+            LocalDateTime endTime = LocalDateTime.parse(row[3]+" "+row[4], formatter);
 
-        Booking booking = bookingService.bookWorkspace(workspaceName, CoworkingConsole.loggedUsername, startTime, endTime);
-        if(booking!=null)
-            System.out.println("Бронирование прошло успешно!");
-        else
-            System.out.println("К сожалению, workspace на это время уже забронирован.");
+            Booking booking = bookingService.bookWorkspace(workspaceName, CoworkingConsole.loggedUsername, startTime, endTime);
+            if (booking != null)
+                System.out.println("Бронирование прошло успешно!");
+            else
+                System.out.println("К сожалению, workspace на это время уже забронирован.");
+        } catch (NoSuchElementException e){
+            System.out.println("Workspace с таким именем не найден. ");
+        }
     }
 
     /**
