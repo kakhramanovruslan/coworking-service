@@ -13,6 +13,9 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> ylab_lab2
         <lombok.version>1.18.30</lombok.version>
         <junit.jupiter.version>5.8.1</junit.jupiter.version>
         <mockito.version>3.12.4</mockito.version>
@@ -20,8 +23,11 @@
         <postgres.version>42.6.0</postgres.version>
         <liquibase.version>4.24.0</liquibase.version>
         <jacoco.version>0.8.8</jacoco.version>
+<<<<<<< HEAD
 =======
 >>>>>>> 43e3611c8f9b95f07c7653312542905fd21780d8
+=======
+>>>>>>> ylab_lab2
     </properties>
 
     <build>
@@ -30,10 +36,14 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
 <<<<<<< HEAD
+<<<<<<< HEAD
                 <version>${jacoco.version}</version>
 =======
                 <version>0.8.8</version>
 >>>>>>> 43e3611c8f9b95f07c7653312542905fd21780d8
+=======
+                <version>${jacoco.version}</version>
+>>>>>>> ylab_lab2
                 <executions>
                     <execution>
                         <goals>
@@ -58,21 +68,29 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
 <<<<<<< HEAD
+<<<<<<< HEAD
             <version>${lombok.version}</version>
 =======
             <version>1.18.28</version>
 >>>>>>> 43e3611c8f9b95f07c7653312542905fd21780d8
+=======
+            <version>${lombok.version}</version>
+>>>>>>> ylab_lab2
             <scope>provided</scope>
         </dependency>
 
         <dependency>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> ylab_lab2
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
             <version>${liquibase.version}</version>
         </dependency>
 
         <dependency>
+<<<<<<< HEAD
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit.jupiter.version}</version>
@@ -99,28 +117,37 @@
             <version>${postgres.version}</version>
         </dependency>
 =======
+=======
+>>>>>>> ylab_lab2
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.8.1</version>
+            <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
 
-        <!-- Mockito -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>3.12.4</version>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
 
-        <!-- AssertJ -->
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.21.0</version>
+            <version>${assertj.version}</version>
             <scope>test</scope>
         </dependency>
+<<<<<<< HEAD
 >>>>>>> 43e3611c8f9b95f07c7653312542905fd21780d8
+=======
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgres.version}</version>
+        </dependency>
+>>>>>>> ylab_lab2
     </dependencies>
 
 </project>

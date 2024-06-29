@@ -1,6 +1,7 @@
 package org.example.entity;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -45,22 +46,52 @@ public class Booking {
     private LocalDateTime endTime;
 
 =======
+=======
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+>>>>>>> ylab_lab2
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * Represents a booking with information such as a unique identifier, workspaceId, userId, startTime, endTime.
+ *
+ * @author ruslan
+ */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Booking {
 
-    static Long generatedId= Long.valueOf(0);
+    /**
+     * The unique identifier for the booking.
+     */
+    private Long id;
 
-    Long id;
-    String workspaceName;
+    /**
+     * The unique identifier for the workspace associated with the booking.
+     */
+    private Long workspaceId;
 
-    String username;
-    LocalDateTime startTime;
-    LocalDateTime endTime;
+    /**
+     * The unique identifier for the user associated with the booking.
+     */
+    private Long userId;
 
+    /**
+     * The start time of booking.
+     */
+    private LocalDateTime startTime;
+
+    /**
+     * The end time of booking.
+     */
+    private LocalDateTime endTime;
+
+<<<<<<< HEAD
     public Booking(String workspaceName, LocalDateTime startTime, LocalDateTime endTime, String username) {
         generatedId++;
         this.id = generatedId;
@@ -71,4 +102,6 @@ public class Booking {
         this.username = username;
     }
 >>>>>>> 43e3611c8f9b95f07c7653312542905fd21780d8
+=======
+>>>>>>> ylab_lab2
 }

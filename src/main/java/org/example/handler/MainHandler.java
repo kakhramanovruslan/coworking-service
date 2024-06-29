@@ -1,6 +1,9 @@
 package org.example.handler;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> ylab_lab2
 import org.example.utils.ScannerManager;
 
 import java.util.InputMismatchException;
@@ -18,10 +21,13 @@ public class MainHandler {
     /**
      * Displays the main application menu in the console.
      */
+<<<<<<< HEAD
 =======
 public class MainHandler {
 
 >>>>>>> 43e3611c8f9b95f07c7653312542905fd21780d8
+=======
+>>>>>>> ylab_lab2
     public void displayMainMenu() {
         System.out.println("╔═════════════════════════════════════════════════╗");
         System.out.println("║         Выберите действие:                      ║");
@@ -33,6 +39,9 @@ public class MainHandler {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> ylab_lab2
     /**
      * Reads the user's choice from console.
      * @return The user's choice.
@@ -51,8 +60,11 @@ public class MainHandler {
     /**
      * Completes the execution of the application.
      */
+<<<<<<< HEAD
 =======
 >>>>>>> 43e3611c8f9b95f07c7653312542905fd21780d8
+=======
+>>>>>>> ylab_lab2
     public void exitApplication() {
         System.out.println("Выход из приложения.");
         System.exit(0);

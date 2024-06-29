@@ -1,6 +1,7 @@
 package org.example.handler;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import org.example.entity.Booking;
 import org.example.entity.Workspace;
 import org.example.in.CoworkingConsole;
@@ -32,36 +33,42 @@ public class UserHandler {
      * The menu includes a list of available actions for the user.
      */
 =======
+=======
+import org.example.entity.Booking;
+import org.example.entity.Workspace;
+>>>>>>> ylab_lab2
 import org.example.in.CoworkingConsole;
+import org.example.service.BookingService;
+import org.example.service.UserService;
+import org.example.service.WorkspaceService;
+import org.example.utils.ScannerManager;
 
-import java.util.InputMismatchException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+/**
+ * The UserHandler class is a handler for interacting with the user menu of the
+ * application console interface. It provides functionality related to the use of the workspaces.
+ */
 public class UserHandler {
-    public Scanner scanner = new Scanner(System.in);
 
-    CoworkingConsole coworkingConsole = new CoworkingConsole();
+    private final Scanner scanner = ScannerManager.getInstance().scanner;
+    private UserService userService = UserService.getInstance();
+    private WorkspaceService workspaceService = WorkspaceService.getInstance();
+    private BookingService bookingService = BookingService.getInstance();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    public int readChoice() {
-        int choice = 0;
-        try {
-            choice = scanner.nextInt();
-            scanner.nextLine();
-        } catch (InputMismatchException e) {
-            scanner.nextLine();
-        }
-        return choice;
-    }
-
-
-
-    public void logout() {
-        coworkingConsole.setLoggedUsername(null);
-        coworkingConsole.setLogged(false);
-        System.out.println("Выход из аккаунта.");
-    }
-
+<<<<<<< HEAD
 >>>>>>> 43e3611c8f9b95f07c7653312542905fd21780d8
+=======
+    /**
+     * Displays the menu for the user in the console.
+     * The menu includes a list of available actions for the user.
+     */
+>>>>>>> ylab_lab2
     public void displayUserMenu() {
         System.out.println("╔═════════════════════════════════════════════════════════════════════════╗");
         System.out.println("║       Выберите действие:                                                ║");
@@ -71,16 +78,24 @@ public class UserHandler {
         System.out.println("║  4. Отмена бронирования                                                 ║");
         System.out.println("║  5. Просмотр всех бронирований                                          ║");
 <<<<<<< HEAD
+<<<<<<< HEAD
         System.out.println("║  6. Выйти из аккаунта                                                   ║");
         System.out.println("║  7. Выйти из приложения                                                 ║");
 =======
         System.out.println("║  6. Выйти из приложения                                                 ║");
 >>>>>>> 43e3611c8f9b95f07c7653312542905fd21780d8
+=======
+        System.out.println("║  6. Выйти из аккаунта                                                   ║");
+        System.out.println("║  7. Выйти из приложения                                                 ║");
+>>>>>>> ylab_lab2
         System.out.println("╚═════════════════════════════════════════════════════════════════════════╝");
 
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> ylab_lab2
     /**
      * Displays the registration menu in the console.
      * The user enters the username and password to register.
@@ -234,6 +249,9 @@ public class UserHandler {
     }
 
 
+<<<<<<< HEAD
 =======
 >>>>>>> 43e3611c8f9b95f07c7653312542905fd21780d8
+=======
+>>>>>>> ylab_lab2
 }

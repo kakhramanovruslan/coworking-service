@@ -36,9 +36,15 @@ build/
 
 ### Mac OS ###
 <<<<<<< HEAD
+<<<<<<< HEAD
 .DS_Store
 
 .idea/
 =======
 .DS_Store
 >>>>>>> 43e3611c8f9b95f07c7653312542905fd21780d8
+=======
+.DS_Store
+
+.idea/
+>>>>>>> ylab_lab2

@@ -1,6 +1,9 @@
 package org.example.handler;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> ylab_lab2
 import org.example.entity.Workspace;
 import org.example.service.WorkspaceService;
 import org.example.utils.ScannerManager;
@@ -24,10 +27,13 @@ public class AdminHandler {
      * Displays the menu for the administrator in the console.
      * The menu includes a list of available actions for the administrator.
      */
+<<<<<<< HEAD
 =======
 public class AdminHandler {
 
 >>>>>>> 43e3611c8f9b95f07c7653312542905fd21780d8
+=======
+>>>>>>> ylab_lab2
     public void displayAdminMenu(){
         System.out.println("---------------------------Меню администратора:----------------------------");
         System.out.println("╔═════════════════════════════════════════════════════════════════════════╗");
@@ -38,16 +44,24 @@ public class AdminHandler {
         System.out.println("║  4. Обновить workspace                                                  ║");
         System.out.println("║  5. Удалить workspace                                                   ║");
 <<<<<<< HEAD
+<<<<<<< HEAD
         System.out.println("║  6. Выйти из аккаунта                                                   ║");
         System.out.println("║  7. Выйти из приложения                                                 ║");
 =======
         System.out.println("║  6. Выйти из приложения                                                 ║");
 >>>>>>> 43e3611c8f9b95f07c7653312542905fd21780d8
+=======
+        System.out.println("║  6. Выйти из аккаунта                                                   ║");
+        System.out.println("║  7. Выйти из приложения                                                 ║");
+>>>>>>> ylab_lab2
         System.out.println("╚═════════════════════════════════════════════════════════════════════════╝");
 
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> ylab_lab2
     /**
      * Displays menu for getting list of all names workspaces in the console.
      */
@@ -120,6 +134,9 @@ public class AdminHandler {
 
 
 
+<<<<<<< HEAD
 =======
 >>>>>>> 43e3611c8f9b95f07c7653312542905fd21780d8
+=======
+>>>>>>> ylab_lab2
 }
