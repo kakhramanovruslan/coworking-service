@@ -1,5 +1,6 @@
 package org.example.handler;
 
+<<<<<<< HEAD
 import org.example.entity.Booking;
 import org.example.entity.Workspace;
 import org.example.in.CoworkingConsole;
@@ -30,6 +31,37 @@ public class UserHandler {
      * Displays the menu for the user in the console.
      * The menu includes a list of available actions for the user.
      */
+=======
+import org.example.in.CoworkingConsole;
+
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+public class UserHandler {
+    public Scanner scanner = new Scanner(System.in);
+
+    CoworkingConsole coworkingConsole = new CoworkingConsole();
+
+    public int readChoice() {
+        int choice = 0;
+        try {
+            choice = scanner.nextInt();
+            scanner.nextLine();
+        } catch (InputMismatchException e) {
+            scanner.nextLine();
+        }
+        return choice;
+    }
+
+
+
+    public void logout() {
+        coworkingConsole.setLoggedUsername(null);
+        coworkingConsole.setLogged(false);
+        System.out.println("Выход из аккаунта.");
+    }
+
+>>>>>>> 43e3611c8f9b95f07c7653312542905fd21780d8
     public void displayUserMenu() {
         System.out.println("╔═════════════════════════════════════════════════════════════════════════╗");
         System.out.println("║       Выберите действие:                                                ║");
@@ -38,12 +70,17 @@ public class UserHandler {
         System.out.println("║  3. Бронирование рабочего места или конференц-зала                      ║");
         System.out.println("║  4. Отмена бронирования                                                 ║");
         System.out.println("║  5. Просмотр всех бронирований                                          ║");
+<<<<<<< HEAD
         System.out.println("║  6. Выйти из аккаунта                                                   ║");
         System.out.println("║  7. Выйти из приложения                                                 ║");
+=======
+        System.out.println("║  6. Выйти из приложения                                                 ║");
+>>>>>>> 43e3611c8f9b95f07c7653312542905fd21780d8
         System.out.println("╚═════════════════════════════════════════════════════════════════════════╝");
 
     }
 
+<<<<<<< HEAD
     /**
      * Displays the registration menu in the console.
      * The user enters the username and password to register.
@@ -197,4 +234,6 @@ public class UserHandler {
     }
 
 
+=======
+>>>>>>> 43e3611c8f9b95f07c7653312542905fd21780d8
 }

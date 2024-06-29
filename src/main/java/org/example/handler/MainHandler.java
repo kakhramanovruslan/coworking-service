@@ -1,5 +1,6 @@
 package org.example.handler;
 
+<<<<<<< HEAD
 import org.example.utils.ScannerManager;
 
 import java.util.InputMismatchException;
@@ -17,6 +18,10 @@ public class MainHandler {
     /**
      * Displays the main application menu in the console.
      */
+=======
+public class MainHandler {
+
+>>>>>>> 43e3611c8f9b95f07c7653312542905fd21780d8
     public void displayMainMenu() {
         System.out.println("╔═════════════════════════════════════════════════╗");
         System.out.println("║         Выберите действие:                      ║");
@@ -27,6 +32,7 @@ public class MainHandler {
 
     }
 
+<<<<<<< HEAD
     /**
      * Reads the user's choice from console.
      * @return The user's choice.
@@ -45,6 +51,8 @@ public class MainHandler {
     /**
      * Completes the execution of the application.
      */
+=======
+>>>>>>> 43e3611c8f9b95f07c7653312542905fd21780d8
     public void exitApplication() {
         System.out.println("Выход из приложения.");
         System.exit(0);

@@ -1,5 +1,6 @@
 package org.example.entity;
 
+<<<<<<< HEAD
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -43,4 +44,31 @@ public class Booking {
      */
     private LocalDateTime endTime;
 
+=======
+import lombok.Data;
+
+import java.time.LocalDateTime;
+
+@Data
+public class Booking {
+
+    static Long generatedId= Long.valueOf(0);
+
+    Long id;
+    String workspaceName;
+
+    String username;
+    LocalDateTime startTime;
+    LocalDateTime endTime;
+
+    public Booking(String workspaceName, LocalDateTime startTime, LocalDateTime endTime, String username) {
+        generatedId++;
+        this.id = generatedId;
+        System.out.println(id);
+        this.workspaceName = workspaceName;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.username = username;
+    }
+>>>>>>> 43e3611c8f9b95f07c7653312542905fd21780d8
 }

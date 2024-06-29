@@ -1,5 +1,6 @@
 package org.example.entity;
 
+<<<<<<< HEAD
 import lombok.*;
 
 /**
@@ -28,4 +29,26 @@ public class User {
      */
     private String password;
 
+=======
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+
+@Data
+public class User {
+    static Long generatedId = 0L;
+
+    private Long id;
+
+
+    private String username;
+    private String password;
+
+    public User(String username, String password) {
+        generatedId++;
+        this.id = generatedId;
+        this.username = username;
+        this.password = password;
+    }
+
+>>>>>>> 43e3611c8f9b95f07c7653312542905fd21780d8
 }
