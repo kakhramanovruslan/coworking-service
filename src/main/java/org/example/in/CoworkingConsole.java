@@ -4,24 +4,22 @@ package org.example.in;
 import org.example.handler.AdminHandler;
 import org.example.handler.MainHandler;
 import org.example.handler.UserHandler;
-import org.example.service.UserService;
-import org.example.utils.ScannerManager;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Scanner;
-
+/**
+ * The CoworkingConsole class represents a text interface for interacting with the coworking service.
+ * The user can perform registration, authentication, book workspaces and view available time,
+ */
 public class CoworkingConsole {
 
-    private final UserService userService = UserService.getInstance();
-    public static String loggedUsername = null; // username активного пользователя
-    public static boolean logged = false; // отслеживание авторизации
+    public static String loggedUsername = null;
+    public static boolean logged = false;
 
-    Scanner scanner = ScannerManager.getInstance().scanner;
-
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
+    /**
+     * The start method launches a text interface for interacting with the coworking.
+     * @param mainHandler General event handler
+     * @param userHandler User event handler
+     * @param adminHandler Admin event handler
+     */
     public void start(MainHandler mainHandler, UserHandler userHandler, AdminHandler adminHandler) {
         while (true) {
             if (!logged) {

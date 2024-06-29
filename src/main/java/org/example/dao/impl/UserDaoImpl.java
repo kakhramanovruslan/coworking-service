@@ -9,10 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementation of Dao interface for interacting with User entities in the database.
+ */
 public class UserDaoImpl implements Dao<Long, User> {
 
     private static final UserDaoImpl userDaoImpl = new UserDaoImpl();
 
+    /**
+     * Retrieves a user by their ID.
+     * @param id ID of the user to retrieve
+     * @return Optional containing the user if found, otherwise empty
+     */
     @Override
     public Optional<User> findById(Long id){
         String sqlFindById = """
@@ -34,6 +42,11 @@ public class UserDaoImpl implements Dao<Long, User> {
         }
     }
 
+    /**
+     * Deletes a user by their ID.
+     * @param id ID of the user to delete
+     * @return True if deletion was successful, false otherwise
+     */
     @Override
     public boolean deleteById(Long id) {
         String sqlDeleteById = """
@@ -52,6 +65,10 @@ public class UserDaoImpl implements Dao<Long, User> {
         }
     }
 
+    /**
+     * Retrieves all users from the database.
+     * @return List of all users
+     */
     @Override
     public List<User> findAll(){
         String sqlFindAll = """
@@ -75,6 +92,11 @@ public class UserDaoImpl implements Dao<Long, User> {
         }
     }
 
+    /**
+     * Saves a new user to the database.
+     * @param user User object to save
+     * @return The saved user object
+     */
     @Override
     public User save(User user){
         String sqlSave = """
@@ -102,11 +124,21 @@ public class UserDaoImpl implements Dao<Long, User> {
         }
     }
 
+    /**
+     * Updates existing user.
+     * @param user User object to update
+     * @return Always returns false as update operation is not implemented
+     */
     @Override
     public boolean update(User user) {
         return false;
     }
 
+    /**
+     * Retrieves a user by their username.
+     * @param username Username of the user to retrieve
+     * @return Optional containing the user if found, otherwise empty
+     */
     public Optional<User> findByUsername(String username){
         String sqlFindByUsername = """
                 SELECT * FROM coworking.users
@@ -129,6 +161,12 @@ public class UserDaoImpl implements Dao<Long, User> {
         }
     }
 
+    /**
+     * Builds a User object from the ResultSet.
+     * @param resultSet ResultSet containing user data
+     * @return User object built from the ResultSet
+     * @throws SQLException If an SQL exception occurs
+     */
     private User buildUser(ResultSet resultSet) throws SQLException {
         return User.builder()
                 .id(resultSet.getLong("id"))
@@ -137,7 +175,10 @@ public class UserDaoImpl implements Dao<Long, User> {
                 .build();
     }
 
-
+    /**
+     * Retrieves the singleton instance of UserDaoImpl.
+     * @return Singleton instance of UserDaoImpl
+     */
     public static UserDaoImpl getInstance() {
         return userDaoImpl;
     }

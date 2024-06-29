@@ -11,9 +11,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementation of Dao interface for interacting with Workspace entities in the database.
+ */
 public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
     private static final WorkspaceDaoImpl workspaceDaoImpl = new WorkspaceDaoImpl();
 
+    /**
+     * Retrieves all workspaces from the database.
+     * @return List of all workspaces
+     */
     @Override
     public List<Workspace> findAll(){
         String sqlFindAll = """
@@ -37,6 +44,11 @@ public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
         }
     }
 
+    /**
+     * Retrieves a workspace by its ID from the database.
+     * @param id ID of the workspace to retrieve
+     * @return Optional containing the workspace if found, otherwise empty
+     */
     @Override
     public Optional<Workspace> findById(Long id){
         String sqlFindById = """
@@ -57,6 +69,12 @@ public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
             return Optional.empty();
         }
     }
+
+    /**
+     * Deletes a workspace by its ID from the database.
+     * @param id ID of the workspace to delete
+     * @return True if deletion was successful, false otherwise
+     */
     @Override
     public boolean deleteById(Long id){
         String sqlDeleteById = """
@@ -75,6 +93,11 @@ public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
         }
     }
 
+    /**
+     * Saves a new workspace to the database.
+     * @param workspace Workspace object to save
+     * @return The saved workspace object
+     */
     @Override
     public Workspace save(Workspace workspace){
         String sqlSave = """
@@ -101,6 +124,11 @@ public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
         }
     }
 
+    /**
+     * Updates an existing workspace in the database.
+     * @param workspace Workspace object with updated information
+     * @return True if update was successful, false otherwise
+     */
     @Override
     public boolean update(Workspace workspace) {
         String sqlUpdate = """
@@ -122,6 +150,11 @@ public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
         }
     }
 
+    /**
+     * Retrieves a workspace by its name from the database.
+     * @param name Name of the workspace to retrieve
+     * @return Optional containing the workspace if found, otherwise empty
+     */
     public Optional<Workspace> findByName(String name){
         String sqlFindByName = """
                 SELECT * FROM coworking.workspaces
@@ -142,6 +175,11 @@ public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
         }
     }
 
+    /**
+     * Deletes a workspace by its name from the database.
+     * @param name Name of the workspace to delete
+     * @return True if deletion was successful, false otherwise
+     */
     public boolean deleteByName(String name){
         String sqlDeleteByName = """
                 DELETE FROM coworking.workspaces
@@ -159,6 +197,12 @@ public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
         }
     }
 
+    /**
+     * Builds a Workspace object from the ResultSet.
+     * @param resultSet ResultSet containing workspace data
+     * @return Workspace object built from the ResultSet
+     * @throws SQLException If an SQL exception occurs
+     */
     private Workspace buildWorkspace(ResultSet resultSet) throws SQLException {
         return Workspace.builder()
                 .id(resultSet.getLong("id"))
@@ -166,6 +210,10 @@ public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
                 .build();
     }
 
+    /**
+     * Retrieves the singleton instance of WorkspaceDaoImpl.
+     * @return Singleton instance of WorkspaceDaoImpl
+     */
     public static WorkspaceDaoImpl getInstance() {
         return workspaceDaoImpl;
     }

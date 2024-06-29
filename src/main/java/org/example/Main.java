@@ -6,7 +6,14 @@ import org.example.handler.UserHandler;
 import org.example.in.CoworkingConsole;
 import org.example.liquibase.LiquibaseDemo;
 
+/**
+ * The main class of the application that runs the console to work with the coworking.
+ */
 public class Main {
+
+    /**
+     * The main method that launches the application.
+     */
     public static void main(String[] args) {
         MainHandler mainHandler = new MainHandler();
         UserHandler userHandler = new UserHandler();

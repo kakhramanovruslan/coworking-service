@@ -8,13 +8,21 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
+/**
+ * The AdminHandler class is a handler for interacting with the admin menu of the
+ * application console interface. It provides functionality related to workspace management.
+ */
 public class AdminHandler {
 
     private final Scanner scanner = ScannerManager.getInstance().scanner;
 
+
     private WorkspaceService workspaceService = WorkspaceService.getInstance();
 
-
+    /**
+     * Displays the menu for the administrator in the console.
+     * The menu includes a list of available actions for the administrator.
+     */
     public void displayAdminMenu(){
         System.out.println("---------------------------Меню администратора:----------------------------");
         System.out.println("╔═════════════════════════════════════════════════════════════════════════╗");
@@ -30,6 +38,9 @@ public class AdminHandler {
 
     }
 
+    /**
+     * Displays menu for getting list of all names workspaces in the console.
+     */
     public void displayListOfAllWorkspaces(){
         List<Workspace> workspaces = workspaceService.getListOfAllWorkSpaces();
         for (Workspace workspace : workspaces) {
@@ -37,6 +48,10 @@ public class AdminHandler {
         }
     }
 
+    /**
+     * Displays menu for getting information about one selected workspace in the console.
+     * The admin enters the name of the workspace to get.
+     */
     public void displayWorkspace(){
         System.out.println("Введите имя workspace: ");
         String name = scanner.nextLine();
@@ -47,6 +62,10 @@ public class AdminHandler {
             System.out.println("Id: "+workspace.get().getId()+", Name: "+workspace.get().getName());
     }
 
+    /**
+     * Displays menu for creating workspace in the console.
+     * The admin enters the information of the workspace to create.
+     */
     public void displayCreatingWorkspace(){
         System.out.println("Для создания workspace введите следующие данные через пробел в точности, как показано ниже: ");
         System.out.println("Values: name");
@@ -58,6 +77,10 @@ public class AdminHandler {
         };
     }
 
+    /**
+     * Displays menu for updating workspace in the console.
+     * The admin enters the old name and new name of the workspace to update.
+     */
     public void displayUpdatingWorkspace(){
         System.out.println("Для обновления в начале введите имя существующего workspace, затем через пробел введите новое значение имени");
         System.out.println("Values: oldName newName");
@@ -70,6 +93,10 @@ public class AdminHandler {
         };
     }
 
+    /**
+     * Displays menu for deleting workspace in the console.
+     * The admin enters the name of the workspace to delete.
+     */
     public void displayDeletingWorkspace() {
         System.out.println("Введите имя для удаления workspace: ");
         String name = scanner.nextLine();

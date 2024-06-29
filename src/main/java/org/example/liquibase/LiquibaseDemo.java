@@ -1,6 +1,5 @@
 package org.example.liquibase;
 
-import liquibase.Contexts;
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
@@ -13,7 +12,7 @@ import java.sql.Connection;
 
 /**
  * The `LiquibaseDemo` class is responsible for running Liquibase database migrations. It uses Liquibase to apply
- * changesets defined in a changelog file to the connected database.
+ * change sets defined in a changelog file to the connected database.
  */
 public class LiquibaseDemo {
     /**

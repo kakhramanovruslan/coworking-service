@@ -11,8 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementation of the Dao for managing Booking entities in the database.
+ */
 public class BookingDaoImpl implements Dao<Long, Booking> {
     private static final BookingDaoImpl bookingDaoImpl = new BookingDaoImpl();
+
+    /**
+     * Retrieves all bookings from the database.
+     *
+     * @return List of all Booking objects retrieved from the database.
+     */
     @Override
     public List<Booking> findAll(){
         String sqlFindAll = """
@@ -36,6 +45,12 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
         }
     }
 
+    /**
+     * Finds a booking by its unique identifier.
+     *
+     * @param id The ID of the booking to find.
+     * @return Optional containing the found Booking object, or empty if not found.
+     */
     @Override
     public Optional<Booking> findById(Long id) {
         String sqlFindById = """
@@ -57,6 +72,12 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
         }
     }
 
+    /**
+     * Deletes a booking by its unique identifier.
+     *
+     * @param id The ID of the booking to delete.
+     * @return True if the booking was successfully deleted, false otherwise.
+     */
     @Override
     public boolean deleteById(Long id){
         String sqlDeleteById = """
@@ -75,6 +96,12 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
         }
     }
 
+    /**
+     * Saves a new booking entity to the database.
+     *
+     * @param booking The Booking object to save.
+     * @return The saved Booking object with its ID set, or null if saving failed.
+     */
     @Override
     public Booking save(Booking booking) {
         if (isWorkspaceBooked(booking.getWorkspaceId(), booking.getStartTime(), booking.getEndTime())) {
@@ -108,11 +135,24 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
         }
     }
 
+    /**
+     * Updates an existing booking entity in the database.
+     *
+     * @param booking The Booking object with updated values.
+     * @return True if the update was successful, false otherwise.
+     */
     @Override
     public boolean update(Booking booking) {
         return false;
     }
 
+    /**
+     * Finds all workspaces that are available within a specified time period.
+     *
+     * @param startTime The start time of the period.
+     * @param endTime   The end time of the period.
+     * @return List of Workspace objects that are available during the specified time period.
+     */
     public List<Workspace> findAllAvailableWorkspaces(LocalDateTime startTime, LocalDateTime endTime) {
         String sqlQuery = """
             SELECT w.id, w.name
@@ -146,6 +186,13 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
         return workspaces;
     }
 
+    /**
+     * Retrieves all bookings that fall within a specified time period.
+     *
+     * @param startTime The start time of the period.
+     * @param endTime   The end time of the period.
+     * @return List of Booking objects within the specified time period.
+     */
     public List<Booking> getFilteredBookingsByTimePeriod(LocalDateTime startTime, LocalDateTime endTime) {
         String sqlQuery = """
                 SELECT id, workspace_id, user_id, start_time, end_time
@@ -186,6 +233,12 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
         return bookings;
     }
 
+    /**
+     * Retrieves all bookings made by a specific user within a specified time period.
+     *
+     * @param username The username of the user to filter bookings by.
+     * @return List of Booking objects made by the specified user.
+     */
     public List<Booking> getFilteredBookingsByUsername(String username) {
         String sqlQuery = """
                 SELECT b.id, b.workspace_id, b.user_id, b.start_time, b.end_time
@@ -220,6 +273,12 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
         return bookings;
     }
 
+    /**
+     * Retrieves all bookings associated with a specific workspace.
+     *
+     * @param workspaceName The name of the workspace to filter bookings by.
+     * @return List of Booking objects associated with the specified workspace.
+     */
     public List<Booking> getFilteredBookingsByWorkspace(String workspaceName) {
         String sqlQuery = """
                 SELECT b.id, b.workspace_id, b.user_id, b.start_time, b.end_time
@@ -254,6 +313,14 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
         return bookings;
     }
 
+    /**
+     * Checks if a workspace is already booked during a specified time period.
+     *
+     * @param workspaceId The ID of the workspace to check.
+     * @param startTime   The start time of the period to check.
+     * @param endTime     The end time of the period to check.
+     * @return True if the workspace is booked during the specified time period, false otherwise.
+     */
     private boolean isWorkspaceBooked(Long workspaceId, LocalDateTime startTime, LocalDateTime endTime) {
         String sqlCheck = """
             SELECT COUNT(*) AS count
@@ -285,10 +352,16 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
             System.err.println("Ошибка при выполнении SQL-запроса для проверки бронирования: " + e.getMessage());
         }
 
-        return false; // В случае ошибки возвращаем false для предотвращения бронирования
+        return false;
     }
 
-
+    /**
+     * Builds a Booking object from a ResultSet.
+     *
+     * @param resultSet The ResultSet containing booking data.
+     * @return Booking object built from the ResultSet data.
+     * @throws SQLException If an SQL exception occurs while retrieving data from the ResultSet.
+     */
     private Booking buildBooking(ResultSet resultSet) throws SQLException {
         return Booking.builder()
                 .id(resultSet.getLong("id"))
@@ -299,7 +372,11 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
                 .build();
     }
 
-
+    /**
+     * Retrieves the singleton instance of BookingDaoImpl.
+     *
+     * @return Singleton instance of BookingDaoImpl.
+     */
     public static BookingDaoImpl getInstance() {
         return bookingDaoImpl;
     }

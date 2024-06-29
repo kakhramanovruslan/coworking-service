@@ -8,23 +8,27 @@ import org.example.service.UserService;
 import org.example.service.WorkspaceService;
 import org.example.utils.ScannerManager;
 
-import java.sql.SQLOutput;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * The UserHandler class is a handler for interacting with the user menu of the
+ * application console interface. It provides functionality related to the use of the workspaces.
+ */
 public class UserHandler {
 
     private final Scanner scanner = ScannerManager.getInstance().scanner;
-
     private UserService userService = UserService.getInstance();
     private WorkspaceService workspaceService = WorkspaceService.getInstance();
     private BookingService bookingService = BookingService.getInstance();
-
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-
+    /**
+     * Displays the menu for the user in the console.
+     * The menu includes a list of available actions for the user.
+     */
     public void displayUserMenu() {
         System.out.println("╔═════════════════════════════════════════════════════════════════════════╗");
         System.out.println("║       Выберите действие:                                                ║");
@@ -38,6 +42,11 @@ public class UserHandler {
         System.out.println("╚═════════════════════════════════════════════════════════════════════════╝");
 
     }
+
+    /**
+     * Displays the registration menu in the console.
+     * The user enters the username and password to register.
+     */
     public void displayRegistration(){
         System.out.print("Введите имя пользователя: ");
         String username = scanner.nextLine();
@@ -49,6 +58,10 @@ public class UserHandler {
             System.out.println("Пользователь с именем " + username + " уже существует. Повторите попытку регистрации еще раз!");
     }
 
+    /**
+     * Displays the authentication menu in the console.
+     * The user enters the username and password to authenticate.
+     */
     public void displayAuthentication(){
         System.out.print("Введите имя пользователя: ");
         String authUsername = scanner.nextLine();
@@ -62,6 +75,9 @@ public class UserHandler {
             System.out.println("Вы ввели неправильный логин или пароль.");
     }
 
+    /**
+     * Displays the available workspaces menu at now in the console.
+     */
     public void displayAvailableWorkspacesAtNow() {
         List<Workspace> workspaces = bookingService.getAvailableWorkspacesAtNow();
         for (Workspace workspace : workspaces) {
@@ -69,6 +85,10 @@ public class UserHandler {
         }
     }
 
+    /**
+     * Displays the available workspaces menu for time period in the console.
+     * The user enters the time period in format: yyyy-MM-dd HH:mm yyyy-MM-dd HH:mm.
+     */
     public void displayAvailableWorkspacesForTimePeriod(){
         System.out.println("Введите период интересующего промежутка времени в формате: 2024-06-21 11:30 2024-06-21 12:30");
         String[] dateTimeString = scanner.nextLine().split(" ");
@@ -81,6 +101,10 @@ public class UserHandler {
         }
     }
 
+    /**
+     * Displays menu for booking workspace in the console.
+     * The user enters the workspace name and time period in format: workspaceName yyyy-MM-dd HH:mm yyyy-MM-dd HH:mm.
+     */
     public void displayBookingWorkspace() {
         System.out.println("Заполните данные для бронирования в формате приведенном ниже: ");
         System.out.println("someWorkspaceName 2024-06-21 11:30 2024-06-21 12:30");
@@ -96,6 +120,10 @@ public class UserHandler {
             System.out.println("К сожалению, workspace на это время уже забронирован.");
     }
 
+    /**
+     * Displays menu for deleting workspace in the console.
+     * The user enters the booking number from the list of all their bookings.
+     */
     public void displayDeletingWorkspace(){
         List<Booking> bookings = bookingService.getFilteredBookingsByUsername(CoworkingConsole.loggedUsername);
         System.out.println(CoworkingConsole.loggedUsername);
@@ -118,6 +146,14 @@ public class UserHandler {
 
     }
 
+    /**
+     * Displays menu for getting all bookings in the console.
+     * The user enters the options of getting list bookings.
+     * There are three filtering options:
+     * 1) by time period
+     * 2) by username
+     * 3) by workspace name.
+     */
     public void displayAllBookings(){
         System.out.println("Просмотр всех бронирований и их фильтрация по: ");
         System.out.println("1. Промежутку времени");
