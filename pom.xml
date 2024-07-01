@@ -19,6 +19,15 @@
         <postgres.version>42.6.0</postgres.version>
         <liquibase.version>4.24.0</liquibase.version>
         <jacoco.version>0.8.8</jacoco.version>
+        <junit.jupiter.version>5.10.1</junit.jupiter.version>
+        <postgresql.version>42.7.1</postgresql.version>
+        <liquibase-core.version>4.25.1</liquibase-core.version>
+        <testcontainers.version>1.19.4</testcontainers.version>
+        <testcontainers.junit.jupiter.version>1.19.1</testcontainers.junit.jupiter.version>
+        <testcontainers.postgresql.version>1.18.3</testcontainers.postgresql.version>
+        <mockito.junit.jupiter.version>5.6.0</mockito.junit.jupiter.version>
+        <slf4j.version>2.0.9</slf4j.version>
+        <slf4j.nop.version>2.0.9</slf4j.nop.version>
     </properties>
 
     <build>
@@ -86,6 +95,49 @@
             <artifactId>postgresql</artifactId>
             <version>${postgres.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>${slf4j.nop.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${testcontainers.junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${testcontainers.postgresql.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+
     </dependencies>
 
 </project>

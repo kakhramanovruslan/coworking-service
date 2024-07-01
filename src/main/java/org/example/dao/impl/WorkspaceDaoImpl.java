@@ -94,6 +94,26 @@ public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
     }
 
     /**
+     * Deletes all workspaces from the database.
+     * @return True if deletion was successful, false otherwise
+     */
+    @Override
+    public boolean deleteAll() {
+        String sqlDeleteAll = """
+            DELETE FROM coworking.workspaces;
+            """;
+
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteAll)) {
+            return preparedStatement.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Saves a new workspace to the database.
      * @param workspace Workspace object to save
      * @return The saved workspace object

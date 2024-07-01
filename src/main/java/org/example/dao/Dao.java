@@ -31,6 +31,12 @@ public interface Dao<ID, Entity> {
     boolean deleteById(ID id);
 
     /**
+     * Deletes all from table.
+     * @return True if deletion was successful, false otherwise
+     */
+    boolean deleteAll();
+
+    /**
      * Saves or creates a new entity.
      * @param entity Entity to save or create
      * @return The saved entity

@@ -97,6 +97,28 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
     }
 
     /**
+     * Deletes all from bookings table.
+     *
+     * @return True if the bookings was successfully deleted, false otherwise.
+     */
+    @Override
+    public boolean deleteAll() {
+        String sqlDeleteAll = """
+            DELETE FROM coworking.bookings;
+            """;
+
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteAll)) {
+            return preparedStatement.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            return false;
+        }
+    }
+
+
+    /**
      * Saves a new booking entity to the database.
      *
      * @param booking The Booking object to save.

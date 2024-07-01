@@ -66,6 +66,27 @@ public class UserDaoImpl implements Dao<Long, User> {
     }
 
     /**
+     * Deletes all from user table.
+     * @return True if deletion was successful, false otherwise
+     */
+    @Override
+    public boolean deleteAll() {
+        String sqlDeleteAll = """
+            DELETE FROM coworking.users;
+            """;
+
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteAll)) {
+            return preparedStatement.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            return false;
+        }
+    }
+
+
+    /**
      * Retrieves all users from the database.
      * @return List of all users
      */
