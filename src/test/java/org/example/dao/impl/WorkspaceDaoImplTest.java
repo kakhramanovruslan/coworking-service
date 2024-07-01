@@ -2,6 +2,7 @@ package org.example.dao.impl;
 
 import org.example.config.ContainersEnvironment;
 import org.example.entity.Workspace;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,6 +26,11 @@ public class WorkspaceDaoImplTest extends ContainersEnvironment {
                 .name("test-workspace-1")
                 .build();
         workspaceDao.save(testWorkspace);
+    }
+
+    @AfterEach
+    public void reset(){
+        workspaceDao.deleteAll();
     }
 
     @Test
@@ -91,11 +97,18 @@ public class WorkspaceDaoImplTest extends ContainersEnvironment {
 
     @Test
     public void testUpdate(){
-        testWorkspace.setName("test-workspace-update");
-        workspaceDao.update(testWorkspace);
+        Workspace testWorkspace2= Workspace.builder()
+                .name("test-workspace-2")
+                .build();
+        Workspace testWorkspaceUpdate = workspaceDao.save(testWorkspace2);
 
-        assertThat(workspaceDao.findById(testWorkspace.getId())).isPresent();
-        assertThat(workspaceDao.findById(testWorkspace.getId()).get().getName()).isEqualTo(testWorkspace.getName());
+        testWorkspaceUpdate.setName("test-workspace-update");
+        workspaceDao.update(testWorkspaceUpdate);
+
+        assertAll(
+                () -> assertThat(workspaceDao.findById(testWorkspaceUpdate.getId())).isPresent(),
+                () -> assertThat(workspaceDao.findById(testWorkspaceUpdate.getId()).get().getName()).isEqualTo(testWorkspaceUpdate.getName())
+        );
     }
 
     @Test

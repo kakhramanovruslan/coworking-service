@@ -2,6 +2,7 @@ package org.example.dao.impl;
 
 import org.example.config.ContainersEnvironment;
 import org.example.entity.User;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,11 @@ public class UserDaoImplTest extends ContainersEnvironment {
                 .password("123")
                 .build();
         userDao.save(testUser);
+    }
+
+    @AfterEach
+    public void reset(){
+        userDao.deleteAll();
     }
 
     @Test
