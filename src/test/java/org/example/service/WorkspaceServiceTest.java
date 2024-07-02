@@ -1,19 +1,13 @@
 package org.example.service;
-
-import org.example.dao.impl.UserDaoImpl;
 import org.example.dao.impl.WorkspaceDaoImpl;
 import org.example.entity.Workspace;
-import org.example.utils.ConnectionManager;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -28,7 +22,6 @@ class WorkspaceServiceTest {
 
     @Test
     void testGetListOfAllWorkspaces() {
-
         when(workspaceDao.findAll()).thenReturn(List.of());
 
         List<Workspace> result = workspaceService.getListOfAllWorkSpaces();
@@ -38,7 +31,6 @@ class WorkspaceServiceTest {
 
     @Test
     void testCreateWorkspace() {
-
         String name = "new workspace";
         Workspace newWorkspace = Workspace.builder().name(name).build();
         when(workspaceDao.save(any(Workspace.class))).thenReturn(newWorkspace);

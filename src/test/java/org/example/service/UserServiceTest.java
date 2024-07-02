@@ -1,23 +1,13 @@
 package org.example.service;
 
-import lombok.SneakyThrows;
 import org.example.dao.impl.UserDaoImpl;
 import org.example.entity.User;
-import org.example.entity.Workspace;
-import org.example.utils.ConnectionManager;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -34,8 +24,8 @@ class UserServiceTest {
     void testRegisterNewUserReturnsTrue() {
         String username = "newuser";
         String password = "password";
-
         when(userDao.findByUsername(anyString())).thenReturn(Optional.empty());
+
         boolean result = userService.register(username, password);
 
         assertTrue(result);
@@ -89,7 +79,6 @@ class UserServiceTest {
         Long id = 1L;
         User user = new User();
         user.setId(id);
-
         when(userDao.findById(id)).thenReturn(Optional.of(user));
 
         Optional<User> result = userService.getUser(id);
@@ -101,7 +90,6 @@ class UserServiceTest {
     @Test
     void testGetUserNonExistingUserReturnsEmpty() {
         Long id = 1L;
-
         when(userDao.findById(id)).thenReturn(Optional.empty());
 
         Optional<User> result = userService.getUser(id);
@@ -114,7 +102,6 @@ class UserServiceTest {
         String username = "user";
         User user = new User();
         user.setUsername(username);
-
         when(userDao.findByUsername(username)).thenReturn(Optional.of(user));
 
         Optional<User> result = userService.getUser(username);
@@ -126,7 +113,6 @@ class UserServiceTest {
     @Test
     void testGetUserByUsernameNonExistingUserReturnsEmpty() {
         String username = "nonexistinguser";
-
         when(userDao.findByUsername(username)).thenReturn(Optional.empty());
 
         Optional<User> result = userService.getUser(username);
