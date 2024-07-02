@@ -6,7 +6,6 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import org.example.utils.ConfigUtil;
-import org.example.utils.ConnectionManager;
 
 import java.sql.Connection;
 
@@ -25,9 +24,8 @@ public class LiquibaseDemo {
     /**
      * Runs database migrations using Liquibase.
      */
-    public void runMigrations() {
+    public void runMigrations(Connection connection) {
         try {
-            Connection connection = ConnectionManager.getConnection();
             Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
             Liquibase liquibase = new Liquibase(CHANGELOG_PATH, new ClassLoaderResourceAccessor(), database);
             liquibase.update();

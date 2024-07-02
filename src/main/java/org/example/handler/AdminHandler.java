@@ -1,7 +1,10 @@
 package org.example.handler;
 
+import lombok.RequiredArgsConstructor;
+import org.example.dao.impl.UserDaoImpl;
 import org.example.entity.Workspace;
 import org.example.service.WorkspaceService;
+import org.example.utils.ConnectionManager;
 import org.example.utils.ScannerManager;
 
 import java.util.List;
@@ -12,12 +15,16 @@ import java.util.Scanner;
  * The AdminHandler class is a handler for interacting with the admin menu of the
  * application console interface. It provides functionality related to workspace management.
  */
+
 public class AdminHandler {
 
     private final Scanner scanner = ScannerManager.getInstance().scanner;
 
+    private final WorkspaceService workspaceService;
 
-    private WorkspaceService workspaceService = WorkspaceService.getInstance();
+    public AdminHandler(ConnectionManager connectionManager) {
+        this.workspaceService = new WorkspaceService(connectionManager);
+    }
 
     /**
      * Displays the menu for the administrator in the console.

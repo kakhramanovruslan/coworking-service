@@ -1,17 +1,25 @@
 package org.example.service;
 
+import lombok.RequiredArgsConstructor;
+import org.example.dao.impl.BookingDaoImpl;
 import org.example.dao.impl.UserDaoImpl;
 import org.example.entity.User;
+import org.example.utils.ConnectionManager;
+
 import java.util.Optional;
 
 
 /**
  * Service class for managing users.
  */
+@RequiredArgsConstructor
 public class UserService {
 
-    private static UserService userService = new UserService();
-    private final UserDaoImpl userDao = UserDaoImpl.getInstance();
+    private final UserDaoImpl userDao;
+
+    public UserService(ConnectionManager connectionManager) {
+        this.userDao = new UserDaoImpl(connectionManager);
+    }
 
     /**
      * Registers a new user with the provided username and password.
@@ -64,11 +72,4 @@ public class UserService {
         return userDao.findByUsername(username);
     }
 
-    /**
-     * Retrieves the singleton instance of UserService.
-     * @return Singleton instance of UserService
-     */
-    public static UserService getInstance() {
-        return userService;
-    }
 }

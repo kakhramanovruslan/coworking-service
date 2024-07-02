@@ -1,9 +1,11 @@
 package org.example.service;
 
+import lombok.RequiredArgsConstructor;
 import org.example.dao.impl.BookingDaoImpl;
 import org.example.entity.Booking;
 import org.example.entity.User;
 import org.example.entity.Workspace;
+import org.example.utils.ConnectionManager;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,10 +16,15 @@ import java.util.Optional;
  * Service class for managing bookings of workspaces.
  */
 public class BookingService {
-    private static BookingService bookingService = new BookingService();
-    private final WorkspaceService workspaceService = WorkspaceService.getInstance();
-    private final UserService userService = UserService.getInstance();
-    private final BookingDaoImpl bookingDao = BookingDaoImpl.getInstance();
+    private final WorkspaceService workspaceService;
+    private final UserService userService;
+    private final BookingDaoImpl bookingDao;
+
+    public BookingService(WorkspaceService workspaceService, UserService userService, ConnectionManager connectionManager) {
+        this.workspaceService = workspaceService;
+        this.userService = userService;
+        this.bookingDao = new BookingDaoImpl(connectionManager);
+    }
 
     /**
      * Retrieves a list of all available workspaces at the current time.
@@ -96,11 +103,4 @@ public class BookingService {
         return bookingDao.getFilteredBookingsByWorkspace(workspaceName);
     }
 
-    /**
-     * Retrieves the singleton instance of BookingService.
-     * @return Singleton instance of BookingService
-     */
-    public static BookingService getInstance() {
-        return bookingService;
-    }
 }

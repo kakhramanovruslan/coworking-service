@@ -1,5 +1,6 @@
 package org.example.dao.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.example.dao.Dao;
 import org.example.entity.User;
 import org.example.entity.Workspace;
@@ -14,8 +15,10 @@ import java.util.Optional;
 /**
  * Implementation of Dao interface for interacting with Workspace entities in the database.
  */
+@RequiredArgsConstructor
 public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
-    private static final WorkspaceDaoImpl workspaceDaoImpl = new WorkspaceDaoImpl();
+
+    private final ConnectionManager connectionManager;
 
     /**
      * Retrieves all workspaces from the database.
@@ -27,7 +30,7 @@ public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
                 SELECT * FROM coworking.workspaces;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindAll)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -56,7 +59,7 @@ public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
                 WHERE id=?;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindById)) {
             preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -82,7 +85,7 @@ public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
                 WHERE id = ?;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteById)) {
             preparedStatement.setObject(1, id);
             return preparedStatement.executeUpdate() > 0;
@@ -103,7 +106,7 @@ public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
             DELETE FROM coworking.workspaces;
             """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteAll)) {
             return preparedStatement.executeUpdate() > 0;
 
@@ -125,7 +128,7 @@ public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
                 VALUES (?);
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlSave, Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setString(1, workspace.getName());
@@ -157,7 +160,7 @@ public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
             WHERE id = ?;
             """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate)) {
 
             preparedStatement.setString(1, workspace.getName());
@@ -181,7 +184,7 @@ public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
                 WHERE name=?;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindByName)) {
             preparedStatement.setObject(1, name);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -206,7 +209,7 @@ public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
                 WHERE name = ?;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteByName)) {
             preparedStatement.setObject(1, name);
             return preparedStatement.executeUpdate() > 0;
@@ -230,11 +233,4 @@ public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
                 .build();
     }
 
-    /**
-     * Retrieves the singleton instance of WorkspaceDaoImpl.
-     * @return Singleton instance of WorkspaceDaoImpl
-     */
-    public static WorkspaceDaoImpl getInstance() {
-        return workspaceDaoImpl;
-    }
 }

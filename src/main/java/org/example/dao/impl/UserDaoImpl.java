@@ -1,5 +1,6 @@
 package org.example.dao.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.example.dao.Dao;
 import org.example.entity.User;
 import org.example.utils.ConnectionManager;
@@ -12,9 +13,10 @@ import java.util.Optional;
 /**
  * Implementation of Dao interface for interacting with User entities in the database.
  */
+@RequiredArgsConstructor
 public class UserDaoImpl implements Dao<Long, User> {
 
-    private static final UserDaoImpl userDaoImpl = new UserDaoImpl();
+    private final ConnectionManager connectionManager;
 
     /**
      * Retrieves a user by their ID.
@@ -28,7 +30,7 @@ public class UserDaoImpl implements Dao<Long, User> {
                 WHERE id=?;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindById)) {
             preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -54,7 +56,7 @@ public class UserDaoImpl implements Dao<Long, User> {
                 WHERE id = ?;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteById)) {
             preparedStatement.setObject(1, id);
             return preparedStatement.executeUpdate() > 0;
@@ -75,7 +77,7 @@ public class UserDaoImpl implements Dao<Long, User> {
             DELETE FROM coworking.users;
             """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteAll)) {
             return preparedStatement.executeUpdate() > 0;
 
@@ -96,7 +98,7 @@ public class UserDaoImpl implements Dao<Long, User> {
                 SELECT * FROM coworking.users;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindAll)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -125,7 +127,7 @@ public class UserDaoImpl implements Dao<Long, User> {
                 VALUES (?,?);
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlSave, Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setString(1, user.getUsername());
@@ -166,7 +168,7 @@ public class UserDaoImpl implements Dao<Long, User> {
                 WHERE username=?;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindByUsername)) {
             preparedStatement.setObject(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -196,11 +198,4 @@ public class UserDaoImpl implements Dao<Long, User> {
                 .build();
     }
 
-    /**
-     * Retrieves the singleton instance of UserDaoImpl.
-     * @return Singleton instance of UserDaoImpl
-     */
-    public static UserDaoImpl getInstance() {
-        return userDaoImpl;
-    }
 }

@@ -1,24 +1,46 @@
 package org.example.dao.impl;
 
-import org.example.config.ContainersEnvironment;
 import org.example.entity.User;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
+import org.example.liquibase.LiquibaseDemo;
+import org.example.utils.ConnectionManager;
+import org.junit.jupiter.api.*;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UserDaoImplTest extends ContainersEnvironment {
+@Testcontainers
+public class UserDaoImplTest {
 
-    UserDaoImpl userDao;
+    @Container
+    public static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:16.2")
+            .withDatabaseName("testdb")
+            .withUsername("testuser")
+            .withPassword("testpass");
+
+    private static UserDaoImpl userDao;
     private User testUser;
+
+    @BeforeAll
+    public static void setUpAll() {
+        postgresContainer.start();
+
+        ConnectionManager connectionManager = new ConnectionManager(
+                postgresContainer.getJdbcUrl(),
+                postgresContainer.getUsername(),
+                postgresContainer.getPassword()
+        );
+
+        LiquibaseDemo liquibaseDemo = LiquibaseDemo.getInstance();
+        liquibaseDemo.runMigrations(connectionManager.getConnection());
+
+        userDao = new UserDaoImpl(connectionManager);
+    }
 
     @BeforeEach
     public void setUp(){
-        userDao = UserDaoImpl.getInstance();
 
         userDao.deleteAll();
 
@@ -32,6 +54,11 @@ public class UserDaoImplTest extends ContainersEnvironment {
     @AfterEach
     public void reset(){
         userDao.deleteAll();
+    }
+
+    @AfterAll
+    public static void resetAll(){
+        postgresContainer.stop();
     }
 
     @Test

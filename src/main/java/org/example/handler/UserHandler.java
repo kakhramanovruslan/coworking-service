@@ -1,11 +1,13 @@
 package org.example.handler;
 
+import lombok.RequiredArgsConstructor;
 import org.example.entity.Booking;
 import org.example.entity.Workspace;
 import org.example.in.CoworkingConsole;
 import org.example.service.BookingService;
 import org.example.service.UserService;
 import org.example.service.WorkspaceService;
+import org.example.utils.ConnectionManager;
 import org.example.utils.ScannerManager;
 
 import java.time.LocalDateTime;
@@ -21,9 +23,15 @@ import java.util.Scanner;
 public class UserHandler {
 
     private final Scanner scanner = ScannerManager.getInstance().scanner;
-    private UserService userService = UserService.getInstance();
-    private WorkspaceService workspaceService = WorkspaceService.getInstance();
-    private BookingService bookingService = BookingService.getInstance();
+    private final WorkspaceService workspaceService;
+    private final UserService userService;
+    private final BookingService bookingService;
+
+    public UserHandler(ConnectionManager connectionManager) {
+        this.workspaceService = new WorkspaceService(connectionManager);
+        this.userService = new UserService(connectionManager);
+        this.bookingService = new BookingService(workspaceService, userService, connectionManager);
+    }
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     /**

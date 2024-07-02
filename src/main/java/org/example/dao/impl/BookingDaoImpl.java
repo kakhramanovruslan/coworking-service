@@ -1,5 +1,6 @@
 package org.example.dao.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.example.dao.Dao;
 import org.example.entity.Booking;
 import org.example.entity.Workspace;
@@ -14,9 +15,9 @@ import java.util.Optional;
 /**
  * Implementation of the Dao for managing Booking entities in the database.
  */
+@RequiredArgsConstructor
 public class BookingDaoImpl implements Dao<Long, Booking> {
-    private static final BookingDaoImpl bookingDaoImpl = new BookingDaoImpl();
-
+    private final ConnectionManager connectionManager;
     /**
      * Retrieves all bookings from the database.
      *
@@ -28,7 +29,7 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
                 SELECT * FROM coworking.bookings;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindAll)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -58,7 +59,7 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
                 WHERE id=?;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindById)) {
             preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -85,7 +86,7 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
                 WHERE id = ?;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteById)) {
             preparedStatement.setObject(1, id);
             return preparedStatement.executeUpdate() > 0;
@@ -107,7 +108,7 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
             DELETE FROM coworking.bookings;
             """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteAll)) {
             return preparedStatement.executeUpdate() > 0;
 
@@ -135,7 +136,7 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
             VALUES (?,?,?,?);
             """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlSave, Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setObject(1, booking.getWorkspaceId());
@@ -186,7 +187,7 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
 
         List<Workspace> workspaces = new ArrayList<>();
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery)) {
 
             preparedStatement.setTimestamp(1, Timestamp.valueOf(endTime));
@@ -226,7 +227,7 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
 
         List<Booking> bookings = new ArrayList<>();
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery)) {
 
             preparedStatement.setTimestamp(1, Timestamp.valueOf(startTime));
@@ -271,7 +272,7 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
 
         List<Booking> bookings = new ArrayList<>();
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery)) {
 
             preparedStatement.setString(1, username);
@@ -311,7 +312,7 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
 
         List<Booking> bookings = new ArrayList<>();
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery)) {
 
             preparedStatement.setString(1, workspaceName);
@@ -353,7 +354,7 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
                 OR (start_time >= ? AND end_time <= ?));
             """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlCheck)) {
 
             preparedStatement.setLong(1, workspaceId);
@@ -394,12 +395,4 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
                 .build();
     }
 
-    /**
-     * Retrieves the singleton instance of BookingDaoImpl.
-     *
-     * @return Singleton instance of BookingDaoImpl.
-     */
-    public static BookingDaoImpl getInstance() {
-        return bookingDaoImpl;
-    }
 }

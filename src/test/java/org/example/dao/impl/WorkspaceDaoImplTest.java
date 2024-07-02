@@ -1,24 +1,48 @@
 package org.example.dao.impl;
 
-import org.example.config.ContainersEnvironment;
 import org.example.entity.Workspace;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.example.liquibase.LiquibaseDemo;
+import org.example.utils.ConnectionManager;
+import org.junit.jupiter.api.*;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
-public class WorkspaceDaoImplTest extends ContainersEnvironment {
+@Testcontainers
+public class WorkspaceDaoImplTest {
 
-    WorkspaceDaoImpl workspaceDao;
+    @Container
+    public static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:16.2")
+            .withDatabaseName("testdb")
+            .withUsername("testuser")
+            .withPassword("testpass");
+
+    private static WorkspaceDaoImpl workspaceDao;
     private Workspace testWorkspace;
 
+    @BeforeAll
+    public static void setUpAll() {
+        postgresContainer.start();
+
+        ConnectionManager connectionManager = new ConnectionManager(
+                postgresContainer.getJdbcUrl(),
+                postgresContainer.getUsername(),
+                postgresContainer.getPassword()
+        );
+
+        LiquibaseDemo liquibaseDemo = LiquibaseDemo.getInstance();
+        liquibaseDemo.runMigrations(connectionManager.getConnection());
+
+        workspaceDao = new WorkspaceDaoImpl(connectionManager);
+
+    }
     @BeforeEach
     public void setUp(){
-        workspaceDao = WorkspaceDaoImpl.getInstance();
 
         workspaceDao.deleteAll();
 
@@ -31,6 +55,11 @@ public class WorkspaceDaoImplTest extends ContainersEnvironment {
     @AfterEach
     public void reset(){
         workspaceDao.deleteAll();
+    }
+
+    @AfterAll
+    public static void resetAll(){
+        postgresContainer.stop();
     }
 
     @Test

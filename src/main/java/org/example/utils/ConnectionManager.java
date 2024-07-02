@@ -8,12 +8,17 @@ import java.sql.SQLException;
 /**
  * Utility class for managing database connections using JDBC.
  */
-@UtilityClass
-public final class ConnectionManager {
+public class ConnectionManager {
 
-    private final String URL = ConfigUtil.getProperty("db.url");
-    private final String USERNAME = ConfigUtil.getProperty("db.username");
-    private final String PASSWORD = ConfigUtil.getProperty("db.password");
+    private final String URL;
+    private final String USERNAME;
+    private final String PASSWORD;
+
+    public ConnectionManager(String url, String username, String password) {
+        this.URL = url;
+        this.USERNAME = username;
+        this.PASSWORD = password;
+    }
 
     /**
      * Method for establishing connection with database.

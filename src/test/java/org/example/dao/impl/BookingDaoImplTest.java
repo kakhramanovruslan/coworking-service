@@ -1,33 +1,56 @@
 package org.example.dao.impl;
 
-import org.example.config.ContainersEnvironment;
 import org.example.entity.Booking;
 import org.example.entity.User;
 import org.example.entity.Workspace;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.example.liquibase.LiquibaseDemo;
+import org.example.utils.ConnectionManager;
+import org.junit.jupiter.api.*;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class BookingDaoImplTest extends ContainersEnvironment {
+@Testcontainers
+public class BookingDaoImplTest {
 
-    BookingDaoImpl bookingDao;
-    UserDaoImpl userDao;
-    WorkspaceDaoImpl workspaceDao;
+    private static BookingDaoImpl bookingDao;
+    private static UserDaoImpl userDao;
+    private static WorkspaceDaoImpl workspaceDao;
     private Booking testBooking;
     private User testUser;
     private Workspace testWorkspace;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+    @Container
+    public static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:16.2")
+            .withDatabaseName("testdb")
+            .withUsername("testuser")
+            .withPassword("testpass");
+    @BeforeAll
+    public static void setUpAll() {
+        postgresContainer.start();
+
+        ConnectionManager connectionManager = new ConnectionManager(
+                postgresContainer.getJdbcUrl(),
+                postgresContainer.getUsername(),
+                postgresContainer.getPassword()
+        );
+
+        LiquibaseDemo liquibaseDemo = LiquibaseDemo.getInstance();
+        liquibaseDemo.runMigrations(connectionManager.getConnection());
+
+        userDao = new UserDaoImpl(connectionManager);
+        workspaceDao = new WorkspaceDaoImpl(connectionManager);
+        bookingDao = new BookingDaoImpl(connectionManager);
+    }
     @BeforeEach
     public void setUp(){
-        bookingDao = BookingDaoImpl.getInstance();
-        userDao = UserDaoImpl.getInstance();
-        workspaceDao = WorkspaceDaoImpl.getInstance();
 
         bookingDao.deleteAll();
         userDao.deleteAll();
@@ -61,6 +84,11 @@ public class BookingDaoImplTest extends ContainersEnvironment {
         userDao.deleteAll();
         workspaceDao.deleteAll();
         bookingDao.deleteAll();
+    }
+
+    @AfterAll
+    public static void resetAll(){
+        postgresContainer.stop();
     }
 
     @Test

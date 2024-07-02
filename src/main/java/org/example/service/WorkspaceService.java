@@ -1,7 +1,11 @@
 package org.example.service;
 
+import lombok.RequiredArgsConstructor;
+import org.example.dao.impl.UserDaoImpl;
 import org.example.dao.impl.WorkspaceDaoImpl;
 import org.example.entity.Workspace;
+import org.example.utils.ConnectionManager;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -9,8 +13,12 @@ import java.util.Optional;
  * Service class for managing workspaces.
  */
 public class WorkspaceService {
-    private static WorkspaceService workspaceService = new WorkspaceService();
-    private final WorkspaceDaoImpl workspaceDao = WorkspaceDaoImpl.getInstance();
+
+    private final WorkspaceDaoImpl workspaceDao;
+
+    public WorkspaceService(ConnectionManager connectionManager) {
+        this.workspaceDao = new WorkspaceDaoImpl(connectionManager);
+    }
 
     /**
      * Retrieves a list of all workspaces.
@@ -84,14 +92,6 @@ public class WorkspaceService {
      */
     public Optional<Workspace> getWorkspace(Long id) {
         return workspaceDao.findById(id);
-    }
-
-    /**
-     * Retrieves the singleton instance of WorkspaceService.
-     * @return Singleton instance of WorkspaceService
-     */
-    public static WorkspaceService getInstance() {
-        return workspaceService;
     }
 
 }
