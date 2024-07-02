@@ -12,6 +12,7 @@ import java.util.Optional;
 /**
  * Service class for managing workspaces.
  */
+@RequiredArgsConstructor
 public class WorkspaceService {
 
     private final WorkspaceDaoImpl workspaceDao;

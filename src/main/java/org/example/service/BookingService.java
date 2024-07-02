@@ -15,6 +15,7 @@ import java.util.Optional;
 /**
  * Service class for managing bookings of workspaces.
  */
+@RequiredArgsConstructor
 public class BookingService {
     private final WorkspaceService workspaceService;
     private final UserService userService;
