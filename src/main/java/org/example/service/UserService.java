@@ -1,7 +1,7 @@
 package org.example.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.dao.impl.BookingDaoImpl;
+import org.example.dao.UserDao;
 import org.example.dao.impl.UserDaoImpl;
 import org.example.entity.User;
 import org.example.utils.ConnectionManager;
@@ -15,7 +15,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserDaoImpl userDao;
+    private final UserDao userDao;
 
     public UserService(ConnectionManager connectionManager) {
         this.userDao = new UserDaoImpl(connectionManager);

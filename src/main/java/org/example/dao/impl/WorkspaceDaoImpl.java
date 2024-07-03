@@ -1,22 +1,20 @@
 package org.example.dao.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.example.dao.Dao;
-import org.example.entity.User;
+import org.example.dao.WorkspaceDao;
 import org.example.entity.Workspace;
 import org.example.utils.ConnectionManager;
 
-import java.lang.annotation.Native;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Implementation of Dao interface for interacting with Workspace entities in the database.
+ * Implementation of WorkspaceDao interface for interacting with Workspace entities in the database.
  */
 @RequiredArgsConstructor
-public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
+public class WorkspaceDaoImpl implements WorkspaceDao {
 
     private final ConnectionManager connectionManager;
 
@@ -178,6 +176,7 @@ public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
      * @param name Name of the workspace to retrieve
      * @return Optional containing the workspace if found, otherwise empty
      */
+    @Override
     public Optional<Workspace> findByName(String name){
         String sqlFindByName = """
                 SELECT * FROM coworking.workspaces
@@ -203,6 +202,7 @@ public class WorkspaceDaoImpl implements Dao<Long, Workspace> {
      * @param name Name of the workspace to delete
      * @return True if deletion was successful, false otherwise
      */
+    @Override
     public boolean deleteByName(String name){
         String sqlDeleteByName = """
                 DELETE FROM coworking.workspaces

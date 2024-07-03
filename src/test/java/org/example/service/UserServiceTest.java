@@ -1,13 +1,16 @@
 package org.example.service;
 
-import org.example.dao.impl.UserDaoImpl;
+import org.example.dao.UserDao;
 import org.example.entity.User;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -15,14 +18,15 @@ import static org.mockito.Mockito.*;
 class UserServiceTest {
 
     @Mock
-    private UserDaoImpl userDao;
+    private UserDao userDao;
 
     @InjectMocks
     private UserService userService;
 
     @Test
+    @DisplayName("Test register new user returns true")
     void testRegisterNewUserReturnsTrue() {
-        String username = "newuser";
+        String username = "newUser";
         String password = "password";
         when(userDao.findByUsername(anyString())).thenReturn(Optional.empty());
 
@@ -35,8 +39,9 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Test register existing user returns false")
     void testRegisterExistingUserReturnsFalse() {
-        String username = "existinguser";
+        String username = "existingUser";
         String password = "password";
         when(userDao.findByUsername(username)).thenReturn(Optional.of(new User()));
 
@@ -47,6 +52,7 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Test authenticate with valid credentials returns true")
     void testAuthenticateValidCredentialsReturnsTrue() {
         String username = "user";
         String password = "password";
@@ -61,9 +67,10 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Test authenticate with invalid credentials returns false")
     void testAuthenticateInvalidCredentialsReturnsFalse() {
         String username = "user";
-        String password = "wrongpassword";
+        String password = "wrongPassword";
         User user = new User();
         user.setUsername(username);
         user.setPassword("password");
@@ -75,6 +82,7 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Test get user by ID returns existing user")
     void testGetUserExistingUserReturnsUser() {
         Long id = 1L;
         User user = new User();
@@ -88,6 +96,7 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Test get user by ID returns empty for non-existing user")
     void testGetUserNonExistingUserReturnsEmpty() {
         Long id = 1L;
         when(userDao.findById(id)).thenReturn(Optional.empty());
@@ -98,6 +107,7 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Test get user by username returns existing user")
     void testGetUserByUsernameExistingUserReturnsUser() {
         String username = "user";
         User user = new User();
@@ -111,8 +121,9 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Test get user by username returns empty for non-existing user")
     void testGetUserByUsernameNonExistingUserReturnsEmpty() {
-        String username = "nonexistinguser";
+        String username = "nonExistingUser";
         when(userDao.findByUsername(username)).thenReturn(Optional.empty());
 
         Optional<User> result = userService.getUser(username);

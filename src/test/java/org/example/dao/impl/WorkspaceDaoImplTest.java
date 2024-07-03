@@ -1,7 +1,8 @@
 package org.example.dao.impl;
 
+import org.example.dao.WorkspaceDao;
 import org.example.entity.Workspace;
-import org.example.liquibase.LiquibaseDemo;
+import org.example.liquibase.LiquibaseManager;
 import org.example.utils.ConnectionManager;
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -10,8 +11,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Testcontainers
 public class WorkspaceDaoImplTest {
@@ -22,39 +23,36 @@ public class WorkspaceDaoImplTest {
             .withUsername("testuser")
             .withPassword("testpass");
 
-    private static WorkspaceDaoImpl workspaceDao;
+    private WorkspaceDao workspaceDao;
+    private ConnectionManager connectionManager;
+    private LiquibaseManager liquibaseManager = LiquibaseManager.getInstance();
     private Workspace testWorkspace;
 
     @BeforeAll
     public static void setUpAll() {
         postgresContainer.start();
+    }
 
-        ConnectionManager connectionManager = new ConnectionManager(
+    @BeforeEach
+    public void setUp(){
+        connectionManager = new ConnectionManager(
                 postgresContainer.getJdbcUrl(),
                 postgresContainer.getUsername(),
                 postgresContainer.getPassword()
         );
 
-        LiquibaseDemo liquibaseDemo = LiquibaseDemo.getInstance();
-        liquibaseDemo.runMigrations(connectionManager.getConnection());
+        liquibaseManager.runMigrations(connectionManager.getConnection());
 
         workspaceDao = new WorkspaceDaoImpl(connectionManager);
 
-    }
-    @BeforeEach
-    public void setUp(){
-
-        workspaceDao.deleteAll();
-
-        testWorkspace = testWorkspace.builder()
-                .name("test-workspace-1")
-                .build();
-        workspaceDao.save(testWorkspace);
+        testWorkspace = workspaceDao.save(Workspace.builder()
+                                                   .name("test-workspace-1")
+                                                   .build());
     }
 
     @AfterEach
     public void reset(){
-        workspaceDao.deleteAll();
+        liquibaseManager.rollbackToCreateTables(connectionManager.getConnection());
     }
 
     @AfterAll
@@ -63,6 +61,7 @@ public class WorkspaceDaoImplTest {
     }
 
     @Test
+    @DisplayName("Test findAll method")
     public void testFindAll(){
         Workspace testWorkspace2 = Workspace.builder()
                 .name("test-workspace-2")
@@ -71,24 +70,26 @@ public class WorkspaceDaoImplTest {
         workspaceDao.save(testWorkspace2);
 
         assertAll(
-            () -> assertThat(workspaceDao.findAll()).hasSize(2),
-            () -> assertThat(workspaceDao.findAll().isEmpty()).isFalse()
+                () -> assertThat(workspaceDao.findAll()).hasSize(2),
+                () -> assertThat(workspaceDao.findAll().isEmpty()).isFalse()
         );
     }
 
     @Test
+    @DisplayName("Test findById method")
     public void testFindById(){
         Optional<Workspace> foundWorkspace = workspaceDao.findById(testWorkspace.getId());
         Optional<Workspace> notFoundWorkspace = workspaceDao.findById(999L);
         assertAll(
-                () -> assertTrue(foundWorkspace.isPresent()),
+                () -> assertThat(foundWorkspace.isPresent()).isTrue(),
                 () -> assertThat(testWorkspace.getId()).isEqualTo(foundWorkspace.get().getId()),
                 () -> assertThat(testWorkspace.getName()).isEqualTo(foundWorkspace.get().getName()),
-                () -> assertFalse(notFoundWorkspace.isPresent())
+                () -> assertThat(notFoundWorkspace.isPresent()).isFalse()
         );
     }
 
     @Test
+    @DisplayName("Test deleteById method")
     public void testDeleteById(){
         assertAll(
                 () -> assertThat(workspaceDao.deleteById(testWorkspace.getId())).isTrue(),
@@ -97,6 +98,7 @@ public class WorkspaceDaoImplTest {
     }
 
     @Test
+    @DisplayName("Test deleteAll method")
     public void testDeleteAll(){
         Workspace testWorkspace2 = Workspace.builder()
                 .name("test-workspace-2")
@@ -110,6 +112,7 @@ public class WorkspaceDaoImplTest {
     }
 
     @Test
+    @DisplayName("Test save method")
     public void testSave(){
         Workspace testWorkspace2 = Workspace.builder()
                 .name("test-workspace-2")
@@ -125,6 +128,7 @@ public class WorkspaceDaoImplTest {
     }
 
     @Test
+    @DisplayName("Test update method")
     public void testUpdate(){
         Workspace testWorkspace2= Workspace.builder()
                 .name("test-workspace-2")
@@ -141,6 +145,7 @@ public class WorkspaceDaoImplTest {
     }
 
     @Test
+    @DisplayName("Test findByName method")
     public void testFindByName(){
         Optional<Workspace> foundWorkspace = workspaceDao.findByName(testWorkspace.getName());
         Optional<Workspace> notFoundWorkspace = workspaceDao.findByName(" ");
@@ -154,12 +159,12 @@ public class WorkspaceDaoImplTest {
     }
 
     @Test
+    @DisplayName("Test deleteByName method")
     public void testDeleteByName(){
         assertAll(
                 () -> assertThat(workspaceDao.deleteByName(testWorkspace.getName())).isTrue(),
                 () -> assertThat(workspaceDao.findByName(testWorkspace.getName()).isEmpty()).isTrue()
         );
     }
-
 
 }

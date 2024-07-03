@@ -1,7 +1,8 @@
 package org.example.dao.impl;
 
+import org.example.dao.UserDao;
 import org.example.entity.User;
-import org.example.liquibase.LiquibaseDemo;
+import org.example.liquibase.LiquibaseManager;
 import org.example.utils.ConnectionManager;
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -20,40 +21,39 @@ public class UserDaoImplTest {
             .withUsername("testuser")
             .withPassword("testpass");
 
-    private static UserDaoImpl userDao;
+    private UserDao userDao;
+    private ConnectionManager connectionManager;
+    private LiquibaseManager liquibaseManager = LiquibaseManager.getInstance();
     private User testUser;
 
     @BeforeAll
     public static void setUpAll() {
         postgresContainer.start();
+    }
 
-        ConnectionManager connectionManager = new ConnectionManager(
+    @BeforeEach
+    public void setUp(){
+        connectionManager = new ConnectionManager(
                 postgresContainer.getJdbcUrl(),
                 postgresContainer.getUsername(),
                 postgresContainer.getPassword()
         );
 
-        LiquibaseDemo liquibaseDemo = LiquibaseDemo.getInstance();
-        liquibaseDemo.runMigrations(connectionManager.getConnection());
+        liquibaseManager.runMigrations(connectionManager.getConnection());
 
         userDao = new UserDaoImpl(connectionManager);
-    }
 
-    @BeforeEach
-    public void setUp(){
+        userDao.deleteById(-1L); // delete admin
 
-        userDao.deleteAll();
-
-        testUser = testUser.builder()
-                .username("ruslan")
-                .password("123")
-                .build();
-        userDao.save(testUser);
+        testUser = userDao.save(User.builder()
+                                    .username("ruslan")
+                                    .password("123")
+                                    .build());
     }
 
     @AfterEach
     public void reset(){
-        userDao.deleteAll();
+        liquibaseManager.rollbackToCreateTables(connectionManager.getConnection());
     }
 
     @AfterAll
@@ -62,6 +62,7 @@ public class UserDaoImplTest {
     }
 
     @Test
+    @DisplayName("Test findById method")
     public void testFindById(){
         Optional<User> foundUser = userDao.findById(testUser.getId());
         Optional<User> notFoundPlayer = userDao.findById(999L);
@@ -73,16 +74,17 @@ public class UserDaoImplTest {
                 () -> assertEquals(testUser.getPassword(), foundUser.get().getPassword()),
                 () -> assertFalse(notFoundPlayer.isPresent())
         );
-
     }
 
     @Test
+    @DisplayName("Test deleteById method")
     public void testDeleteById(){
         assertTrue(userDao.deleteById(testUser.getId()));
         assertTrue(userDao.findById(testUser.getId()).isEmpty());
     }
 
     @Test
+    @DisplayName("Test deleteAll method")
     public void testDeleteAll(){
         User testUser2 = User.builder()
                 .username("ruslan2")
@@ -95,6 +97,7 @@ public class UserDaoImplTest {
     }
 
     @Test
+    @DisplayName("Test findAll method")
     public void testFindAll(){
         User testUser2 = User.builder()
                 .username("ruslan2")
@@ -107,6 +110,7 @@ public class UserDaoImplTest {
     }
 
     @Test
+    @DisplayName("Test save method")
     public void testSave(){
         User testUser2 = User.builder()
                 .username("ruslan2")
@@ -124,11 +128,13 @@ public class UserDaoImplTest {
     }
 
     @Test
-    @Disabled
+    @DisplayName("Test update method")
+    @Disabled("Not implemented yet")
     public void testUpdate(){
     }
 
     @Test
+    @DisplayName("Test findByUsername method")
     public void testFindByUsername(){
         Optional<User> foundUser = userDao.findByUsername(testUser.getUsername());
         Optional<User> notFoundPlayer = userDao.findByUsername(" ");
@@ -140,7 +146,5 @@ public class UserDaoImplTest {
                 () -> assertEquals(testUser.getPassword(), foundUser.get().getPassword()),
                 () -> assertFalse(notFoundPlayer.isPresent())
         );
-
     }
-
 }

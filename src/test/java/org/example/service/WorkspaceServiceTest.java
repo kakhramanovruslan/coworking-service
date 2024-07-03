@@ -1,13 +1,17 @@
 package org.example.service;
-import org.example.dao.impl.WorkspaceDaoImpl;
+
+import org.example.dao.WorkspaceDao;
 import org.example.entity.Workspace;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.util.List;
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -15,12 +19,13 @@ import static org.mockito.Mockito.*;
 class WorkspaceServiceTest {
 
     @Mock
-    private WorkspaceDaoImpl workspaceDao;
+    private WorkspaceDao workspaceDao;
 
     @InjectMocks
     private WorkspaceService workspaceService;
 
     @Test
+    @DisplayName("Test getting list of all workspaces")
     void testGetListOfAllWorkspaces() {
         when(workspaceDao.findAll()).thenReturn(List.of());
 
@@ -30,6 +35,7 @@ class WorkspaceServiceTest {
     }
 
     @Test
+    @DisplayName("Test creating a workspace")
     void testCreateWorkspace() {
         String name = "new workspace";
         Workspace newWorkspace = Workspace.builder().name(name).build();
@@ -42,6 +48,7 @@ class WorkspaceServiceTest {
     }
 
     @Test
+    @DisplayName("Test deleting workspace by name if it exists")
     void testDeleteWorkspaceByNameIfWorkspaceExists() {
         String name = "existing workspace";
         when(workspaceDao.deleteByName(name)).thenReturn(true);
@@ -53,6 +60,7 @@ class WorkspaceServiceTest {
     }
 
     @Test
+    @DisplayName("Test deleting workspace by name if it does not exist")
     void testDeleteWorkspaceByNameIfWorkspaceDoesNotExist() {
         String name = "non existing workspace";
         when(workspaceDao.deleteByName(name)).thenReturn(false);
@@ -64,6 +72,7 @@ class WorkspaceServiceTest {
     }
 
     @Test
+    @DisplayName("Test deleting workspace by ID if it exists")
     void testDeleteWorkspaceByIdIfWorkspaceExists() {
         Long id = 1L;
         when(workspaceDao.deleteById(id)).thenReturn(true);
@@ -75,6 +84,7 @@ class WorkspaceServiceTest {
     }
 
     @Test
+    @DisplayName("Test deleting workspace by ID if it does not exist")
     void testDeleteWorkspaceByIdIfWorkspaceDoesNotExist() {
         Long id = 1L;
         when(workspaceDao.deleteById(id)).thenReturn(false);
@@ -86,6 +96,7 @@ class WorkspaceServiceTest {
     }
 
     @Test
+    @DisplayName("Test updating workspace if it exists")
     void testUpdateWorkspaceIfWorkspaceExists() {
         String oldName = "old name";
         String newName = "new name";
@@ -100,6 +111,7 @@ class WorkspaceServiceTest {
     }
 
     @Test
+    @DisplayName("Test updating workspace if it does not exist")
     void testUpdateWorkspaceIfWorkspaceDoesNotExist() {
         String oldName = "non existing workspace";
         String newName = "new name";
@@ -111,6 +123,7 @@ class WorkspaceServiceTest {
     }
 
     @Test
+    @DisplayName("Test getting workspace by name if it exists")
     void testGetWorkspaceByNameIfWorkspaceExists() {
         String name = "existing workspace";
         Workspace workspace = Workspace.builder().name(name).build();
@@ -123,6 +136,7 @@ class WorkspaceServiceTest {
     }
 
     @Test
+    @DisplayName("Test getting workspace by name if it does not exist")
     void testGetWorkspaceByNameIfWorkspaceDoesNotExist() {
         String name = "non existing workspace";
 
@@ -132,6 +146,7 @@ class WorkspaceServiceTest {
     }
 
     @Test
+    @DisplayName("Test getting workspace by ID if it exists")
     void testGetWorkspaceByIdIfWorkspaceExists() {
         Long id = 1L;
         Workspace workspace = Workspace.builder().id(id).build();
@@ -144,6 +159,7 @@ class WorkspaceServiceTest {
     }
 
     @Test
+    @DisplayName("Test getting workspace by ID if it does not exist")
     void testGetWorkspaceByIdIfWorkspaceDoesNotExist() {
         Long id = 1L;
 

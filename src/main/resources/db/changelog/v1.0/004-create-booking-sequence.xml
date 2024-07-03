@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.10.xsd">
+
+    <changeSet id="005-create-booking-sequence" author="ruslan">
+        <createSequence schemaName="coworking" cacheSize="1" cycle="false" dataType="bigint" incrementBy="1"
+                        maxValue="9223372036854775807" minValue="1" sequenceName="booking_id_seq" startValue="1"/>
+
+        <rollback>
+            <dropSequence sequenceName="booking_id_seq" schemaName="coworking"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

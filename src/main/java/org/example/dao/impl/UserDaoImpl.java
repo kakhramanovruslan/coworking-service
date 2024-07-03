@@ -1,7 +1,7 @@
 package org.example.dao.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.example.dao.Dao;
+import org.example.dao.UserDao;
 import org.example.entity.User;
 import org.example.utils.ConnectionManager;
 
@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Implementation of Dao interface for interacting with User entities in the database.
+ * Implementation of UserDao interface for interacting with User entities in the database.
  */
 @RequiredArgsConstructor
-public class UserDaoImpl implements Dao<Long, User> {
+public class UserDaoImpl implements UserDao {
 
     private final ConnectionManager connectionManager;
 
@@ -162,6 +162,7 @@ public class UserDaoImpl implements Dao<Long, User> {
      * @param username Username of the user to retrieve
      * @return Optional containing the user if found, otherwise empty
      */
+    @Override
     public Optional<User> findByUsername(String username){
         String sqlFindByUsername = """
                 SELECT * FROM coworking.users

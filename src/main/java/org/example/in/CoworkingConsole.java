@@ -1,9 +1,9 @@
 package org.example.in;
 
 
-import org.example.handler.AdminHandler;
-import org.example.handler.MainHandler;
-import org.example.handler.UserHandler;
+import org.example.in.handler.AdminConsoleHandler;
+import org.example.in.handler.MainConsoleHandler;
+import org.example.in.handler.UserConsoleHandler;
 
 /**
  * The CoworkingConsole class represents a text interface for interacting with the coworking service.
@@ -16,80 +16,80 @@ public class CoworkingConsole {
 
     /**
      * The start method launches a text interface for interacting with the coworking.
-     * @param mainHandler General event handler
-     * @param userHandler User event handler
-     * @param adminHandler Admin event handler
+     * @param mainConsoleHandler General event handler
+     * @param userConsoleHandler User event handler
+     * @param adminConsoleHandler Admin event handler
      */
-    public void start(MainHandler mainHandler, UserHandler userHandler, AdminHandler adminHandler) {
+    public void start(MainConsoleHandler mainConsoleHandler, UserConsoleHandler userConsoleHandler, AdminConsoleHandler adminConsoleHandler) {
         while (true) {
             if (!logged) {
-                mainHandler.displayMainMenu();
-                int choice = mainHandler.readChoice();
+                mainConsoleHandler.displayMainMenu();
+                int choice = mainConsoleHandler.readChoice();
                 switch (choice) {
                     case 1:
-                        userHandler.displayRegistration();
+                        userConsoleHandler.displayRegistration();
                         break;
                     case 2:
-                        userHandler.displayAuthentication();
+                        userConsoleHandler.displayAuthentication();
                         break;
                     case 3:
-                        mainHandler.exitApplication();
+                        mainConsoleHandler.exitApplication();
                         break;
                     default:
                         System.out.println("Неверный выбор. Пожалуйста, выберите снова.");
                 }
             } else if ("admin".equals(loggedUsername)) {
-                adminHandler.displayAdminMenu();
-                int choice = mainHandler.readChoice();
+                adminConsoleHandler.displayAdminMenu();
+                int choice = mainConsoleHandler.readChoice();
                 switch (choice) {
                     case 1:
-                        adminHandler.displayListOfAllWorkspaces();
+                        adminConsoleHandler.displayListOfAllWorkspaces();
                         break;
                     case 2:
-                        adminHandler.displayWorkspace();
+                        adminConsoleHandler.displayWorkspace();
                         break;
                     case 3:
-                        adminHandler.displayCreatingWorkspace();
+                        adminConsoleHandler.displayCreatingWorkspace();
                         break;
                     case 4:
-                        adminHandler.displayUpdatingWorkspace();
+                        adminConsoleHandler.displayUpdatingWorkspace();
                         break;
                     case 5:
-                        adminHandler.displayDeletingWorkspace();
+                        adminConsoleHandler.displayDeletingWorkspace();
                         break;
                     case 6:
-                        userHandler.logout();
+                        userConsoleHandler.logout();
                         break;
                     case 7:
-                        mainHandler.exitApplication();
+                        mainConsoleHandler.exitApplication();
                         break;
                     default:
                         System.out.println("Неверный выбор. Пожалуйста, выберите снова.");
                 }
             } else if (logged) {
-                userHandler.displayUserMenu();
-                int choice = mainHandler.readChoice();
+                userConsoleHandler.displayUserMenu();
+                int choice = mainConsoleHandler.readChoice();
                 switch (choice) {
                     case 1:
-                        userHandler.displayAvailableWorkspacesAtNow();
+                        userConsoleHandler.displayAvailableWorkspacesAtNow();
                         break;
                     case 2:
-                        userHandler.displayAvailableWorkspacesForTimePeriod();
+                        userConsoleHandler.displayAvailableWorkspacesForTimePeriod();
                         break;
                     case 3:
-                        userHandler.displayBookingWorkspace();
+                        userConsoleHandler.displayBookingWorkspace();
                         break;
                     case 4:
-                        userHandler.displayDeletingWorkspace();
+                        userConsoleHandler.displayDeletingWorkspace();
                         break;
                     case 5:
-                        userHandler.displayAllBookings();
+                        userConsoleHandler.displayAllBookings();
                         break;
                     case 6:
-                        userHandler.logout();
+                        userConsoleHandler.logout();
                         break;
                     case 7:
-                        mainHandler.exitApplication();
+                        mainConsoleHandler.exitApplication();
                         break;
                     default:
                         System.out.println("Неверный выбор. Пожалуйста, выберите снова.");

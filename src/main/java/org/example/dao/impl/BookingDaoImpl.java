@@ -1,7 +1,7 @@
 package org.example.dao.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.example.dao.Dao;
+import org.example.dao.BookingDao;
 import org.example.entity.Booking;
 import org.example.entity.Workspace;
 import org.example.utils.ConnectionManager;
@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Implementation of the Dao for managing Booking entities in the database.
+ * Implementation of the BookingDao for managing Booking entities in the database.
  */
 @RequiredArgsConstructor
-public class BookingDaoImpl implements Dao<Long, Booking> {
+public class BookingDaoImpl implements BookingDao {
     private final ConnectionManager connectionManager;
     /**
      * Retrieves all bookings from the database.
@@ -176,6 +176,7 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
      * @param endTime   The end time of the period.
      * @return List of Workspace objects that are available during the specified time period.
      */
+    @Override
     public List<Workspace> findAllAvailableWorkspaces(LocalDateTime startTime, LocalDateTime endTime) {
         String sqlQuery = """
             SELECT w.id, w.name
@@ -216,6 +217,7 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
      * @param endTime   The end time of the period.
      * @return List of Booking objects within the specified time period.
      */
+    @Override
     public List<Booking> getFilteredBookingsByTimePeriod(LocalDateTime startTime, LocalDateTime endTime) {
         String sqlQuery = """
                 SELECT id, workspace_id, user_id, start_time, end_time
@@ -262,6 +264,7 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
      * @param username The username of the user to filter bookings by.
      * @return List of Booking objects made by the specified user.
      */
+    @Override
     public List<Booking> getFilteredBookingsByUsername(String username) {
         String sqlQuery = """
                 SELECT b.id, b.workspace_id, b.user_id, b.start_time, b.end_time
@@ -302,6 +305,7 @@ public class BookingDaoImpl implements Dao<Long, Booking> {
      * @param workspaceName The name of the workspace to filter bookings by.
      * @return List of Booking objects associated with the specified workspace.
      */
+    @Override
     public List<Booking> getFilteredBookingsByWorkspace(String workspaceName) {
         String sqlQuery = """
                 SELECT b.id, b.workspace_id, b.user_id, b.start_time, b.end_time

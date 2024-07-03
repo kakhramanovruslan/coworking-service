@@ -6,8 +6,12 @@
          https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd"
         logicalFilePath="db/changelog.xml">
 
-    <include file="v1.0/001-create-schema.xml" relativeToChangelogFile="true"/>
-    <include file="v1.0/002-create-sequences.xml" relativeToChangelogFile="true"/>
-    <include file="v1.0/003-create-tables.xml" relativeToChangelogFile="true"/>
-    <include file="v1.0/004-insert-data.xml" relativeToChangelogFile="true"/>
+    <include file="v1.0/001-create-coworking-schema.xml" relativeToChangelogFile="true"/>
+    <include file="v1.0/002-create-user-sequence.xml" relativeToChangelogFile="true"/>
+    <include file="v1.0/003-create-workspace-sequence.xml" relativeToChangelogFile="true"/>
+    <include file="v1.0/004-create-booking-sequence.xml" relativeToChangelogFile="true"/>
+    <include file="v1.0/005-create-users-table.xml" relativeToChangelogFile="true"/>
+    <include file="v1.0/006-create-workspaces-table.xml" relativeToChangelogFile="true"/>
+    <include file="v1.0/007-create-bookings-table.xml" relativeToChangelogFile="true"/>
+    <include file="v1.0/008-insert-admin-credentials.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

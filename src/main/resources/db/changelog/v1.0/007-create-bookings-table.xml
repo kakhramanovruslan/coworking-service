@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="008-create-bookings-table" author="ruslan">
+        <createTable schemaName="coworking" tableName="bookings">
+            <!-- Bookings table -->
+            <column name="id" type="bigint" defaultValueComputed="nextval('coworking.booking_id_seq')">
+                <!-- Booking ID -->
+                <constraints primaryKey="true" primaryKeyName="booking_pkey" nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <!-- User ID who made the booking -->
+                <constraints nullable="false"/>
+            </column>
+            <column name="workspace_id" type="bigint">
+                <!-- Workspace ID booked by the user -->
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_time" type="timestamp">
+                <!-- Start time of the booking -->
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_time" type="timestamp">
+                <!-- End time of the booking -->
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Add foreign key constraint for user_id -->
+        <addForeignKeyConstraint
+                baseTableSchemaName="coworking"
+                baseTableName="bookings"
+                baseColumnNames="user_id"
+                constraintName="fk_bookings_users"
+                referencedTableSchemaName="coworking"
+                referencedTableName="users"
+                referencedColumnNames="id"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
+
+        <!-- Add foreign key constraint for workspace_id -->
+        <addForeignKeyConstraint
+                baseTableSchemaName="coworking"
+                baseTableName="bookings"
+                baseColumnNames="workspace_id"
+                constraintName="fk_bookings_workspaces"
+                referencedTableSchemaName="coworking"
+                referencedTableName="workspaces"
+                referencedColumnNames="id"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
+
+        <rollback>
+            <dropTable tableName="bookings" schemaName="coworking"/>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

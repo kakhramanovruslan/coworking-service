@@ -1,7 +1,7 @@
 package org.example.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.dao.impl.UserDaoImpl;
+import org.example.dao.WorkspaceDao;
 import org.example.dao.impl.WorkspaceDaoImpl;
 import org.example.entity.Workspace;
 import org.example.utils.ConnectionManager;
@@ -15,7 +15,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class WorkspaceService {
 
-    private final WorkspaceDaoImpl workspaceDao;
+    private final WorkspaceDao workspaceDao;
 
     public WorkspaceService(ConnectionManager connectionManager) {
         this.workspaceDao = new WorkspaceDaoImpl(connectionManager);

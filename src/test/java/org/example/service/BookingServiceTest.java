@@ -1,9 +1,12 @@
 package org.example.service;
 
+import org.example.dao.BookingDao;
+import org.example.dao.Dao;
 import org.example.dao.impl.BookingDaoImpl;
 import org.example.entity.Booking;
 import org.example.entity.User;
 import org.example.entity.Workspace;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,11 +30,12 @@ class BookingServiceTest {
     @Mock
     private UserService userService;
     @Mock
-    private BookingDaoImpl bookingDao;
+    private BookingDao bookingDao;
     @InjectMocks
     private BookingService bookingService;
 
     @Test
+    @DisplayName("Test retrieving available workspaces at current time")
     void testGetAvailableWorkspacesAtNow() {
         Workspace workspace1 = Workspace.builder().name("Workspace 1").build();
         Workspace workspace2 = Workspace.builder().name("Workspace 2").build();
@@ -50,6 +54,7 @@ class BookingServiceTest {
     }
 
     @Test
+    @DisplayName("Test retrieving available workspaces for a specific time period")
     void testGetAvailableWorkspacesForTimePeriod() {
         Workspace workspace1 = Workspace.builder().name("Workspace 1").build();
         Workspace workspace2 = Workspace.builder().name("Workspace 2").build();
@@ -65,6 +70,19 @@ class BookingServiceTest {
     }
 
     @Test
+    @DisplayName("Test canceling when booking does not exist")
+    void testCancelBookWhenBookingDoesNotExist() {
+        Long nonExistingBookingId = 999L;
+        when(bookingDao.deleteById(nonExistingBookingId)).thenReturn(false);
+
+        boolean result = bookingService.cancelBook(nonExistingBookingId);
+
+        assertFalse(result);
+        verify(bookingDao).deleteById(nonExistingBookingId);
+    }
+
+    @Test
+    @DisplayName("Test booking a workspace")
     void testBookWorkspace() {
         String workspaceName = "Workspace 1";
         String username = "User 1";
@@ -91,6 +109,7 @@ class BookingServiceTest {
     }
 
     @Test
+    @DisplayName("Test canceling a booking")
     void testCancelBook() {
         Long bookingId = 1L;
         when(bookingDao.deleteById(bookingId)).thenReturn(true);
@@ -102,6 +121,7 @@ class BookingServiceTest {
     }
 
     @Test
+    @DisplayName("Test retrieving filtered bookings by time period")
     void testGetFilteredBookingsByTimePeriod() {
         LocalDateTime startTime = LocalDateTime.of(2022, 1, 1, 10, 0);
         LocalDateTime endTime = LocalDateTime.of(2022, 1, 1, 12, 0);
@@ -127,6 +147,7 @@ class BookingServiceTest {
     }
 
     @Test
+    @DisplayName("Test retrieving filtered bookings by username")
     void testGetFilteredBookingsByUsername() {
         String username = "User 1";
         Booking booking1 = Booking.builder()
@@ -151,6 +172,7 @@ class BookingServiceTest {
     }
 
     @Test
+    @DisplayName("Test retrieving filtered bookings by workspace")
     void testGetFilteredBookingsByWorkspace() {
         String workspaceName = "Workspace 1";
         Booking booking1 = Booking.builder()
@@ -175,6 +197,7 @@ class BookingServiceTest {
     }
 
     @Test
+    @DisplayName("Test bookWorkspace throws NoSuchElementException when workspace not found")
     void testBookWorkspaceNoSuchElementException() {
         String workspaceName = "Workspace 1";
         String username = "User 1";
@@ -182,12 +205,12 @@ class BookingServiceTest {
         LocalDateTime endTime = LocalDateTime.of(2022, 1, 1, 12, 0);
         when(workspaceService.getWorkspace(workspaceName)).thenReturn(Optional.empty());
 
-        // When and Then
         assertThrows(NoSuchElementException.class, () -> bookingService.bookWorkspace(workspaceName, username, startTime, endTime));
         verify(workspaceService).getWorkspace(workspaceName);
     }
 
     @Test
+    @DisplayName("Test bookWorkspace throws NoSuchElementException when username not found")
     void testBookWorkspaceUsernameNotFoundException() {
         String workspaceName = "Workspace 1";
         String username = "User 1";

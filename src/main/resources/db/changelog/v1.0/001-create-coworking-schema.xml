@@ -4,9 +4,15 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.10.xsd">
 
-    <changeSet id="001-create-schema" author="ruslan">
+    <changeSet id="002-create-coworking-schema" author="ruslan">
         <sql dbms="postgresql" endDelimiter=";">
             CREATE SCHEMA IF NOT EXISTS coworking
         </sql>
+
+        <rollback>
+            <sql dbms="postgresql" endDelimiter=";">
+                DROP SCHEMA IF EXISTS coworking CASCADE;
+            </sql>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

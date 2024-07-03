@@ -1,10 +1,10 @@
 package org.example;
 
-import org.example.handler.AdminHandler;
-import org.example.handler.MainHandler;
-import org.example.handler.UserHandler;
+import org.example.in.handler.AdminConsoleHandler;
+import org.example.in.handler.MainConsoleHandler;
+import org.example.in.handler.UserConsoleHandler;
 import org.example.in.CoworkingConsole;
-import org.example.liquibase.LiquibaseDemo;
+import org.example.liquibase.LiquibaseManager;
 import org.example.utils.ConfigUtil;
 import org.example.utils.ConnectionManager;
 
@@ -22,14 +22,14 @@ public class Main {
         String password = ConfigUtil.getProperty("db.password");
         ConnectionManager connectionManager = new ConnectionManager(url, username, password);
 
-        MainHandler mainHandler = new MainHandler();
-        UserHandler userHandler = new UserHandler(connectionManager);
-        AdminHandler adminHandler = new AdminHandler(connectionManager);
+        MainConsoleHandler mainConsoleHandler = new MainConsoleHandler();
+        UserConsoleHandler userConsoleHandler = new UserConsoleHandler(connectionManager);
+        AdminConsoleHandler adminConsoleHandler = new AdminConsoleHandler(connectionManager);
 
-        LiquibaseDemo liquibaseDemo = LiquibaseDemo.getInstance();
-        liquibaseDemo.runMigrations(connectionManager.getConnection());
+        LiquibaseManager liquibaseManager = LiquibaseManager.getInstance();
+        liquibaseManager.runMigrations(connectionManager.getConnection());
 
         CoworkingConsole coworkingConsole = new CoworkingConsole();
-        coworkingConsole.start(mainHandler, userHandler, adminHandler);
+        coworkingConsole.start(mainConsoleHandler, userConsoleHandler, adminConsoleHandler);
     }
 }

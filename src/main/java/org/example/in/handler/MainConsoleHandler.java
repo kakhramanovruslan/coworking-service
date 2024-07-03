@@ -1,18 +1,16 @@
-package org.example.handler;
+package org.example.in.handler;
 
-import org.example.service.WorkspaceService;
-import org.example.utils.ConnectionManager;
 import org.example.utils.ScannerManager;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
- * The MainHandler class is a handler for interacting with the main menu of the
+ * The MainConsoleHandler class is a handler for interacting with the main menu of the
  * application console interface. It provides functionality related to displaying
  * the main menu and handling actions related to it.
  */
-public class MainHandler {
+public class MainConsoleHandler {
 
     private final Scanner scanner = ScannerManager.getInstance().scanner;
 

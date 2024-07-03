@@ -1,6 +1,5 @@
-package org.example.handler;
+package org.example.in.handler;
 
-import lombok.RequiredArgsConstructor;
 import org.example.entity.Booking;
 import org.example.entity.Workspace;
 import org.example.in.CoworkingConsole;
@@ -17,17 +16,17 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
- * The UserHandler class is a handler for interacting with the user menu of the
+ * The UserConsoleHandler class is a handler for interacting with the user menu of the
  * application console interface. It provides functionality related to the use of the workspaces.
  */
-public class UserHandler {
+public class UserConsoleHandler {
 
     private final Scanner scanner = ScannerManager.getInstance().scanner;
     private final WorkspaceService workspaceService;
     private final UserService userService;
     private final BookingService bookingService;
 
-    public UserHandler(ConnectionManager connectionManager) {
+    public UserConsoleHandler(ConnectionManager connectionManager) {
         this.workspaceService = new WorkspaceService(connectionManager);
         this.userService = new UserService(connectionManager);
         this.bookingService = new BookingService(workspaceService, userService, connectionManager);

@@ -1,9 +1,12 @@
 package org.example.dao.impl;
 
+import org.example.dao.BookingDao;
+import org.example.dao.UserDao;
+import org.example.dao.WorkspaceDao;
 import org.example.entity.Booking;
 import org.example.entity.User;
 import org.example.entity.Workspace;
-import org.example.liquibase.LiquibaseDemo;
+import org.example.liquibase.LiquibaseManager;
 import org.example.utils.ConnectionManager;
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -19,9 +22,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @Testcontainers
 public class BookingDaoImplTest {
 
-    private static BookingDaoImpl bookingDao;
-    private static UserDaoImpl userDao;
-    private static WorkspaceDaoImpl workspaceDao;
+    private static BookingDao bookingDao;
+    private static UserDao userDao;
+    private static WorkspaceDao workspaceDao;
+    private ConnectionManager connectionManager;
+    private LiquibaseManager liquibaseManager = LiquibaseManager.getInstance();
     private Booking testBooking;
     private User testUser;
     private Workspace testWorkspace;
@@ -35,55 +40,46 @@ public class BookingDaoImplTest {
     @BeforeAll
     public static void setUpAll() {
         postgresContainer.start();
-
-        ConnectionManager connectionManager = new ConnectionManager(
+    }
+    @BeforeEach
+    public void setUp(){
+        connectionManager = new ConnectionManager(
                 postgresContainer.getJdbcUrl(),
                 postgresContainer.getUsername(),
                 postgresContainer.getPassword()
         );
 
-        LiquibaseDemo liquibaseDemo = LiquibaseDemo.getInstance();
-        liquibaseDemo.runMigrations(connectionManager.getConnection());
+        liquibaseManager.runMigrations(connectionManager.getConnection());
 
         userDao = new UserDaoImpl(connectionManager);
         workspaceDao = new WorkspaceDaoImpl(connectionManager);
         bookingDao = new BookingDaoImpl(connectionManager);
-    }
-    @BeforeEach
-    public void setUp(){
 
-        bookingDao.deleteAll();
-        userDao.deleteAll();
-        workspaceDao.deleteAll();
+        userDao.deleteById(-1L); // delete admin
 
-        testUser = testUser.builder()
-                .username("ruslan")
-                .password("123")
-                .build();
-        userDao.save(testUser);
+        testUser = userDao.save(User.builder()
+                                    .username("ruslan")
+                                    .password("123")
+                                    .build());
 
-        testWorkspace = testWorkspace.builder()
-                .name("test-workspace-1")
-                .build();
-        workspaceDao.save(testWorkspace);
+        testWorkspace = workspaceDao.save(Workspace.builder()
+                                                   .name("test-workspace-1")
+                                                   .build());
 
         LocalDateTime startTime = LocalDateTime.parse("2024-06-21 11:30", formatter);
         LocalDateTime endTime = LocalDateTime.parse("2024-06-21 12:30", formatter);
 
-        testBooking = testBooking.builder()
-                        .workspaceId(testWorkspace.getId())
-                        .userId(testUser.getId())
-                        .startTime(startTime)
-                        .endTime(endTime)
-                        .build();
-        bookingDao.save(testBooking);
+        testBooking = bookingDao.save(Booking.builder()
+                                             .workspaceId(testWorkspace.getId())
+                                             .userId(testUser.getId())
+                                             .startTime(startTime)
+                                             .endTime(endTime)
+                                             .build());
     }
 
     @AfterEach
     public void reset(){
-        userDao.deleteAll();
-        workspaceDao.deleteAll();
-        bookingDao.deleteAll();
+        liquibaseManager.rollbackToCreateTables(connectionManager.getConnection());
     }
 
     @AfterAll
@@ -92,6 +88,7 @@ public class BookingDaoImplTest {
     }
 
     @Test
+    @DisplayName("Test findAll method")
     public void testFindAll(){
         LocalDateTime startTime = LocalDateTime.parse("2024-06-21 13:30", formatter);
         LocalDateTime endTime = LocalDateTime.parse("2024-06-21 14:30", formatter);
@@ -110,6 +107,7 @@ public class BookingDaoImplTest {
     }
 
     @Test
+    @DisplayName("Test findById method")
     public void testFindById(){
         Optional<Booking> foundBooking = bookingDao.findById(testBooking.getId());
         Optional<Booking> notFoundBooking = bookingDao.findById(999L);
@@ -122,6 +120,7 @@ public class BookingDaoImplTest {
     }
 
     @Test
+    @DisplayName("Test deleteById method")
     public void testDeleteById(){
         assertAll(
                 () -> assertThat(bookingDao.deleteById(testBooking.getId())).isTrue(),
@@ -130,6 +129,7 @@ public class BookingDaoImplTest {
     }
 
     @Test
+    @DisplayName("Test deleteAll method")
     public void testDeleteAll(){
         LocalDateTime startTime = LocalDateTime.parse("2024-06-21 13:30", formatter);
         LocalDateTime endTime = LocalDateTime.parse("2024-06-21 14:30", formatter);
@@ -148,6 +148,7 @@ public class BookingDaoImplTest {
     }
 
     @Test
+    @DisplayName("Test save method returns null if workspace is booked")
     public void testSaveReturnNullIfWorkspaceBooked(){
         LocalDateTime startTime = LocalDateTime.parse("2024-06-21 11:30", formatter);
         LocalDateTime endTime = LocalDateTime.parse("2024-06-21 12:30", formatter);
@@ -165,6 +166,7 @@ public class BookingDaoImplTest {
     }
 
     @Test
+    @DisplayName("Test save method")
     public void testSave(){
         LocalDateTime startTime = LocalDateTime.parse("2024-06-21 13:30", formatter);
         LocalDateTime endTime = LocalDateTime.parse("2024-06-21 14:30", formatter);
@@ -185,11 +187,13 @@ public class BookingDaoImplTest {
     }
 
     @Test
-    @Disabled
+    @DisplayName("Test update method")
+    @Disabled("Not implemented yet")
     public void testUpdate(){
     }
 
     @Test
+    @DisplayName("Test findAllAvailableWorkspaces method")
     public void testFindAllAvailableWorkspaces() {
         Workspace testWorkspace2 = Workspace.builder()
                 .name("test-workspace-2")
@@ -208,6 +212,7 @@ public class BookingDaoImplTest {
     }
 
     @Test
+    @DisplayName("Test testGetFilteredBookingsByTimePeriod method")
     public void testGetFilteredBookingsByTimePeriod(){
         LocalDateTime startTime = LocalDateTime.parse("2024-06-21 11:30", formatter);
         LocalDateTime endTime = LocalDateTime.parse("2024-06-21 12:30", formatter);
@@ -219,6 +224,7 @@ public class BookingDaoImplTest {
     }
 
     @Test
+    @DisplayName("Test getFilteredBookingsByUsername method")
     public void testGetFilteredBookingsByUsername(){
         assertAll(
                 () -> assertThat(bookingDao.getFilteredBookingsByUsername(testUser.getUsername())).hasSize(1),
@@ -227,6 +233,7 @@ public class BookingDaoImplTest {
     }
 
     @Test
+    @DisplayName("Test getFilteredBookingsByWorkspace method")
     public void testGetFilteredBookingsByWorkspace(){
         assertAll(
                 () -> assertThat(bookingDao.getFilteredBookingsByWorkspace(testWorkspace.getName())).hasSize(1),

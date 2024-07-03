@@ -17,7 +17,7 @@
         <mockito.version>3.12.4</mockito.version>
         <assertj.version>3.21.0</assertj.version>
         <postgres.version>42.6.0</postgres.version>
-        <liquibase.version>4.24.0</liquibase.version>
+        <liquibase.version>4.20.0</liquibase.version>
         <jacoco.version>0.8.8</jacoco.version>
         <junit.jupiter.version>5.10.1</junit.jupiter.version>
         <postgresql.version>42.7.1</postgresql.version>

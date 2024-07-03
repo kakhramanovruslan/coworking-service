@@ -1,6 +1,7 @@
 package org.example.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.dao.BookingDao;
 import org.example.dao.impl.BookingDaoImpl;
 import org.example.entity.Booking;
 import org.example.entity.User;
@@ -19,7 +20,7 @@ import java.util.Optional;
 public class BookingService {
     private final WorkspaceService workspaceService;
     private final UserService userService;
-    private final BookingDaoImpl bookingDao;
+    private final BookingDao bookingDao;
 
     public BookingService(WorkspaceService workspaceService, UserService userService, ConnectionManager connectionManager) {
         this.workspaceService = workspaceService;
