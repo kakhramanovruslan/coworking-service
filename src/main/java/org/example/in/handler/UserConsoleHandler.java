@@ -138,23 +138,28 @@ public class UserConsoleHandler {
      */
     public void displayDeletingWorkspace(){
         List<Booking> bookings = bookingService.getFilteredBookingsByUsername(CoworkingConsole.loggedUsername);
-        System.out.println(CoworkingConsole.loggedUsername);
-        int i = -1;
-        for (Booking booking : bookings) {
-            i++;
-            String workspaceName = workspaceService.getWorkspace(booking.getWorkspaceId()).get().getName();
+        if (bookings.size() > 0) {
+            System.out.println(CoworkingConsole.loggedUsername);
+            int i = -1;
+            for (Booking booking : bookings) {
+                i++;
+                String workspaceName = workspaceService.getWorkspace(booking.getWorkspaceId()).get().getName();
 
-            System.out.println("№: " + i +", Workspace: " + workspaceName + ", Username: "+ CoworkingConsole.loggedUsername +
-                    ", Начало: " + booking.getStartTime() + ", Конец: " + booking.getEndTime());
+                System.out.println("№: " + i +", Workspace: " + workspaceName + ", Username: "+ CoworkingConsole.loggedUsername +
+                        ", Начало: " + booking.getStartTime() + ", Конец: " + booking.getEndTime());
 
+            }
+            System.out.println("Введите порядковый номер брони по вышеперечисленному списку для его отмены: ");
+            Integer id = Integer.parseInt(scanner.nextLine());
+            Booking booking = bookings.get(id);
+            if(bookingService.cancelBook(booking.getId()))
+                System.out.println("Бронь успешно была отменена");
+            else
+                System.out.println("Бронь с таким идентификатором не существует, попробуйте снова");
+        } else {
+            System.out.println("В настоящее время на ваше имя нет бронирований.");
         }
-        System.out.println("Введите порядковый номер брони по вышеперечисленному списку для его отмены: ");
-        Integer id = Integer.parseInt(scanner.nextLine());
-        Booking booking = bookings.get(id);
-        if(bookingService.cancelBook(booking.getId()))
-            System.out.println("Бронь успешно была отменена");
-        else
-            System.out.println("Бронь с таким идентификатором не существует, попробуйте снова");
+
 
     }
 
