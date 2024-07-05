@@ -1,6 +1,5 @@
 package org.example.utils;
 
-import lombok.experimental.UtilityClass;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -14,10 +13,16 @@ public class ConnectionManager {
     private final String USERNAME;
     private final String PASSWORD;
 
-    public ConnectionManager(String url, String username, String password) {
+    public ConnectionManager(String url, String username, String password, String driver) {
         this.URL = url;
         this.USERNAME = username;
         this.PASSWORD = password;
+
+        try {
+            Class.forName(driver);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

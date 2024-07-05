@@ -41,7 +41,7 @@ class WorkspaceServiceTest {
         Workspace newWorkspace = Workspace.builder().name(name).build();
         when(workspaceDao.save(any(Workspace.class))).thenReturn(newWorkspace);
 
-        Workspace result = workspaceService.createWorkspace(name);
+        Workspace result = workspaceService.createWorkspace(newWorkspace);
 
         assertEquals(newWorkspace, result);
         verify(workspaceDao).save(any(Workspace.class));
@@ -99,12 +99,11 @@ class WorkspaceServiceTest {
     @DisplayName("Test updating workspace if it exists")
     void testUpdateWorkspaceIfWorkspaceExists() {
         String oldName = "old name";
-        String newName = "new name";
         Workspace oldWorkspace = Workspace.builder().name(oldName).build();
         when(workspaceDao.findByName(oldName)).thenReturn(Optional.of(oldWorkspace));
         when(workspaceDao.update(any(Workspace.class))).thenReturn(true);
 
-        boolean result = workspaceService.updateWorkspace(oldName, newName);
+        boolean result = workspaceService.updateWorkspace(oldName, Workspace.builder().build());
 
         assertTrue(result);
         verify(workspaceDao).update(any(Workspace.class));
@@ -114,9 +113,8 @@ class WorkspaceServiceTest {
     @DisplayName("Test updating workspace if it does not exist")
     void testUpdateWorkspaceIfWorkspaceDoesNotExist() {
         String oldName = "non existing workspace";
-        String newName = "new name";
 
-        boolean result = workspaceService.updateWorkspace(oldName, newName);
+        boolean result = workspaceService.updateWorkspace(oldName, any(Workspace.class));
 
         assertFalse(result);
         verify(workspaceDao, never()).update(any(Workspace.class));
@@ -129,7 +127,7 @@ class WorkspaceServiceTest {
         Workspace workspace = Workspace.builder().name(name).build();
         when(workspaceDao.findByName(name)).thenReturn(Optional.of(workspace));
 
-        Optional<Workspace> result = workspaceService.getWorkspace(name);
+        Optional<Workspace> result = workspaceService.getWorkspaceByName(name);
 
         assertTrue(result.isPresent());
         assertEquals(workspace, result.get());
@@ -140,7 +138,7 @@ class WorkspaceServiceTest {
     void testGetWorkspaceByNameIfWorkspaceDoesNotExist() {
         String name = "non existing workspace";
 
-        Optional<Workspace> result = workspaceService.getWorkspace(name);
+        Optional<Workspace> result = workspaceService.getWorkspaceByName(name);
 
         assertTrue(result.isEmpty());
     }
@@ -152,7 +150,7 @@ class WorkspaceServiceTest {
         Workspace workspace = Workspace.builder().id(id).build();
         when(workspaceDao.findById(id)).thenReturn(Optional.of(workspace));
 
-        Optional<Workspace> result = workspaceService.getWorkspace(id);
+        Optional<Workspace> result = workspaceService.getWorkspaceById(id);
 
         assertTrue(result.isPresent());
         assertEquals(workspace, result.get());
@@ -163,7 +161,7 @@ class WorkspaceServiceTest {
     void testGetWorkspaceByIdIfWorkspaceDoesNotExist() {
         Long id = 1L;
 
-        Optional<Workspace> result = workspaceService.getWorkspace(id);
+        Optional<Workspace> result = workspaceService.getWorkspaceById(id);
 
         assertTrue(result.isEmpty());
     }

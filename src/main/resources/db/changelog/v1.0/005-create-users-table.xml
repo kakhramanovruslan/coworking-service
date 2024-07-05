@@ -8,20 +8,24 @@
     <changeSet id="006-create-users-table" author="ruslan">
 
         <createTable schemaName="coworking" tableName="users">
-            <!-- User table -->
             <column name="id" type="bigint" defaultValueComputed="nextval('coworking.user_id_seq')">
-                <!-- User ID -->
                 <constraints primaryKey="true" primaryKeyName="user_pkey" nullable="false"/>
             </column>
             <column name="username" type="varchar(255)">
-                <!-- Username -->
                 <constraints nullable="false"/>
             </column>
             <column name="password" type="varchar(255)">
-                <!-- Password -->
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <sql>COMMENT ON COLUMN coworking.users.id IS 'User ID: Unique identifier for each user';</sql>
+        <sql>COMMENT ON COLUMN coworking.users.username IS 'Username: The name used by the user to log in';</sql>
+        <sql>COMMENT ON COLUMN coworking.users.password IS 'Password: The password used by the user to log in';</sql>
+        <sql>COMMENT ON COLUMN coworking.users.role IS 'Role: The role assigned to the user (admin, user)';</sql>
 
         <rollback>
             <dropTable tableName="users" schemaName="coworking"/>

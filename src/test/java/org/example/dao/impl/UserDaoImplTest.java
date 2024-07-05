@@ -36,8 +36,8 @@ public class UserDaoImplTest {
         connectionManager = new ConnectionManager(
                 postgresContainer.getJdbcUrl(),
                 postgresContainer.getUsername(),
-                postgresContainer.getPassword()
-        );
+                postgresContainer.getPassword(),
+                postgresContainer.getDriverClassName());
 
         liquibaseManager.runMigrations(connectionManager.getConnection());
 

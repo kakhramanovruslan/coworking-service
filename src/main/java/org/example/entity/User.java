@@ -1,6 +1,8 @@
 package org.example.entity;
 
 import lombok.*;
+import org.example.entity.types.Role;
+
 
 /**
  * Represents a user with information such as a unique identifier, username, password.
@@ -27,5 +29,11 @@ public class User {
      * The password of the user.
      */
     private String password;
+
+    /**
+     * The role assigned to the user. Default value is USER.
+     */
+    @Builder.Default
+    Role role = Role.USER;
 
 }

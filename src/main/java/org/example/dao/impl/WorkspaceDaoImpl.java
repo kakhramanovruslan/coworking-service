@@ -212,6 +212,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteByName)) {
             preparedStatement.setObject(1, name);
+
             return preparedStatement.executeUpdate() > 0;
 
         } catch (SQLException e) {

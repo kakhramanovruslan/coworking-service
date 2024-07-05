@@ -2,9 +2,9 @@ package org.example.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.dao.WorkspaceDao;
-import org.example.dao.impl.WorkspaceDaoImpl;
 import org.example.entity.Workspace;
-import org.example.utils.ConnectionManager;
+import org.example.exceptions.WorkspaceAlreadyExist;
+import org.example.exceptions.WorkspaceNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,10 +17,6 @@ public class WorkspaceService {
 
     private final WorkspaceDao workspaceDao;
 
-    public WorkspaceService(ConnectionManager connectionManager) {
-        this.workspaceDao = new WorkspaceDaoImpl(connectionManager);
-    }
-
     /**
      * Retrieves a list of all workspaces.
      * @return List of all workspaces
@@ -31,14 +27,13 @@ public class WorkspaceService {
 
     /**
      * Creates a new workspace with the given name.
-     * @param name Name of the new workspace
+     * @param workspace new Workspace
      * @return The created workspace object
      */
-    public Workspace createWorkspace(String name) {
-        Workspace newWorkspace = workspaceDao.save(Workspace.builder()
-                                   .name(name)
-                                   .build());
-        return newWorkspace;
+    public Workspace createWorkspace(Workspace workspace) throws WorkspaceAlreadyExist{
+        Optional<Workspace> w = workspaceDao.findByName(workspace.getName());
+        if (w.isPresent()) throw new WorkspaceAlreadyExist("Workspace с таким имененм уже существует");
+        return workspaceDao.save(workspace);
     }
 
     /**
@@ -46,8 +41,9 @@ public class WorkspaceService {
      * @param name Name of the workspace to delete
      * @return True if deletion was successful, false otherwise
      */
-    public boolean deleteWorkspace(String name) {
-        return workspaceDao.deleteByName(name);
+    public boolean deleteWorkspace(String name) throws WorkspaceNotFoundException{
+        Workspace workspace = this.getWorkspace(name);
+        return workspaceDao.deleteByName(workspace.getName());
     }
 
     /**
@@ -56,25 +52,24 @@ public class WorkspaceService {
      * @return True if deletion was successful, false otherwise
      */
     public boolean deleteWorkspace(Long id) {
-        return workspaceDao.deleteById(id);
+        Workspace workspace = this.getWorkspace(id);
+        return workspaceDao.deleteById(workspace.getId());
     }
 
     /**
      * Updates the name of a workspace.
      * @param oldName Current name of the workspace
-     * @param newName New name to update
+     * @param workspace updated Workspace
      * @return True if update was successful, false otherwise
      */
-    public boolean updateWorkspace(String oldName, String newName) {
-        Optional<Workspace> oldWorkspace = workspaceDao.findByName(oldName);
-        if(oldWorkspace.isPresent()){
-            Workspace newWorkspace = Workspace.builder()
-                    .id(oldWorkspace.get().getId())
-                    .name(newName)
-                    .build();
-            return workspaceDao.update(newWorkspace);
-        }
-        return false;
+    public boolean updateWorkspace(String oldName, Workspace workspace) throws WorkspaceNotFoundException, WorkspaceAlreadyExist{
+        Workspace oldWorkspace = this.getWorkspace(oldName);
+
+        Optional<Workspace> newWorkspace = this.getWorkspaceByName(workspace.getName());
+        if (newWorkspace.isPresent()) throw new WorkspaceAlreadyExist("Workspace с таким именем уже существует");
+
+        workspace.setId(oldWorkspace.getId());
+        return workspaceDao.update(workspace);
     }
 
     /**
@@ -82,7 +77,7 @@ public class WorkspaceService {
      * @param name Name of the workspace to retrieve
      * @return Optional containing the workspace if found, otherwise empty
      */
-    public Optional<Workspace> getWorkspace(String name) {
+    public Optional<Workspace> getWorkspaceByName(String name) {
         return workspaceDao.findByName(name);
     }
 
@@ -91,8 +86,18 @@ public class WorkspaceService {
      * @param id ID of the workspace to retrieve
      * @return Optional containing the workspace if found, otherwise empty
      */
-    public Optional<Workspace> getWorkspace(Long id) {
+    public Optional<Workspace> getWorkspaceById(Long id) {
         return workspaceDao.findById(id);
+    }
+
+    private Workspace getWorkspace(String name) throws WorkspaceNotFoundException{
+        return workspaceDao.findByName(name)
+                .orElseThrow(() -> new WorkspaceNotFoundException("Workspace с таким именем не существует"));
+    }
+
+    private Workspace getWorkspace(Long id) throws WorkspaceNotFoundException{
+        return workspaceDao.findById(id)
+                .orElseThrow(() -> new WorkspaceNotFoundException("Workspace с таким именем не существует"));
     }
 
 }

@@ -3,6 +3,7 @@ package org.example.dao.impl;
 import lombok.RequiredArgsConstructor;
 import org.example.dao.UserDao;
 import org.example.entity.User;
+import org.example.entity.types.Role;
 import org.example.utils.ConnectionManager;
 
 import java.sql.*;
@@ -123,8 +124,8 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User save(User user){
         String sqlSave = """
-                INSERT INTO coworking.users(username, password)
-                VALUES (?,?);
+                INSERT INTO coworking.users(username, password, role)
+                VALUES (?,?,?);
                 """;
 
         try (Connection connection = connectionManager.getConnection();
@@ -132,6 +133,7 @@ public class UserDaoImpl implements UserDao {
 
             preparedStatement.setString(1, user.getUsername());
             preparedStatement.setString(2, user.getPassword());
+            preparedStatement.setString(3, user.getRole().toString());
 
             preparedStatement.executeUpdate();
             ResultSet keys = preparedStatement.getGeneratedKeys();
@@ -171,7 +173,7 @@ public class UserDaoImpl implements UserDao {
 
         try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindByUsername)) {
-            preparedStatement.setObject(1, username);
+            preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
@@ -196,6 +198,7 @@ public class UserDaoImpl implements UserDao {
                 .id(resultSet.getLong("id"))
                 .username(resultSet.getString("username"))
                 .password(resultSet.getString("password"))
+                .role(Role.valueOf(resultSet.getString("role")))
                 .build();
     }
 

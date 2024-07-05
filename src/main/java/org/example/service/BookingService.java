@@ -18,15 +18,9 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 public class BookingService {
-    private final WorkspaceService workspaceService;
     private final UserService userService;
+    private final WorkspaceService workspaceService;
     private final BookingDao bookingDao;
-
-    public BookingService(WorkspaceService workspaceService, UserService userService, ConnectionManager connectionManager) {
-        this.workspaceService = workspaceService;
-        this.userService = userService;
-        this.bookingDao = new BookingDaoImpl(connectionManager);
-    }
 
     /**
      * Retrieves a list of all available workspaces at the current time.
@@ -56,7 +50,7 @@ public class BookingService {
      * @return The booking entity that was created
      */
     public Booking bookWorkspace(String workspaceName, String username, LocalDateTime startTime, LocalDateTime endTime) throws NoSuchElementException{
-        Optional<Workspace> workspace = workspaceService.getWorkspace(workspaceName);
+        Optional<Workspace> workspace = workspaceService.getWorkspaceByName(workspaceName);
         if (workspace.isEmpty()) throw new NoSuchElementException();
         Optional<User> user = userService.getUser(username);
         Booking booking = bookingDao.save(Booking.builder()

@@ -7,16 +7,16 @@
 
     <changeSet id="007-create-workspaces-table" author="ruslan">
         <createTable schemaName="coworking" tableName="workspaces">
-            <!-- Workspaces table -->
             <column name="id" type="bigint" defaultValueComputed="nextval('coworking.workspace_id_seq')">
-                <!-- Workspace ID -->
                 <constraints primaryKey="true" primaryKeyName="workspace_pkey" nullable="false"/>
             </column>
             <column name="name" type="varchar(255)">
-                <!-- Workspace name -->
                 <constraints nullable="false" unique="true"/>
             </column>
         </createTable>
+
+        <sql>COMMENT ON COLUMN coworking.workspaces.id IS 'Workspace ID: Unique identifier for each workspace';</sql>
+        <sql>COMMENT ON COLUMN coworking.workspaces.name IS 'Workspace name: The name of the workspace';</sql>
 
         <rollback>
             <dropTable tableName="workspaces" schemaName="coworking"/>

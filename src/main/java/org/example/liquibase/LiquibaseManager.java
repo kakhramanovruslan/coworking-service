@@ -20,10 +20,8 @@ public class LiquibaseManager {
      * A singleton instance of the `LiquibaseManager` class.
      */
     private static final LiquibaseManager liquibaseManager = new LiquibaseManager();
-
     private static final String CHANGELOG_PATH = ConfigUtil.getProperty("liquibase.changeLogFile");
     private static final String LIQUIBASE_SCHEMA_NAME = ConfigUtil.getProperty("liquibase.schemaName");
-
     private static final String SQL_CREATE_LIQUIBASE_SCHEMA = "CREATE SCHEMA IF NOT EXISTS " + LIQUIBASE_SCHEMA_NAME;
 
     /**
