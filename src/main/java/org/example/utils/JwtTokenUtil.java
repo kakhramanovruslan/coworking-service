@@ -5,8 +5,10 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import org.example.dto.UserDTO;
 import org.example.entity.User;
 import org.example.dto.Authentication;
+import org.example.exceptions.UserNotFoundException;
 import org.example.service.UserService;
 
 import java.nio.file.AccessDeniedException;
@@ -64,15 +66,15 @@ public class JwtTokenUtil {
      * @return the authentication result
      * @throws AccessDeniedException if the JWT is invalid or the user does not exist
      */
-    public Authentication authentication(String token) throws AccessDeniedException {
+    public Authentication authentication(String token) throws AccessDeniedException, UserNotFoundException {
         if (!validateToken(token)) {
             throw new AccessDeniedException("Access denied: Invalid token");
         }
 
         String username = getUsernameClaim(token);
-        Optional<User> user = userService.getUser(username);
+        UserDTO user = userService.getUser(username);
 
-        return new Authentication(username, user.get().getRole());
+        return new Authentication(username, user.getRole());
     }
 
     public String getUsernameClaim(String token) throws JWTVerificationException {

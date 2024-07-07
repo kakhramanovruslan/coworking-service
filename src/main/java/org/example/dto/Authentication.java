@@ -9,6 +9,6 @@ import org.example.entity.types.Role;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Authentication {
-    private String login;
+    private String username;
     private Role role;
 }

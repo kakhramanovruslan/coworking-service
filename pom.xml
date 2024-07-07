@@ -26,13 +26,18 @@
         <testcontainers.junit.jupiter.version>1.19.1</testcontainers.junit.jupiter.version>
         <testcontainers.postgresql.version>1.18.3</testcontainers.postgresql.version>
         <mockito.junit.jupiter.version>5.6.0</mockito.junit.jupiter.version>
-        <slf4j.version>2.0.9</slf4j.version>
-        <slf4j.nop.version>2.0.9</slf4j.nop.version>
         <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
         <plugin.war.version>3.3.1</plugin.war.version>
         <jackson.version>2.16.0</jackson.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <jjwt.version>0.12.5</jjwt.version>
+        <auth0.jwt.version>3.8.1</auth0.jwt.version>
+        <org.mindrot.jbcrypt>0.4</org.mindrot.jbcrypt>
+        <aspectj.version>1.9.21</aspectj.version>
+        <plugin.aspectj.version>1.14.0</plugin.aspectj.version>
+        <log4j.version>2.20.0</log4j.version>
+        <plugin.war.version>3.3.1</plugin.war.version>
+        <lombok-mapstruct-binding>0.2.0</lombok-mapstruct-binding>
+        <hibernate.validator.version>8.0.1.Final</hibernate.validator.version>
     </properties>
 
     <build>
@@ -78,10 +83,37 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok-mapstruct-binding</artifactId>
-                            <version>0.2.0</version>
+                            <version>${lombok-mapstruct-binding}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>${plugin.war.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <version>${plugin.aspectj.version}</version>
+                <configuration>
+                    <complianceLevel>17</complianceLevel>
+                    <source>17</source>
+                    <target>17</target>
+                    <showWeaveInfo>true</showWeaveInfo>
+                    <verbose>true</verbose>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>
@@ -127,19 +159,6 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgres.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-nop</artifactId>
-            <version>${slf4j.nop.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -189,16 +208,52 @@
             <version>${jackson.version}</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>com.fasterxml.jackson.dataformat</groupId>-->
-<!--            <artifactId>jackson-dataformat-xml</artifactId>-->
-<!--            <version>${jackson.version}</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
-            <version>3.8.1</version>
+            <version>${auth0.jwt.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>${org.mindrot.jbcrypt}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjtools</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate.validator.version}</version>
         </dependency>
 
     </dependencies>

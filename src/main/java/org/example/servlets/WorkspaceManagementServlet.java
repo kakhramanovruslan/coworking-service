@@ -7,17 +7,23 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import org.example.dto.Authentication;
+import org.example.dto.BookingRequest;
 import org.example.dto.ExceptionResponse;
-import org.example.dto.WorkspaceDTO;
+import org.example.dto.WorkspaceRequest;
 import org.example.entity.Workspace;
 import org.example.entity.types.Role;
-import org.example.exceptions.WorkspaceAlreadyExist;
+import org.example.exceptions.NotValidArgumentException;
+import org.example.exceptions.WorkspaceAlreadyExistException;
 import org.example.exceptions.WorkspaceNotFoundException;
 import org.example.service.WorkspaceService;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
+import java.util.Set;
 
 @WebServlet("/admin/workspaces")
 public class WorkspaceManagementServlet extends HttpServlet {
@@ -35,12 +41,15 @@ public class WorkspaceManagementServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            Authentication authentication = (Authentication) getServletContext().getAttribute("authentication");
-            if (authentication.getRole() != Role.ADMIN) {
-                throw new AccessDeniedException("У вас нет разрешения на доступ к этой странице");
-            }
+            isAdmin(req);
 
-            Workspace newWorkspace = objectMapper.readValue(req.getReader(), Workspace.class);
+            WorkspaceRequest newWorkspace = objectMapper.readValue(req.getReader(), WorkspaceRequest.class);
+
+            Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+            Set<ConstraintViolation<WorkspaceRequest>> violations = validator.validate(newWorkspace);
+            for (ConstraintViolation<WorkspaceRequest> violation : violations) {
+                throw new NotValidArgumentException(violation.getMessage());
+            }
 
             Workspace createdWorkspace = workspaceService.createWorkspace(newWorkspace);
 
@@ -49,7 +58,7 @@ public class WorkspaceManagementServlet extends HttpServlet {
         } catch (AccessDeniedException e) {
             resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
             objectMapper.writeValue(resp.getWriter(), new ExceptionResponse(e.getMessage()));
-        } catch (WorkspaceAlreadyExist e){
+        } catch (NotValidArgumentException | WorkspaceAlreadyExistException e){
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(resp.getWriter(), new ExceptionResponse(e.getMessage()));
         } catch (RuntimeException e) {
@@ -61,17 +70,11 @@ public class WorkspaceManagementServlet extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            Authentication authentication = (Authentication) getServletContext().getAttribute("authentication");
-            if (authentication.getRole() != Role.ADMIN) {
-                throw new AccessDeniedException("У вас нет разрешения на доступ к этой странице");
-            }
+            isAdmin(req);
 
             String workspaceName = req.getParameter("name");
-            if (workspaceName == null || workspaceName.isEmpty()) {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                objectMapper.writeValue(resp.getWriter(), new ExceptionResponse("Не указано имя рабочего пространства"));
-                return;
-            }
+            if (workspaceName == null || workspaceName.isEmpty())
+                throw new NotValidArgumentException("Не указано имя рабочего пространства");
 
             Workspace updatedWorkspace = objectMapper.readValue(req.getReader(), Workspace.class);
 
@@ -81,10 +84,7 @@ public class WorkspaceManagementServlet extends HttpServlet {
         } catch (AccessDeniedException e) {
             resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
             objectMapper.writeValue(resp.getWriter(), new ExceptionResponse(e.getMessage()));
-        } catch (WorkspaceNotFoundException e) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(resp.getWriter(), new ExceptionResponse(e.getMessage()));
-        } catch (WorkspaceAlreadyExist e) {
+        } catch (NotValidArgumentException | WorkspaceAlreadyExistException | WorkspaceNotFoundException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(resp.getWriter(), new ExceptionResponse(e.getMessage()));
         } catch (RuntimeException e) {
@@ -96,17 +96,10 @@ public class WorkspaceManagementServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            Authentication authentication = (Authentication) getServletContext().getAttribute("authentication");
-            if (authentication.getRole() != Role.ADMIN) {
-                throw new AccessDeniedException("У вас нет разрешения на доступ к этой странице");
-            }
+            isAdmin(req);
 
             String name = req.getParameter("name");
-            if (name == null || name.isEmpty()) {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                objectMapper.writeValue(resp.getWriter(), new ExceptionResponse("Не указано имя рабочего пространства"));
-                return;
-            }
+            if (name == null || name.isEmpty()) throw new NotValidArgumentException("Не указано имя рабочего пространства");
 
             workspaceService.deleteWorkspace(name);
 
@@ -114,12 +107,19 @@ public class WorkspaceManagementServlet extends HttpServlet {
         } catch (AccessDeniedException e) {
             resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
             objectMapper.writeValue(resp.getWriter(), new ExceptionResponse(e.getMessage()));
-        } catch (WorkspaceNotFoundException e) {
+        } catch (NotValidArgumentException | WorkspaceNotFoundException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(resp.getWriter(), new ExceptionResponse(e.getMessage()));
         } catch (RuntimeException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             objectMapper.writeValue(resp.getWriter(), new ExceptionResponse(e.getMessage()));
+        }
+    }
+
+    private void isAdmin(HttpServletRequest req) throws AccessDeniedException {
+        Authentication authentication = (Authentication) getServletContext().getAttribute("authentication");
+        if (authentication.getRole() != Role.ADMIN) {
+            throw new AccessDeniedException("У вас нет разрешения на доступ к этой странице");
         }
     }
 }

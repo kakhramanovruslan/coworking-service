@@ -1,6 +1,8 @@
 package org.example.service;
 
 import org.example.dao.BookingDao;
+import org.example.dto.BookingRequest;
+import org.example.dto.UserDTO;
 import org.example.entity.Booking;
 import org.example.entity.User;
 import org.example.entity.Workspace;
@@ -87,7 +89,7 @@ class BookingServiceTest {
         LocalDateTime startTime = LocalDateTime.of(2022, 1, 1, 10, 0);
         LocalDateTime endTime = LocalDateTime.of(2022, 1, 1, 12, 0);
         Workspace workspace = Workspace.builder().name(workspaceName).build();
-        User user = User.builder().username(username).build();
+        UserDTO user = UserDTO.builder().username(username).build();
         Booking booking = Booking.builder()
                                  .workspaceId(workspace.getId())
                                  .userId(user.getId())
@@ -95,10 +97,15 @@ class BookingServiceTest {
                                  .endTime(endTime)
                                  .build();
         when(workspaceService.getWorkspaceByName(workspaceName)).thenReturn(Optional.of(workspace));
-        when(userService.getUser(username)).thenReturn(Optional.of(user));
+        when(userService.getUser(username)).thenReturn(user);
         when(bookingDao.save(booking)).thenReturn(booking);
 
-        Booking result = bookingService.bookWorkspace(workspaceName, username, startTime, endTime);
+        BookingRequest bookingRequest = BookingRequest.builder()
+                                                      .workspaceName(workspaceName)
+                                                      .startTime(startTime)
+                                                      .endTime(endTime)
+                                                      .build();
+        Booking result = bookingService.bookWorkspace(bookingRequest, username);
 
         assertEquals(booking, result);
         verify(workspaceService).getWorkspaceByName(workspaceName);
@@ -203,7 +210,13 @@ class BookingServiceTest {
         LocalDateTime endTime = LocalDateTime.of(2022, 1, 1, 12, 0);
         when(workspaceService.getWorkspaceByName(workspaceName)).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> bookingService.bookWorkspace(workspaceName, username, startTime, endTime));
+        BookingRequest bookingRequest = BookingRequest.builder()
+                .workspaceName(workspaceName)
+                .startTime(startTime)
+                .endTime(endTime)
+                .build();
+
+        assertThrows(NoSuchElementException.class, () -> bookingService.bookWorkspace(bookingRequest, username));
         verify(workspaceService).getWorkspaceByName(workspaceName);
     }
 
@@ -216,9 +229,15 @@ class BookingServiceTest {
         LocalDateTime endTime = LocalDateTime.of(2022, 1, 1, 12, 0);
         Workspace workspace = Workspace.builder().name(workspaceName).build();
         when(workspaceService.getWorkspaceByName(workspaceName)).thenReturn(Optional.of(workspace));
-        when(userService.getUser(username)).thenReturn(Optional.empty());
+        when(userService.getUser(username)).thenReturn(null);
 
-        assertThrows(NoSuchElementException.class, () -> bookingService.bookWorkspace(workspaceName, username, startTime, endTime));
+        BookingRequest bookingRequest = BookingRequest.builder()
+                .workspaceName(workspaceName)
+                .startTime(startTime)
+                .endTime(endTime)
+                .build();
+
+        assertThrows(NoSuchElementException.class, () -> bookingService.bookWorkspace(bookingRequest, username));
         verify(workspaceService).getWorkspaceByName(workspaceName);
         verify(userService).getUser(username);
     }

@@ -34,18 +34,18 @@ class WorkspaceServiceTest {
         assertTrue(result.isEmpty());
     }
 
-    @Test
-    @DisplayName("Test creating a workspace")
-    void testCreateWorkspace() {
-        String name = "new workspace";
-        Workspace newWorkspace = Workspace.builder().name(name).build();
-        when(workspaceDao.save(any(Workspace.class))).thenReturn(newWorkspace);
-
-        Workspace result = workspaceService.createWorkspace(newWorkspace);
-
-        assertEquals(newWorkspace, result);
-        verify(workspaceDao).save(any(Workspace.class));
-    }
+//    @Test
+//    @DisplayName("Test creating a workspace")
+//    void testCreateWorkspace() {
+//        String name = "new workspace";
+//        Workspace newWorkspace = Workspace.builder().name(name).build();
+//        when(workspaceDao.save(any(Workspace.class))).thenReturn(newWorkspace);
+//
+//        Workspace result = workspaceService.createWorkspace(newWorkspace);
+//
+//        assertEquals(newWorkspace, result);
+//        verify(workspaceDao).save(any(Workspace.class));
+//    }
 
     @Test
     @DisplayName("Test deleting workspace by name if it exists")

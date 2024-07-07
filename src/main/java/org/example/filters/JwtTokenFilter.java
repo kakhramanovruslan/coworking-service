@@ -1,11 +1,14 @@
 package org.example.filters;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.annotation.WebInitParam;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.dto.Authentication;
+import org.example.dto.ExceptionResponse;
+import org.example.exceptions.UserNotFoundException;
 import org.example.utils.JwtTokenUtil;
 
 import java.io.IOException;
@@ -20,6 +23,7 @@ public class JwtTokenFilter implements Filter {
 
     private JwtTokenUtil jwtTokenUtil;
     private ServletContext servletContext;
+    private ObjectMapper objectMapper;
 
     /**
      * Initializes the filter.
@@ -30,6 +34,7 @@ public class JwtTokenFilter implements Filter {
     public void init(FilterConfig config) {
         this.servletContext = config.getServletContext();
         jwtTokenUtil = (JwtTokenUtil) servletContext.getAttribute("jwtTokenUtils");
+        objectMapper = (ObjectMapper) servletContext.getAttribute("objectMapper");
     }
 
     /**
@@ -64,6 +69,9 @@ public class JwtTokenFilter implements Filter {
                 httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
+        } catch (UserNotFoundException e) {
+            httpResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            objectMapper.writeValue(httpResponse.getWriter(), new ExceptionResponse(e.getMessage()));
         } catch (RuntimeException e) {
             httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;

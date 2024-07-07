@@ -1,6 +1,7 @@
 package org.example;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
@@ -21,6 +22,7 @@ import org.example.utils.ConnectionManager;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Properties;
 
@@ -104,6 +106,9 @@ public class ApplicationContextListener implements ServletContextListener {
 
     private void loadMappers(ServletContext servletContext) {
         ObjectMapper objectMapper = new ObjectMapper();
+        JavaTimeModule module = new JavaTimeModule();
+        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));
+        objectMapper.registerModule(module);
         servletContext.setAttribute("objectMapper", objectMapper);
     }
 }

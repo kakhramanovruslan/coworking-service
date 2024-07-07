@@ -2,6 +2,7 @@ package org.example.dao.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.dao.WorkspaceDao;
+import org.example.dto.WorkspaceRequest;
 import org.example.entity.Workspace;
 import org.example.utils.ConnectionManager;
 

@@ -1,7 +1,10 @@
 package org.example.service;
 
 import org.example.dao.UserDao;
+import org.example.dto.UserDTO;
 import org.example.entity.User;
+import org.example.exceptions.UserNotFoundException;
+import org.example.mappers.UserMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -89,10 +92,10 @@ class UserServiceTest {
         user.setId(id);
         when(userDao.findById(id)).thenReturn(Optional.of(user));
 
-        Optional<User> result = userService.getUser(id);
+        User result = UserMapper.INSTANCE.toEntity(userService.getUser(id));
 
-        assertTrue(result.isPresent());
-        assertEquals(user, result.get());
+        assertNotNull(result);
+        assertEquals(user, result);
     }
 
     @Test
@@ -101,9 +104,9 @@ class UserServiceTest {
         Long id = 1L;
         when(userDao.findById(id)).thenReturn(Optional.empty());
 
-        Optional<User> result = userService.getUser(id);
+        UserDTO result = userService.getUser(id);
 
-        assertTrue(result.isEmpty());
+        assertNull(result);
     }
 
     @Test
@@ -114,10 +117,9 @@ class UserServiceTest {
         user.setUsername(username);
         when(userDao.findByUsername(username)).thenReturn(Optional.of(user));
 
-        Optional<User> result = userService.getUser(username);
+        UserDTO result = userService.getUser(username);
 
-        assertTrue(result.isPresent());
-        assertEquals(user, result.get());
+        assertEquals(user, result);
     }
 
     @Test
@@ -126,8 +128,6 @@ class UserServiceTest {
         String username = "nonExistingUser";
         when(userDao.findByUsername(username)).thenReturn(Optional.empty());
 
-        Optional<User> result = userService.getUser(username);
-
-        assertTrue(result.isEmpty());
+        assertThrows(UserNotFoundException.class, () -> userService.getUser(username));
     }
 }

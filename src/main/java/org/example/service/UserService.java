@@ -2,7 +2,10 @@ package org.example.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.dao.UserDao;
+import org.example.dto.UserDTO;
 import org.example.entity.User;
+import org.example.exceptions.UserNotFoundException;
+import org.example.mappers.UserMapper;
 
 
 import java.util.Optional;
@@ -21,8 +24,10 @@ public class UserService {
      * @param id ID of the user to retrieve
      * @return Optional containing the user if found, otherwise empty
      */
-    public Optional<User> getUser(Long id){
-        return userDao.findById(id);
+    public UserDTO getUser(Long id) throws UserNotFoundException{
+        Optional<User> foundedUser = userDao.findById(id);
+        if(foundedUser.isEmpty()) throw new UserNotFoundException("Пользователь с таким id не найден");
+        return UserMapper.INSTANCE.toDTO(foundedUser.get());
     }
 
     /**
@@ -30,8 +35,10 @@ public class UserService {
      * @param username Username of the user to retrieve
      * @return Optional containing the user if found, otherwise empty
      */
-    public Optional<User> getUser(String username){
-        return userDao.findByUsername(username);
+    public UserDTO getUser(String username) throws UserNotFoundException{
+        Optional<User> foundedUser = userDao.findByUsername(username);
+        if(foundedUser.isEmpty()) throw new UserNotFoundException("Пользователь с таким именем не найден");
+        return UserMapper.INSTANCE.toDTO(foundedUser.get());
     }
 
 }

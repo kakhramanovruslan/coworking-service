@@ -8,28 +8,28 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.entity.Workspace;
-import org.example.service.WorkspaceService;
+import org.example.service.BookingService;
 
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/workspaces")
-public class GetAllWorkspacesServlet extends HttpServlet {
+@WebServlet("/workspaces/available")
+public class GetAvailableWorkspacesServlet extends HttpServlet {
 
-    private WorkspaceService workspaceService;
+    private BookingService bookingService;
     private ObjectMapper objectMapper;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        workspaceService = (WorkspaceService) getServletContext().getAttribute("workspaceService");
+        bookingService = (BookingService) getServletContext().getAttribute("bookingService");
         objectMapper = (ObjectMapper) getServletContext().getAttribute("objectMapper");
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
-            List<Workspace> workspaces = workspaceService.getListOfAllWorkSpaces();
+            List<Workspace> workspaces = bookingService.getAvailableWorkspacesAtNow();
             resp.setStatus(HttpServletResponse.SC_OK);
             objectMapper.writeValue(resp.getWriter(), workspaces);
         } catch (RuntimeException e) {

@@ -9,11 +9,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.dto.ExceptionResponse;
 import org.example.entity.Workspace;
+import org.example.exceptions.NotValidArgumentException;
+import org.example.exceptions.WorkspaceNotFoundException;
 import org.example.service.WorkspaceService;
 
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
-import java.util.Enumeration;
 import java.util.Optional;
 
 @WebServlet("/workspace")
@@ -35,21 +35,13 @@ public class GetWorkspaceServlet extends HttpServlet {
             String workspaceId = req.getParameter("id");
             String workspaceName = req.getParameter("name");
 
+            isValidRequest(workspaceId, workspaceName);
+
             Optional<Workspace> workspace;
 
-            if(workspaceId != null && workspaceName != null){
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                objectMapper.writeValue(resp.getWriter(), new ExceptionResponse("Некорректный формат запроса"));
-                return;
-            } else if (workspaceId != null) {
-                try {
-                    long id = Long.parseLong(workspaceId);
-                    workspace = workspaceService.getWorkspaceById(id);
-                } catch (NumberFormatException e) {
-                    resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    objectMapper.writeValue(resp.getWriter(), new ExceptionResponse("Некорректный формат ID рабочего пространства"));
-                    return;
-                }
+            if (workspaceId != null) {
+                long id = Long.parseLong(workspaceId);
+                workspace = workspaceService.getWorkspaceById(id);
             } else if (workspaceName != null) {
                 workspace = workspaceService.getWorkspaceByName(workspaceName);
             } else {
@@ -66,8 +58,24 @@ public class GetWorkspaceServlet extends HttpServlet {
 
             resp.setStatus(HttpServletResponse.SC_OK);
             objectMapper.writeValue(resp.getWriter(), workspace.get());
+        } catch (NumberFormatException e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            objectMapper.writeValue(resp.getWriter(), new ExceptionResponse("Некорректный формат ID рабочего пространства"));
+        } catch (WorkspaceNotFoundException | NotValidArgumentException e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            objectMapper.writeValue(resp.getWriter(), new ExceptionResponse(e.getMessage()));
         } catch (RuntimeException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            objectMapper.writeValue(resp.getWriter(), new ExceptionResponse(e.getMessage()));
         }
+    }
+
+    private boolean isValidRequest(String workspaceId, String workspaceName) throws NotValidArgumentException{
+        int paramCount = 0;
+        if (workspaceId != null) paramCount++;
+        if (workspaceName != null) paramCount++;
+
+        if (paramCount > 1) throw new NotValidArgumentException("Можно передавать только один параметр: id или name");
+        return paramCount == 1;
     }
 }

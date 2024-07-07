@@ -2,11 +2,13 @@ package org.example.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.dao.BookingDao;
-import org.example.dao.impl.BookingDaoImpl;
+import org.example.dto.BookingRequest;
+import org.example.dto.UserDTO;
 import org.example.entity.Booking;
-import org.example.entity.User;
 import org.example.entity.Workspace;
-import org.example.utils.ConnectionManager;
+import org.example.exceptions.UserNotFoundException;
+import org.example.exceptions.WorkspaceAlreadyBookedException;
+import org.example.exceptions.WorkspaceNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -43,21 +45,31 @@ public class BookingService {
 
     /**
      * Books a workspace for a user within a specified time period.
-     * @param workspaceName Name of the workspace
-     * @param username Username of the user booking the workspace
-     * @param startTime Start time of the booking
-     * @param endTime End time of the booking
+     * @param bookingRequest DTO with info about booking
      * @return The booking entity that was created
      */
-    public Booking bookWorkspace(String workspaceName, String username, LocalDateTime startTime, LocalDateTime endTime) throws NoSuchElementException{
-        Optional<Workspace> workspace = workspaceService.getWorkspaceByName(workspaceName);
-        if (workspace.isEmpty()) throw new NoSuchElementException();
-        Optional<User> user = userService.getUser(username);
+    public Booking bookWorkspace(BookingRequest bookingRequest, String username) throws WorkspaceNotFoundException, UserNotFoundException, WorkspaceAlreadyBookedException {
+        Optional<Workspace> workspace = workspaceService.getWorkspaceByName(bookingRequest.getWorkspaceName());
+        if (workspace.isEmpty()) throw new WorkspaceNotFoundException("Workspace с таким именем не был найден");
+        UserDTO user = userService.getUser(username);
+
+        // Проверка наличия пересекающихся бронирований
+        boolean bookingExists = bookingDao.findAll().stream()
+                .anyMatch(booking -> booking.getWorkspaceId().equals(workspace.get().getId()) &&
+                        (booking.getEndTime().isAfter(bookingRequest.getStartTime()) ||
+                                booking.getEndTime().isEqual(bookingRequest.getStartTime())) &&
+                        (booking.getStartTime().isBefore(bookingRequest.getEndTime()) ||
+                                booking.getStartTime().isEqual(bookingRequest.getEndTime())));
+
+        if (bookingExists) {
+            throw new WorkspaceAlreadyBookedException("Рабочее пространство уже забронировано на указанный период");
+        }
+
         Booking booking = bookingDao.save(Booking.builder()
                     .workspaceId(workspace.get().getId())
-                    .userId(user.get().getId())
-                    .startTime(startTime)
-                    .endTime(endTime)
+                    .userId(user.getId())
+                    .startTime(bookingRequest.getStartTime())
+                    .endTime(bookingRequest.getEndTime())
                     .build());
         return booking;
     }
@@ -86,7 +98,8 @@ public class BookingService {
      * @param username Username of the user whose bookings are to be retrieved
      * @return List of bookings made by the specified user
      */
-    public List<Booking> getFilteredBookingsByUsername(String username) {
+    public List<Booking> getFilteredBookingsByUsername(String username) throws UserNotFoundException {
+        userService.getUser(username);
         return bookingDao.getFilteredBookingsByUsername(username);
     }
 
@@ -95,7 +108,8 @@ public class BookingService {
      * @param workspaceName Name of the workspace whose bookings are to be retrieved
      * @return List of bookings for the specified workspace
      */
-    public List<Booking> getFilteredBookingsByWorkspace(String workspaceName) {
+    public List<Booking> getFilteredBookingsByWorkspace(String workspaceName) throws WorkspaceNotFoundException {
+        workspaceService.getWorkspace(workspaceName);
         return bookingDao.getFilteredBookingsByWorkspace(workspaceName);
     }
 
