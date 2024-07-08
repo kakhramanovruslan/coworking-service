@@ -42,7 +42,7 @@
 {
   "username": "string",
   "password": "string"
- }
+}
 ```
 
 ### Response
@@ -54,7 +54,7 @@
 ```json
 {
   "token": "string"
- }
+}
 ```
 
 **Error Response:**
@@ -65,7 +65,7 @@
   ```json
   {
     "message": "string"
-   }
+  }
   ```
 - Server Error
   - Code: `500 Internal Server Error`
@@ -91,7 +91,7 @@
 {
   "username": "string",
   "password": "string"
- }
+}
 ```
 
 ### Response
@@ -103,7 +103,7 @@
 ```json
 {
   "message": "string"
- }
+}
 ```
 
 **Error Response:**
@@ -114,7 +114,7 @@
   ```json
   {
     "message": "string"
-   }
+  }
   ```
 - Server Error
   - Code: `500 Internal Server Error`
@@ -143,7 +143,7 @@
   "workspaceName": "string",
   "startTime": "LocalDateTime",
   "endTime": "LocalDateTime"
- }
+}
 ```
 
 ### Response
@@ -160,7 +160,7 @@
   "userId": "Long",
   "startTime": "LocalDateTime",
   "endTime": "LocalDateTime"
- }
+}
 ```
 
 **Error Response:**
@@ -171,7 +171,7 @@
   ```json
   {
     "message": "string"
-   }
+  }
   ```
 - Validation Errors, Workspace/User Not Found, Workspace Already Booked
   - Code: `400 Bad Request`
@@ -180,7 +180,7 @@
   ```json
   {
     "message": "string"
-   }
+  }
   ```
 - Server Error
   - Code: `500 Internal Server Error`
@@ -244,7 +244,7 @@
   ```json
   {
     "message": "string"
-   }
+  }
   ```
 - Validation Errors, Workspace/User Not Found
   - Code: `400 Bad Request`
@@ -253,7 +253,7 @@
   ```json
   {
     "message": "string"
-   }
+  }
   ```
 - Server Error
   - Code: `500 Internal Server Error`
@@ -298,7 +298,7 @@
   ```json
   {
     "message": "string"
-   }
+  }
   ```
 - Server Error
   - Code: `500 Internal Server Error`
@@ -351,7 +351,7 @@
   ```json
   {
     "message": "string"
-   }
+  }
   ```
 - Validation Errors
   - Code: `400 Bad Request`
@@ -360,7 +360,7 @@
   ```json
   {
     "message": "string"
-   }
+  }
   ```
 - Server Error
   - Code: `500 Internal Server Error`
@@ -405,7 +405,7 @@
   ```json
   {
     "message": "string"
-   }
+  }
   ```
 - Server Error
   - Code: `500 Internal Server Error`
@@ -453,7 +453,7 @@
   ```json
   {
     "message": "string"
-   }
+  }
   ```
 - Validation Errors, Workspace Not Found
   - Code: `400 Bad Request`
@@ -462,7 +462,7 @@
   ```json
   {
     "message": "string"
-   }
+  }
   ```
 - Server Error
   - Code: `500 Internal Server Error`
@@ -490,7 +490,7 @@
 ```json
 {
   "name": "string"
- }
+}
 ```
 
 ### Response
@@ -503,7 +503,7 @@
 {
   "id": "Long",
   "name": "string"
- }
+}
 ```
 
 **Error Response:**
@@ -514,7 +514,7 @@
   ```json
   {
     "message": "string"
-   }
+  }
   ```
 - Validation Errors, Workspace Already Exist
   - Code: `400 Bad Request`
@@ -523,7 +523,7 @@
   ```json
   {
     "message": "string"
-   }
+  }
   ```
 - Server Error
   - Code: `500 Internal Server Error`
@@ -549,7 +549,7 @@
 ```json
 {
   "name": "string"
- }
+}
 ```
 
 ### Response
@@ -565,7 +565,7 @@
   ```json
   {
     "message": "string"
-   }
+  }
   ```
 - Validation Errors, Workspace Already Exist, Workspace Not Found
   - Code: `400 Bad Request`
@@ -574,7 +574,7 @@
   ```json
   {
     "message": "string"
-   }
+  }
   ```
 - Server Error
   - Code: `500 Internal Server Error`
@@ -608,7 +608,7 @@
   ```json
   {
     "message": "string"
-   }
+  }
   ```
 - Validation Errors, Workspace Not Found
   - Code: `400 Bad Request`
@@ -617,7 +617,7 @@
   ```json
   {
     "message": "string"
-   }
+  }
   ```
 - Server Error
   - Code: `500 Internal Server Error`
