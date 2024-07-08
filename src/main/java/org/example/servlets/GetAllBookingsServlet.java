@@ -76,7 +76,6 @@ public class GetAllBookingsServlet extends HttpServlet {
             objectMapper.writeValue(resp.getWriter(), new ExceptionResponse(e.getMessage()));
         } catch (RuntimeException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            objectMapper.writeValue(resp.getWriter(), new ExceptionResponse(e.getMessage()));
         }
     }
 
