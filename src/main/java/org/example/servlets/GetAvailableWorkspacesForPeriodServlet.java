@@ -18,6 +18,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
+/**
+ * Servlet for retrieving available workspaces for a specified time period.
+ */
 @WebServlet("/workspaces/available-for-period")
 public class GetAvailableWorkspacesForPeriodServlet extends HttpServlet {
 
@@ -31,13 +34,20 @@ public class GetAvailableWorkspacesForPeriodServlet extends HttpServlet {
         objectMapper = (ObjectMapper) getServletContext().getAttribute("objectMapper");
     }
 
+    /**
+     * Handles GET requests to retrieve available workspaces for the specified time period.
+     *
+     * @param req  the HTTP servlet request
+     * @param resp the HTTP servlet response
+     * @throws IOException if an I/O error occurs during request handling
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
             String startTimeStr = req.getParameter("endTime");
             String endTimeStr = req.getParameter("startTime");
 
-            if(startTimeStr.isBlank() || endTimeStr.isBlank()) throw new NotValidArgumentException("Неверный формат запроса");
+            if(startTimeStr.isBlank() || endTimeStr.isBlank()) throw new NotValidArgumentException("Invalid request format");
 
             DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
@@ -52,7 +62,7 @@ public class GetAvailableWorkspacesForPeriodServlet extends HttpServlet {
             objectMapper.writeValue(resp.getWriter(), new ExceptionResponse(e.getMessage()));
         } catch (DateTimeParseException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(resp.getWriter(), new ExceptionResponse("Неверный формат даты и времени"));
+            objectMapper.writeValue(resp.getWriter(), new ExceptionResponse("Invalid date and time format"));
         } catch (RuntimeException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }

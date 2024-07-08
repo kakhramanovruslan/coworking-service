@@ -18,6 +18,9 @@ import org.example.service.SecurityService;
 
 import java.io.IOException;
 
+/**
+ * Servlet handling authentication requests.
+ */
 @WebServlet("/auth/login")
 @Slf4j
 public class AuthenticationServlet extends HttpServlet {
@@ -32,6 +35,13 @@ public class AuthenticationServlet extends HttpServlet {
         objectMapper = (ObjectMapper) getServletContext().getAttribute("objectMapper");
     }
 
+    /**
+     * Handles POST requests for authentication.
+     *
+     * @param req  the HTTP servlet request
+     * @param resp the HTTP servlet response
+     * @throws IOException if an I/O error occurs during request handling
+     */
     @Loggable
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {

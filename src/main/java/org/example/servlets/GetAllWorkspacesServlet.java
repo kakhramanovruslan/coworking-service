@@ -13,6 +13,9 @@ import org.example.service.WorkspaceService;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Servlet for retrieving all workspaces.
+ */
 @WebServlet("/workspaces")
 public class GetAllWorkspacesServlet extends HttpServlet {
 
@@ -26,6 +29,13 @@ public class GetAllWorkspacesServlet extends HttpServlet {
         objectMapper = (ObjectMapper) getServletContext().getAttribute("objectMapper");
     }
 
+    /**
+     * Handles GET requests to retrieve all workspaces.
+     *
+     * @param req  the HTTP servlet request
+     * @param resp the HTTP servlet response
+     * @throws IOException if an I/O error occurs during request handling
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {

@@ -37,7 +37,7 @@ public class WorkspaceService {
     @Auditable(actionType = ActionType.CREATE_WORKSPACE, username = "admin")
     public Workspace createWorkspace(WorkspaceRequest workspace) throws WorkspaceAlreadyExistException {
         Optional<Workspace> w = workspaceDao.findByName(workspace.getName());
-        if (w.isPresent()) throw new WorkspaceAlreadyExistException("Workspace с таким имененм уже существует");
+        if (w.isPresent()) throw new WorkspaceAlreadyExistException("Workspace with this name already exists.");
         Workspace newWorkspace = Workspace.builder().name(workspace.getName()).build();
         return workspaceDao.save(newWorkspace);
     }
@@ -79,7 +79,7 @@ public class WorkspaceService {
         Workspace oldWorkspace = this.getWorkspace(oldName);
 
         Optional<Workspace> newWorkspace = this.getWorkspaceByName(workspace.getName());
-        if (newWorkspace.isPresent()) throw new WorkspaceAlreadyExistException("Workspace с таким именем уже существует");
+        if (newWorkspace.isPresent()) throw new WorkspaceAlreadyExistException("Workspace with this name already exists.");
 
         workspace.setId(oldWorkspace.getId());
         return workspaceDao.update(workspace);
@@ -115,7 +115,7 @@ public class WorkspaceService {
      */
     public Workspace getWorkspace(String name) throws WorkspaceNotFoundException{
         return workspaceDao.findByName(name)
-                .orElseThrow(() -> new WorkspaceNotFoundException("Workspace с таким именем не существует"));
+                .orElseThrow(() -> new WorkspaceNotFoundException("Workspace with this name doesn't exists."));
     }
 
     /**
@@ -126,7 +126,7 @@ public class WorkspaceService {
      */
     public Workspace getWorkspace(Long id) throws WorkspaceNotFoundException{
         return workspaceDao.findById(id)
-                .orElseThrow(() -> new WorkspaceNotFoundException("Workspace с таким именем не существует"));
+                .orElseThrow(() -> new WorkspaceNotFoundException("Workspace with this name doesn't exists."));
     }
 
 }

@@ -11,7 +11,6 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import org.example.dto.Authentication;
-import org.example.dto.BookingRequest;
 import org.example.dto.ExceptionResponse;
 import org.example.dto.WorkspaceRequest;
 import org.example.entity.Workspace;
@@ -25,6 +24,9 @@ import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.util.Set;
 
+/**
+ * Servlet for managing workspaces, accessible only to administrators.
+ */
 @WebServlet("/admin/workspaces")
 public class WorkspaceManagementServlet extends HttpServlet {
 
@@ -38,6 +40,14 @@ public class WorkspaceManagementServlet extends HttpServlet {
         objectMapper = (ObjectMapper) getServletContext().getAttribute("objectMapper");
     }
 
+    /**
+     * Handles POST requests to create a new workspace.
+     *
+     * @param req  the HTTP servlet request containing workspace data in JSON format
+     * @param resp the HTTP servlet response
+     * @throws ServletException if an error occurs during request handling
+     * @throws IOException      if an I/O error occurs during request handling
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
@@ -74,7 +84,7 @@ public class WorkspaceManagementServlet extends HttpServlet {
 
             String workspaceName = req.getParameter("name");
             if (workspaceName == null || workspaceName.isEmpty())
-                throw new NotValidArgumentException("Не указано имя рабочего пространства");
+                throw new NotValidArgumentException("Workspace name is not specified.");
 
             Workspace updatedWorkspace = objectMapper.readValue(req.getReader(), Workspace.class);
 
@@ -99,7 +109,7 @@ public class WorkspaceManagementServlet extends HttpServlet {
             isAdmin(req);
 
             String name = req.getParameter("name");
-            if (name == null || name.isEmpty()) throw new NotValidArgumentException("Не указано имя рабочего пространства");
+            if (name == null || name.isEmpty()) throw new NotValidArgumentException("Workspace name is not specified.");
 
             workspaceService.deleteWorkspace(name);
 
@@ -119,7 +129,7 @@ public class WorkspaceManagementServlet extends HttpServlet {
     private void isAdmin(HttpServletRequest req) throws AccessDeniedException {
         Authentication authentication = (Authentication) getServletContext().getAttribute("authentication");
         if (authentication.getRole() != Role.ADMIN) {
-            throw new AccessDeniedException("У вас нет разрешения на доступ к этой странице");
+            throw new AccessDeniedException("You do not have permission to access this page.");
         }
     }
 }

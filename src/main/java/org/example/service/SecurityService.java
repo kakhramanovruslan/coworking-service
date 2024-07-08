@@ -42,7 +42,7 @@ public class SecurityService {
 
         Optional<User> optionalUser = userDao.findByUsername(username);
         if (optionalUser.isPresent()) {
-            throw new RegisterException("Пользователь с таким логином уже существует.");
+            throw new RegisterException("A user with this username already exists.");
         }
 
         User newUser = User.builder()
@@ -66,11 +66,11 @@ public class SecurityService {
     public TokenResponse authenticate(String username, String password) {
         Optional<User> optionalUser = userDao.findByUsername(username);
         if (optionalUser.isEmpty()) {
-            throw new AuthenticationException("Пользователь с данным логином отсутствует в базе данных.");
+            throw new AuthenticationException("User with this username does not exist.");
         }
 
         if (!PasswordUtil.checkPassword(password, optionalUser.get().getPassword())) {
-            throw new AuthenticationException("Неправильное имя пользователя или пароль");
+            throw new AuthenticationException("Incorrect username or password.");
         }
 
         String token = jwtTokenUtil.generateToken(username);

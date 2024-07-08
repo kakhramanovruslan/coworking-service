@@ -6,7 +6,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.example.dto.UserDTO;
-import org.example.entity.User;
 import org.example.dto.Authentication;
 import org.example.exceptions.UserNotFoundException;
 import org.example.service.UserService;
@@ -15,7 +14,6 @@ import java.nio.file.AccessDeniedException;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Date;
-import java.util.Optional;
 
 /**
  * Utility class for handling JWT token operations.
@@ -45,7 +43,6 @@ public class JwtTokenUtil {
      * @param username the login for which to generate the JWT
      * @return the generated JWT
      */
-
     public String generateToken(String username){
         Date expirationDate = Date.from(ZonedDateTime.now().plusMinutes(60).toInstant());
 
@@ -57,7 +54,6 @@ public class JwtTokenUtil {
                 .withExpiresAt(expirationDate)
                 .sign(Algorithm.HMAC256(secret));
     }
-
 
     /**
      * Authenticates a user based on the given JWT.
@@ -77,7 +73,14 @@ public class JwtTokenUtil {
         return new Authentication(username, user.getRole());
     }
 
-    public String getUsernameClaim(String token) throws JWTVerificationException {
+    /**
+     * Retrieves the username claim from the provided JWT token.
+     *
+     * @param token the JWT token from which to retrieve the username claim
+     * @return the username claim extracted from the JWT token
+     * @throws JWTVerificationException if the token verification fails
+     */
+    private String getUsernameClaim(String token) throws JWTVerificationException {
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
                 .withIssuer("ruslan")
                 .build();
@@ -87,11 +90,10 @@ public class JwtTokenUtil {
     }
 
     /**
-     * Validates the given JWT.
+     * Validates the given JWT token.
      *
-     * @param token the JWT to validate
-     * @return true if the JWT is valid, false otherwise
-     * @throws RuntimeException if the JWT is invalid
+     * @param token the JWT token to validate
+     * @return true if the token is valid, false otherwise
      */
     public boolean validateToken(String token) {
         try {

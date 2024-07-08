@@ -41,7 +41,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
 
             return workspaces;
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -67,7 +67,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
                     ? Optional.of(buildWorkspace(resultSet))
                     : Optional.empty();
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
             return Optional.empty();
         }
     }
@@ -90,7 +90,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
             return preparedStatement.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
             return false;
         }
     }
@@ -110,7 +110,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
             return preparedStatement.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
             return false;
         }
     }
@@ -141,7 +141,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
 
             return workspace;
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
             return null;
         }
     }
@@ -167,7 +167,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
 
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
             return false;
         }
     }
@@ -193,7 +193,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
                     ? Optional.of(buildWorkspace(resultSet))
                     : Optional.empty();
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
             return Optional.empty();
         }
     }
@@ -217,7 +217,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
             return preparedStatement.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
             return false;
         }
     }

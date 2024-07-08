@@ -39,7 +39,7 @@ public class AuditDaoImpl implements AuditDao {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
         }
 
         return audits;
@@ -67,7 +67,7 @@ public class AuditDaoImpl implements AuditDao {
                     ? Optional.of(buildAudit(resultSet))
                     : Optional.empty();
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
             return Optional.empty();
         }
     }
@@ -91,7 +91,7 @@ public class AuditDaoImpl implements AuditDao {
             return preparedStatement.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
             return false;
         }
     }
@@ -112,7 +112,7 @@ public class AuditDaoImpl implements AuditDao {
             return preparedStatement.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
             return false;
         }
     }
@@ -146,7 +146,7 @@ public class AuditDaoImpl implements AuditDao {
 
             return audit;
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
             return null;
         }
     }
@@ -175,7 +175,7 @@ public class AuditDaoImpl implements AuditDao {
 
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
             return false;
         }
     }

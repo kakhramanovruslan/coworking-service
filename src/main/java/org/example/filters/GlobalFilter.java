@@ -5,6 +5,10 @@ import jakarta.servlet.annotation.WebFilter;
 
 import java.io.IOException;
 
+
+/**
+ * Servlet filter to set character encoding and content type for all requests and responses.
+ */
 @WebFilter
 public class GlobalFilter implements Filter {
     @Override

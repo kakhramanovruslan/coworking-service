@@ -25,6 +25,9 @@ import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.util.Set;
 
+/**
+ * Servlet handling workspace booking requests.
+ */
 @WebServlet("/workspaces/book")
 public class BookWorkspaceServlet extends HttpServlet {
 
@@ -39,6 +42,14 @@ public class BookWorkspaceServlet extends HttpServlet {
         objectMapper = (ObjectMapper) getServletContext().getAttribute("objectMapper");
     }
 
+    /**
+     * Handles POST requests for booking a workspace.
+     *
+     * @param req  the HTTP servlet request
+     * @param resp the HTTP servlet response
+     * @throws ServletException if an error occurs during request handling
+     * @throws IOException      if an I/O error occurs during request handling
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {

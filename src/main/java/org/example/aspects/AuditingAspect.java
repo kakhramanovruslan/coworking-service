@@ -10,20 +10,38 @@ import org.example.entity.types.ActionType;
 import org.example.entity.types.AuditType;
 import org.example.service.AuditService;
 
+/**
+ * Aspect for auditing annotated methods with {@link Auditable} annotation.
+ */
 @Aspect
 @Slf4j
 public class AuditingAspect {
 
     private static AuditService auditService;
 
+    /**
+     * Sets the AuditService instance used for recording audit logs.
+     * @param auditService The AuditService instance to set.
+     */
     public static void setAuditService(AuditService auditService) {
         AuditingAspect.auditService = auditService;
     }
 
+    /**
+     * Pointcut definition to match methods annotated with {@link Auditable}.
+     * @param auditable The Auditable annotation instance.
+     */
     @Pointcut("execution(@org.example.annotations.Auditable * *(..)) && @annotation(auditable)")
     public void annotatedByAuditable(Auditable auditable) {
     }
 
+    /**
+     * Advice to perform auditing around methods annotated with {@link Auditable}.
+     * @param pjp The ProceedingJoinPoint for the intercepted method.
+     * @param auditable The Auditable annotation instance.
+     * @return The result of the intercepted method.
+     * @throws Throwable If an error occurs during method execution.
+     */
     @Around("annotatedByAuditable(auditable)")
     public Object audit(ProceedingJoinPoint pjp, Auditable auditable) throws Throwable {
         MethodSignature methodSignature = (MethodSignature) pjp.getSignature();

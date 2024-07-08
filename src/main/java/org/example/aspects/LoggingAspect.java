@@ -7,13 +7,25 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 
+/**
+ * Aspect for logging methods annotated with {@link org.example.annotations.Loggable}.
+ */
 @Slf4j
 @Aspect
 public class LoggingAspect {
 
+    /**
+     * Pointcut definition to match methods annotated with {@link org.example.annotations.Loggable}.
+     */
     @Pointcut("@annotation(org.example.annotations.Loggable) && execution(* *(..))")
     public void loggableMethods(){}
 
+    /**
+     * Advice to log method entry, execution time, and exit.
+     * @param joinPoint The ProceedingJoinPoint for the intercepted method.
+     * @return The result of the intercepted method.
+     * @throws Throwable If an error occurs during method execution.
+     */
     @Around("loggableMethods()")
     public Object loggableMethods(ProceedingJoinPoint joinPoint) throws Throwable {
         String methodName = joinPoint.getSignature().toShortString();

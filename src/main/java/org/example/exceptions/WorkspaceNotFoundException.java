@@ -1,5 +1,8 @@
 package org.example.exceptions;
 
+/**
+ * Exception thrown when a requested workspace is not found.
+ */
 public class WorkspaceNotFoundException extends RuntimeException {
 
     /**

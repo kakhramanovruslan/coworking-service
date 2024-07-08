@@ -15,6 +15,9 @@ import java.time.LocalDateTime;
 @Setter
 public class BookingRequest {
 
+    /**
+     * The name of workspace for booking.
+     */
     @NotNull(message = "Workspace name cannot be null")
     @NotBlank(message = "Workspace name cannot be blank")
     private String workspaceName;

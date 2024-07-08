@@ -57,10 +57,10 @@ public class BookingService {
     @Auditable(actionType = ActionType.BOOK_WORKSPACE)
     public Booking bookWorkspace(BookingRequest bookingRequest, String username) throws WorkspaceNotFoundException, UserNotFoundException, WorkspaceAlreadyBookedException {
         Optional<Workspace> workspace = workspaceService.getWorkspaceByName(bookingRequest.getWorkspaceName());
-        if (workspace.isEmpty()) throw new WorkspaceNotFoundException("Workspace с таким именем не был найден");
+        if (workspace.isEmpty()) throw new WorkspaceNotFoundException("Workspace with this name was not found.");
         UserDTO user = userService.getUser(username);
 
-        // Проверка наличия пересекающихся бронирований
+        // checking overlapping bookings.
         boolean bookingExists = bookingDao.findAll().stream()
                 .anyMatch(booking -> booking.getWorkspaceId().equals(workspace.get().getId()) &&
                         (booking.getEndTime().isAfter(bookingRequest.getStartTime()) ||
@@ -69,7 +69,7 @@ public class BookingService {
                                 booking.getStartTime().isEqual(bookingRequest.getEndTime())));
 
         if (bookingExists) {
-            throw new WorkspaceAlreadyBookedException("Рабочее пространство уже забронировано на указанный период");
+            throw new WorkspaceAlreadyBookedException("The workspace is already booked for the specified period.");
         }
 
         Booking booking = bookingDao.save(Booking.builder()

@@ -19,6 +19,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+/**
+ * Servlet for retrieving bookings based on various filter parameters.
+ */
 @WebServlet("/workspaces/bookings")
 public class GetAllBookingsServlet extends HttpServlet {
     private BookingService bookingService;
@@ -31,6 +34,13 @@ public class GetAllBookingsServlet extends HttpServlet {
         objectMapper = (ObjectMapper) getServletContext().getAttribute("objectMapper");
     }
 
+    /**
+     * Handles GET requests for retrieving bookings based on specified parameters.
+     *
+     * @param req  the HTTP servlet request
+     * @param resp the HTTP servlet response
+     * @throws IOException if an I/O error occurs during request handling
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
@@ -54,7 +64,7 @@ public class GetAllBookingsServlet extends HttpServlet {
                 bookings = bookingService.getFilteredBookingsByWorkspace(workspaceName);
             } else {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                objectMapper.writeValue(resp.getWriter(), new ExceptionResponse("Не указаны параметры запроса"));
+                objectMapper.writeValue(resp.getWriter(), new ExceptionResponse("Parameters of the request are not specified."));
                 return;
             }
 
@@ -70,13 +80,23 @@ public class GetAllBookingsServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Validates the request parameters to ensure only one filter parameter is provided.
+     *
+     * @param startTime    the start time parameter
+     * @param endTime      the end time parameter
+     * @param username     the username parameter
+     * @param workspaceName the workspace name parameter
+     * @return true if the request is valid, false otherwise
+     * @throws NotValidArgumentException if more than one parameter is provided
+     */
     private boolean isValidRequest(String startTime, String endTime, String username, String workspaceName) throws NotValidArgumentException {
         int paramCount = 0;
         if (startTime != null && endTime != null) paramCount++;
         if (username != null) paramCount++;
         if (workspaceName != null) paramCount++;
 
-        if (paramCount > 1) throw new NotValidArgumentException("Можно передавать только один параметр: startTime и endTime, username или name");
+        if (paramCount > 1) throw new NotValidArgumentException("You can only pass one parameter: startTime and endTime, username, or name.");
         return paramCount == 1;
     }
 }

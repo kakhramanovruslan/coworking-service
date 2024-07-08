@@ -28,7 +28,7 @@ public class UserService {
      */
     public UserDTO getUser(Long id) throws UserNotFoundException{
         Optional<User> foundedUser = userDao.findById(id);
-        if(foundedUser.isEmpty()) throw new UserNotFoundException("Пользователь с таким id не найден");
+        if(foundedUser.isEmpty()) throw new UserNotFoundException("User with this ID does not exist.");
         return UserMapper.INSTANCE.toDTO(foundedUser.get());
     }
 
@@ -41,7 +41,7 @@ public class UserService {
      */
     public UserDTO getUser(String username) throws UserNotFoundException{
         Optional<User> foundedUser = userDao.findByUsername(username);
-        if(foundedUser.isEmpty()) throw new UserNotFoundException("Пользователь с таким именем не найден");
+        if(foundedUser.isEmpty()) throw new UserNotFoundException("User with this username does not exist.");
         return UserMapper.INSTANCE.toDTO(foundedUser.get());
     }
 

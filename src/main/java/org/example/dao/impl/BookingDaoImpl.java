@@ -41,7 +41,7 @@ public class BookingDaoImpl implements BookingDao {
 
             return bookings;
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -68,7 +68,7 @@ public class BookingDaoImpl implements BookingDao {
                     ? Optional.of(buildBooking(resultSet))
                     : Optional.empty();
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
             return Optional.empty();
         }
     }
@@ -92,7 +92,7 @@ public class BookingDaoImpl implements BookingDao {
             return preparedStatement.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
             return false;
         }
     }
@@ -113,7 +113,7 @@ public class BookingDaoImpl implements BookingDao {
             return preparedStatement.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
             return false;
         }
     }
@@ -153,7 +153,7 @@ public class BookingDaoImpl implements BookingDao {
 
             return booking;
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
             return null;
         }
     }
@@ -204,7 +204,7 @@ public class BookingDaoImpl implements BookingDao {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
         }
 
         return workspaces;
@@ -252,7 +252,7 @@ public class BookingDaoImpl implements BookingDao {
             }
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
         }
 
         return bookings;
@@ -293,7 +293,7 @@ public class BookingDaoImpl implements BookingDao {
             }
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
         }
 
         return bookings;
@@ -334,7 +334,7 @@ public class BookingDaoImpl implements BookingDao {
             }
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
         }
 
         return bookings;
@@ -376,7 +376,7 @@ public class BookingDaoImpl implements BookingDao {
                 return count > 0;
             }
         } catch (SQLException e) {
-            System.err.println("Ошибка при выполнении SQL-запроса для проверки бронирования: " + e.getMessage());
+            System.err.println("Error during execution of SQL query: " + e.getMessage());
         }
 
         return false;

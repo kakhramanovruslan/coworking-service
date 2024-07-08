@@ -16,6 +16,9 @@ import org.example.service.WorkspaceService;
 import java.io.IOException;
 import java.util.Optional;
 
+/**
+ * Servlet for retrieving a workspace by its ID or name.
+ */
 @WebServlet("/workspace")
 public class GetWorkspaceServlet extends HttpServlet {
 
@@ -29,6 +32,13 @@ public class GetWorkspaceServlet extends HttpServlet {
         objectMapper = (ObjectMapper) getServletContext().getAttribute("objectMapper");
     }
 
+    /**
+     * Handles GET requests to retrieve a workspace by its ID or name.
+     *
+     * @param req  the HTTP servlet request
+     * @param resp the HTTP servlet response
+     * @throws IOException if an I/O error occurs during request handling
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
@@ -46,13 +56,13 @@ public class GetWorkspaceServlet extends HttpServlet {
                 workspace = workspaceService.getWorkspaceByName(workspaceName);
             } else {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                objectMapper.writeValue(resp.getWriter(), new ExceptionResponse("Не указано имя или ID рабочего пространства"));
+                objectMapper.writeValue(resp.getWriter(), new ExceptionResponse("Workspace name or ID is not specified"));
                 return;
             }
 
             if (workspace.isEmpty()) {
                 resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                objectMapper.writeValue(resp.getWriter(), new ExceptionResponse("Рабочее пространство не найдено"));
+                objectMapper.writeValue(resp.getWriter(), new ExceptionResponse("Workspace not found"));
                 return;
             }
 
@@ -60,7 +70,7 @@ public class GetWorkspaceServlet extends HttpServlet {
             objectMapper.writeValue(resp.getWriter(), workspace.get());
         } catch (NumberFormatException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(resp.getWriter(), new ExceptionResponse("Некорректный формат ID рабочего пространства"));
+            objectMapper.writeValue(resp.getWriter(), new ExceptionResponse("Incorrect format of workspace ID"));
         } catch (WorkspaceNotFoundException | NotValidArgumentException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(resp.getWriter(), new ExceptionResponse(e.getMessage()));
@@ -75,7 +85,7 @@ public class GetWorkspaceServlet extends HttpServlet {
         if (workspaceId != null) paramCount++;
         if (workspaceName != null) paramCount++;
 
-        if (paramCount > 1) throw new NotValidArgumentException("Можно передавать только один параметр: id или name");
+        if (paramCount > 1) throw new NotValidArgumentException("Only one parameter can be passed: id or name");
         return paramCount == 1;
     }
 }

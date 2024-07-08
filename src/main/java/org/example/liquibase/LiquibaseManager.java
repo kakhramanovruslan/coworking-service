@@ -1,6 +1,5 @@
 package org.example.liquibase;
 
-import liquibase.Contexts;
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
@@ -34,7 +33,7 @@ public class LiquibaseManager {
             database.setLiquibaseSchemaName(LIQUIBASE_SCHEMA_NAME);
             Liquibase liquibase = new Liquibase(CHANGELOG_PATH, new ClassLoaderResourceAccessor(), database);
             liquibase.update();
-            System.out.println("Миграции успешно выполнены!");
+            System.out.println("Migrations successfully executed!");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -51,7 +50,7 @@ public class LiquibaseManager {
             database.setLiquibaseSchemaName(LIQUIBASE_SCHEMA_NAME);
             Liquibase liquibase = new Liquibase(CHANGELOG_PATH, new ClassLoaderResourceAccessor(), database);
             liquibase.rollback(4, null);
-            System.out.println("Миграции успешно отменены!");
+            System.out.println("Migrations successfully rolled back!");
         } catch (Exception e) {
             e.printStackTrace();
         }

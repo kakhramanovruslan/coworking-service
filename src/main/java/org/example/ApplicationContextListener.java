@@ -35,6 +35,11 @@ public class ApplicationContextListener implements ServletContextListener {
     private Properties properties;
     private ConnectionManager connectionManager;
 
+    /**
+     * Initializes the application context when the servlet context is initialized.
+     *
+     * @param sce the servlet context event
+     */
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         final ServletContext servletContext = sce.getServletContext();
@@ -45,11 +50,21 @@ public class ApplicationContextListener implements ServletContextListener {
         loadMappers(servletContext);
     }
 
+    /**
+     * Cleans up resources when the servlet context is destroyed.
+     *
+     * @param sce the servlet context event
+     */
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
         ServletContextListener.super.contextDestroyed(sce);
     }
 
+    /**
+     * Loads application properties from a properties file.
+     *
+     * @param servletContext the servlet context
+     */
     private void loadProperties(ServletContext servletContext) {
         if (properties == null) {
             properties = new Properties();
@@ -64,6 +79,11 @@ public class ApplicationContextListener implements ServletContextListener {
         }
     }
 
+    /**
+     * Configures database connection and runs Liquibase migrations if enabled.
+     *
+     * @param servletContext the servlet context
+     */
     private void databaseConfiguration(ServletContext servletContext) {
         String url = properties.getProperty("db.url");
         String username = properties.getProperty("db.username");
@@ -80,6 +100,11 @@ public class ApplicationContextListener implements ServletContextListener {
         }
     }
 
+    /**
+     * Initializes service layer components and sets them as servlet context attributes.
+     *
+     * @param servletContext the servlet context
+     */
     private void serviceContextInit(ServletContext servletContext) {
         UserDao userDao = new UserDaoImpl(connectionManager);
         WorkspaceDao workspaceDao = new WorkspaceDaoImpl(connectionManager);
@@ -111,6 +136,11 @@ public class ApplicationContextListener implements ServletContextListener {
         servletContext.setAttribute("auditingAspect", auditingAspect);
     }
 
+    /**
+     * Loads and configures object mappers, such as Jackson ObjectMapper.
+     *
+     * @param servletContext the servlet context
+     */
     private void loadMappers(ServletContext servletContext) {
         ObjectMapper objectMapper = new ObjectMapper();
         JavaTimeModule module = new JavaTimeModule();

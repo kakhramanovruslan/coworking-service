@@ -22,6 +22,9 @@ import org.example.service.SecurityService;
 import java.io.IOException;
 import java.util.Set;
 
+/**
+ * Servlet handling user registration requests.
+ */
 @WebServlet("/auth/registration")
 public class RegistrationServlet extends HttpServlet {
 
@@ -35,6 +38,14 @@ public class RegistrationServlet extends HttpServlet {
         objectMapper = (ObjectMapper) getServletContext().getAttribute("objectMapper");
     }
 
+    /**
+     * Handles POST requests for user registration.
+     *
+     * @param req  the HTTP servlet request containing registration data in JSON format
+     * @param resp the HTTP servlet response
+     * @throws ServletException if an error occurs during request handling
+     * @throws IOException      if an I/O error occurs during request handling
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
