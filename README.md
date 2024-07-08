@@ -165,7 +165,7 @@
 
 **Error Response:**
 - Access Denied
-  - Code: `403 Forbidden`
+  - Code: `401 Unauthorized`
   - Content-Type: `application/json
   - **Body:**
   ```json
@@ -238,7 +238,7 @@
 
 **Error Response:**
 - Access Denied
-  - Code: `403 Forbidden`
+  - Code: `401 Unauthorized`
   - Content-Type: `application/json
   - **Body:**
   ```json
@@ -292,7 +292,7 @@
 
 **Error Response:**
 - Access Denied
-  - Code: `403 Forbidden`
+  - Code: `401 Unauthorized`
   - Content-Type: `application/json
   - **Body:**
   ```json
@@ -345,7 +345,7 @@
 
 **Error Response:**
 - Access Denied
-  - Code: `403 Forbidden`
+  - Code: `401 Unauthorized`
   - Content-Type: `application/json
   - **Body:**
   ```json
@@ -399,7 +399,7 @@
 
 **Error Response:**
 - Access Denied
-  - Code: `403 Forbidden`
+  - Code: `401 Unauthorized`
   - Content-Type: `application/json
   - **Body:**
   ```json
@@ -447,7 +447,7 @@
 
 **Error Response:**
 - Access Denied
-  - Code: `403 Forbidden`
+  - Code: `401 Unauthorized`
   - Content-Type: `application/json
   - **Body:**
   ```json

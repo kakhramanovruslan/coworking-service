@@ -78,7 +78,7 @@ public class WorkspaceService {
     public boolean updateWorkspace(String oldName, Workspace workspace) throws WorkspaceNotFoundException, WorkspaceAlreadyExistException {
         Workspace oldWorkspace = this.getWorkspace(oldName);
 
-        Optional<Workspace> newWorkspace = this.getWorkspaceByName(workspace.getName());
+        Optional<Workspace> newWorkspace = workspaceDao.findByName(workspace.getName());
         if (newWorkspace.isPresent()) throw new WorkspaceAlreadyExistException("Workspace with this name already exists.");
 
         workspace.setId(oldWorkspace.getId());

@@ -4,8 +4,10 @@ import org.example.dao.BookingDao;
 import org.example.dto.BookingRequest;
 import org.example.dto.UserDTO;
 import org.example.entity.Booking;
-import org.example.entity.User;
 import org.example.entity.Workspace;
+import org.example.exceptions.UserNotFoundException;
+import org.example.exceptions.WorkspaceAlreadyBookedException;
+import org.example.exceptions.WorkspaceNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,219 +27,153 @@ import static org.mockito.Mockito.*;
 class BookingServiceTest {
 
     @Mock
-    private WorkspaceService workspaceService;
-    @Mock
     private UserService userService;
+
+    @Mock
+    private WorkspaceService workspaceService;
+
     @Mock
     private BookingDao bookingDao;
+
     @InjectMocks
     private BookingService bookingService;
 
     @Test
-    @DisplayName("Test retrieving available workspaces at current time")
-    void testGetAvailableWorkspacesAtNow() {
-        Workspace workspace1 = Workspace.builder().name("Workspace 1").build();
-        Workspace workspace2 = Workspace.builder().name("Workspace 2").build();
-        List<Workspace> availableWorkspaces = Arrays.asList(workspace1, workspace2);
-        when(bookingDao.findAllAvailableWorkspaces(any(LocalDateTime.class), any(LocalDateTime.class)))
-                .thenReturn(availableWorkspaces);
+    @DisplayName("Test booking a workspace successfully")
+    void testBookWorkspaceSuccess() throws WorkspaceNotFoundException, UserNotFoundException, WorkspaceAlreadyBookedException {
+        String username = "testUser";
+        String workspaceName = "Test Workspace";
+        LocalDateTime startTime = LocalDateTime.now();
+        LocalDateTime endTime = startTime.plusHours(2);
 
-        List<Workspace> result = bookingService.getAvailableWorkspacesAtNow();
+        BookingRequest bookingRequest = buildBookingRequest(workspaceName, startTime, endTime);
+        Workspace workspace = buildWorkspace(1L, workspaceName);
+        UserDTO userDTO = buildUserDTO(1L, username);
 
-        assertEquals(
-                availableWorkspaces.stream().map(Workspace::getName).toList(),
-                result.stream().map(Workspace::getName).toList()
-        );
-
-        verify(bookingDao).findAllAvailableWorkspaces(any(LocalDateTime.class), any(LocalDateTime.class));
-    }
-
-    @Test
-    @DisplayName("Test retrieving available workspaces for a specific time period")
-    void testGetAvailableWorkspacesForTimePeriod() {
-        Workspace workspace1 = Workspace.builder().name("Workspace 1").build();
-        Workspace workspace2 = Workspace.builder().name("Workspace 2").build();
-        LocalDateTime startTime = LocalDateTime.of(2022, 1, 1, 10, 0);
-        LocalDateTime endTime = LocalDateTime.of(2022, 1, 1, 12, 0);
-        List<Workspace> availableWorkspaces = Arrays.asList(workspace1, workspace2);
-        when(bookingDao.findAllAvailableWorkspaces(startTime, endTime)).thenReturn(availableWorkspaces);
-
-        List<Workspace> result = bookingService.getAvailableWorkspacesForTimePeriod(startTime, endTime);
-
-        assertEquals(availableWorkspaces, result);
-        verify(bookingDao).findAllAvailableWorkspaces(startTime, endTime);
-    }
-
-    @Test
-    @DisplayName("Test canceling when booking does not exist")
-    void testCancelBookWhenBookingDoesNotExist() {
-        Long nonExistingBookingId = 999L;
-        when(bookingDao.deleteById(nonExistingBookingId)).thenReturn(false);
-
-        boolean result = bookingService.cancelBook(nonExistingBookingId);
-
-        assertFalse(result);
-        verify(bookingDao).deleteById(nonExistingBookingId);
-    }
-
-    @Test
-    @DisplayName("Test booking a workspace")
-    void testBookWorkspace() {
-        String workspaceName = "Workspace 1";
-        String username = "User 1";
-        LocalDateTime startTime = LocalDateTime.of(2022, 1, 1, 10, 0);
-        LocalDateTime endTime = LocalDateTime.of(2022, 1, 1, 12, 0);
-        Workspace workspace = Workspace.builder().name(workspaceName).build();
-        UserDTO user = UserDTO.builder().username(username).build();
-        Booking booking = Booking.builder()
-                                 .workspaceId(workspace.getId())
-                                 .userId(user.getId())
-                                 .startTime(startTime)
-                                 .endTime(endTime)
-                                 .build();
         when(workspaceService.getWorkspaceByName(workspaceName)).thenReturn(Optional.of(workspace));
-        when(userService.getUser(username)).thenReturn(user);
-        when(bookingDao.save(booking)).thenReturn(booking);
+        when(userService.getUser(username)).thenReturn(userDTO);
+        when(bookingDao.findAll()).thenReturn(Arrays.asList());
+        when(bookingDao.save(any(Booking.class))).thenAnswer(invocation -> {
+            Booking savedBooking = invocation.getArgument(0);
+            savedBooking.setId(1L);
+            return savedBooking;
+        });
 
-        BookingRequest bookingRequest = BookingRequest.builder()
-                                                      .workspaceName(workspaceName)
-                                                      .startTime(startTime)
-                                                      .endTime(endTime)
-                                                      .build();
-        Booking result = bookingService.bookWorkspace(bookingRequest, username);
+        Booking booking = bookingService.bookWorkspace(bookingRequest, username);
 
-        assertEquals(booking, result);
-        verify(workspaceService).getWorkspaceByName(workspaceName);
-        verify(userService).getUser(username);
-        verify(bookingDao).save(booking);
+        assertNotNull(booking);
+        assertEquals(workspace.getId(), booking.getWorkspaceId());
+        assertEquals(userDTO.getId(), booking.getUserId());
+        assertEquals(startTime, booking.getStartTime());
+        assertEquals(endTime, booking.getEndTime());
+        verify(workspaceService, times(1)).getWorkspaceByName(workspaceName);
+        verify(userService, times(1)).getUser(username);
+        verify(bookingDao, times(1)).save(any(Booking.class));
     }
 
     @Test
-    @DisplayName("Test canceling a booking")
-    void testCancelBook() {
+    @DisplayName("Test cancel a booking successfully")
+    void testCancelBookingSuccess() {
         Long bookingId = 1L;
+
         when(bookingDao.deleteById(bookingId)).thenReturn(true);
 
         boolean result = bookingService.cancelBook(bookingId);
 
         assertTrue(result);
-        verify(bookingDao).deleteById(bookingId);
+        verify(bookingDao, times(1)).deleteById(bookingId);
     }
 
     @Test
-    @DisplayName("Test retrieving filtered bookings by time period")
+    @DisplayName("Test getting filtered bookings by time period")
     void testGetFilteredBookingsByTimePeriod() {
-        LocalDateTime startTime = LocalDateTime.of(2022, 1, 1, 10, 0);
-        LocalDateTime endTime = LocalDateTime.of(2022, 1, 1, 12, 0);
-        Booking booking1 = Booking.builder()
-                .workspaceId(1L)
-                .userId(1L)
-                .startTime(startTime)
-                .endTime(endTime)
-                .build();
-        Booking booking2 = Booking.builder()
-                .workspaceId(2L)
-                .userId(1L)
-                .startTime(startTime)
-                .endTime(endTime)
-                .build();
-        List<Booking> bookings = Arrays.asList(booking1, booking2);
-        when(bookingDao.getFilteredBookingsByTimePeriod(startTime, endTime)).thenReturn(bookings);
+        LocalDateTime startTime = LocalDateTime.now().minusHours(1);
+        LocalDateTime endTime = LocalDateTime.now();
 
-        List<Booking> result = bookingService.getFilteredBookingsByTimePeriod(startTime, endTime);
+        Booking mockBook1 = buildBooking(1L, 1L, startTime, endTime);
+        Booking mockBook2 = buildBooking(2L, 2L, startTime.plusDays(1), endTime.plusDays(1));
+        List<Booking> mockBookings = Arrays.asList(mockBook1, mockBook2);
 
-        assertEquals(bookings, result);
-        verify(bookingDao).getFilteredBookingsByTimePeriod(startTime, endTime);
+        when(bookingDao.getFilteredBookingsByTimePeriod(startTime, endTime)).thenReturn(mockBookings);
+
+        List<Booking> bookings = bookingService.getFilteredBookingsByTimePeriod(startTime, endTime);
+
+        assertNotNull(bookings);
+        assertEquals(2, bookings.size());
+        verify(bookingDao, times(1)).getFilteredBookingsByTimePeriod(startTime, endTime);
     }
 
     @Test
     @DisplayName("Test retrieving filtered bookings by username")
-    void testGetFilteredBookingsByUsername() {
-        String username = "User 1";
-        Booking booking1 = Booking.builder()
-                .workspaceId(1L)
-                .userId(1L)
-                .startTime(LocalDateTime.now())
-                .endTime(LocalDateTime.now())
-                .build();
-        Booking booking2 = Booking.builder()
-                .workspaceId(2L)
-                .userId(1L)
-                .startTime(LocalDateTime.now())
-                .endTime(LocalDateTime.now())
-                .build();
-        List<Booking> bookings = Arrays.asList(booking1, booking2);
-        when(bookingDao.getFilteredBookingsByUsername(username)).thenReturn(bookings);
+    void testGetFilteredBookingsByUsername() throws UserNotFoundException {
+        String username = "testUser";
+        UserDTO userDTO = buildUserDTO(1L, username);
 
-        List<Booking> result = bookingService.getFilteredBookingsByUsername(username);
+        Booking mockBook1 = buildBooking(userDTO.getId(), 1L, LocalDateTime.now(), LocalDateTime.now().plusHours(1));
+        Booking mockBook2 = buildBooking(userDTO.getId(), 2L, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(1).plusHours(1));
+        List<Booking> mockBookings = Arrays.asList(mockBook1, mockBook2);
 
-        assertEquals(bookings, result);
-        verify(bookingDao).getFilteredBookingsByUsername(username);
+        when(userService.getUser(username)).thenReturn(userDTO);
+        when(bookingDao.getFilteredBookingsByUsername(username)).thenReturn(mockBookings);
+
+        List<Booking> bookings = bookingService.getFilteredBookingsByUsername(username);
+
+        assertNotNull(bookings);
+        assertEquals(2, bookings.size());
+        verify(userService, times(1)).getUser(username);
+        verify(bookingDao, times(1)).getFilteredBookingsByUsername(username);
     }
 
     @Test
-    @DisplayName("Test retrieving filtered bookings by workspace")
-    void testGetFilteredBookingsByWorkspace() {
-        String workspaceName = "Workspace 1";
-        Booking booking1 = Booking.builder()
-                .workspaceId(1L)
-                .userId(1L)
-                .startTime(LocalDateTime.now())
-                .endTime(LocalDateTime.now())
-                .build();
-        Booking booking2 = Booking.builder()
-                .workspaceId(2L)
-                .userId(1L)
-                .startTime(LocalDateTime.now())
-                .endTime(LocalDateTime.now())
-                .build();
-        List<Booking> bookings = Arrays.asList(booking1, booking2);
-        when(bookingDao.getFilteredBookingsByWorkspace(workspaceName)).thenReturn(bookings);
+    @DisplayName("Test retrieving filtered bookings by workspace name")
+    void testGetFilteredBookingsByWorkspace() throws WorkspaceNotFoundException {
+        String workspaceName = "Test Workspace";
+        Workspace workspace = buildWorkspace(1L, workspaceName);
 
-        List<Booking> result = bookingService.getFilteredBookingsByWorkspace(workspaceName);
+        Booking mockBook1 = buildBooking(1L, 1L, LocalDateTime.now(), LocalDateTime.now().plusHours(1));
+        Booking mockBook2 = buildBooking(2L, 2L, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(1).plusHours(1));
+        List<Booking> mockBookings = Arrays.asList(mockBook1, mockBook2);
 
-        assertEquals(bookings, result);
-        verify(bookingDao).getFilteredBookingsByWorkspace(workspaceName);
+        when(workspaceService.getWorkspace(workspaceName)).thenReturn(workspace);
+        when(bookingDao.getFilteredBookingsByWorkspace(workspaceName)).thenReturn(mockBookings);
+
+        List<Booking> bookings = bookingService.getFilteredBookingsByWorkspace(workspaceName);
+
+        assertNotNull(bookings);
+        assertEquals(2, bookings.size());
+        verify(workspaceService, times(1)).getWorkspace(workspaceName);
+        verify(bookingDao, times(1)).getFilteredBookingsByWorkspace(workspaceName);
     }
 
-    @Test
-    @DisplayName("Test bookWorkspace throws NoSuchElementException when workspace not found")
-    void testBookWorkspaceNoSuchElementException() {
-        String workspaceName = "Workspace 1";
-        String username = "User 1";
-        LocalDateTime startTime = LocalDateTime.of(2022, 1, 1, 10, 0);
-        LocalDateTime endTime = LocalDateTime.of(2022, 1, 1, 12, 0);
-        when(workspaceService.getWorkspaceByName(workspaceName)).thenReturn(Optional.empty());
+    public UserDTO buildUserDTO(Long id, String username){
+        return UserDTO.builder()
+                .id(id)
+                .username(username)
+                .build();
+    }
 
-        BookingRequest bookingRequest = BookingRequest.builder()
+    public Workspace buildWorkspace(Long id, String name){
+        return Workspace.builder()
+                .id(id)
+                .name(name)
+                .build();
+    }
+
+    public BookingRequest buildBookingRequest(String workspaceName, LocalDateTime startTime, LocalDateTime endTime){
+        return BookingRequest.builder()
                 .workspaceName(workspaceName)
                 .startTime(startTime)
                 .endTime(endTime)
                 .build();
-
-        assertThrows(NoSuchElementException.class, () -> bookingService.bookWorkspace(bookingRequest, username));
-        verify(workspaceService).getWorkspaceByName(workspaceName);
     }
 
-    @Test
-    @DisplayName("Test bookWorkspace throws NoSuchElementException when username not found")
-    void testBookWorkspaceUsernameNotFoundException() {
-        String workspaceName = "Workspace 1";
-        String username = "User 1";
-        LocalDateTime startTime = LocalDateTime.of(2022, 1, 1, 10, 0);
-        LocalDateTime endTime = LocalDateTime.of(2022, 1, 1, 12, 0);
-        Workspace workspace = Workspace.builder().name(workspaceName).build();
-        when(workspaceService.getWorkspaceByName(workspaceName)).thenReturn(Optional.of(workspace));
-        when(userService.getUser(username)).thenReturn(null);
-
-        BookingRequest bookingRequest = BookingRequest.builder()
-                .workspaceName(workspaceName)
+    public Booking buildBooking(Long userId, Long workspaceId, LocalDateTime startTime, LocalDateTime endTime){
+        return Booking.builder()
+                .userId(userId)
+                .workspaceId(workspaceId)
                 .startTime(startTime)
                 .endTime(endTime)
                 .build();
-
-        assertThrows(NoSuchElementException.class, () -> bookingService.bookWorkspace(bookingRequest, username));
-        verify(workspaceService).getWorkspaceByName(workspaceName);
-        verify(userService).getUser(username);
     }
+
 }

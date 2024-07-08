@@ -2,7 +2,10 @@ package org.example.service;
 
 import org.example.dao.UserDao;
 import org.example.dto.UserDTO;
+import org.example.entity.Audit;
 import org.example.entity.User;
+import org.example.entity.types.ActionType;
+import org.example.entity.types.AuditType;
 import org.example.exceptions.UserNotFoundException;
 import org.example.mappers.UserMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -26,108 +29,62 @@ class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-//    @Test
-//    @DisplayName("Test register new user returns true")
-//    void testRegisterNewUserReturnsTrue() {
-//        String username = "newUser";
-//        String password = "password";
-//        when(userDao.findByUsername(anyString())).thenReturn(Optional.empty());
-//
-//        boolean result = userService.register(username, password);
-//
-//        assertTrue(result);
-//
-//        verify(userDao).save(any(User.class));
-//        verify(userDao).findByUsername(anyString());
-//    }
-//
-//    @Test
-//    @DisplayName("Test register existing user returns false")
-//    void testRegisterExistingUserReturnsFalse() {
-//        String username = "existingUser";
-//        String password = "password";
-//        when(userDao.findByUsername(username)).thenReturn(Optional.of(new User()));
-//
-//        boolean result = userService.register(username, password);
-//
-//        assertFalse(result);
-//        verify(userDao, never()).save(any(User.class));
-//    }
-//
-//    @Test
-//    @DisplayName("Test authenticate with valid credentials returns true")
-//    void testAuthenticateValidCredentialsReturnsTrue() {
-//        String username = "user";
-//        String password = "password";
-//        User user = new User();
-//        user.setUsername(username);
-//        user.setPassword(password);
-//        when(userDao.findByUsername(username)).thenReturn(Optional.of(user));
-//
-//        boolean result = userService.authenticate(username, password);
-//
-//        assertTrue(result);
-//    }
-//
-//    @Test
-//    @DisplayName("Test authenticate with invalid credentials returns false")
-//    void testAuthenticateInvalidCredentialsReturnsFalse() {
-//        String username = "user";
-//        String password = "wrongPassword";
-//        User user = new User();
-//        user.setUsername(username);
-//        user.setPassword("password");
-//        when(userDao.findByUsername(username)).thenReturn(Optional.of(user));
-//
-//        boolean result = userService.authenticate(username, password);
-//
-//        assertFalse(result);
-//    }
-
     @Test
-    @DisplayName("Test get user by ID returns existing user")
-    void testGetUserExistingUserReturnsUser() {
-        Long id = 1L;
+    @DisplayName("Test retrieving user by ID")
+    void testGetUserById() throws UserNotFoundException {
+        Long userId = 1L;
         User user = new User();
-        user.setId(id);
-        when(userDao.findById(id)).thenReturn(Optional.of(user));
+        user.setId(userId);
+        user.setUsername("testUser");
 
-        User result = UserMapper.INSTANCE.toEntity(userService.getUser(id));
+        when(userDao.findById(userId)).thenReturn(Optional.of(user));
 
-        assertNotNull(result);
-        assertEquals(user, result);
+        UserDTO userDTO = userService.getUser(userId);
+
+        assertNotNull(userDTO);
+        assertEquals(userId, userDTO.getId());
+        assertEquals("testUser", userDTO.getUsername());
+        verify(userDao, times(1)).findById(userId);
     }
 
     @Test
-    @DisplayName("Test get user by ID returns empty for non-existing user")
-    void testGetUserNonExistingUserReturnsEmpty() {
-        Long id = 1L;
-        when(userDao.findById(id)).thenReturn(Optional.empty());
+    @DisplayName("Test user not found by id throws exception")
+    void testGetUserByIdNotFound() {
+        Long userId = 1L;
 
-        UserDTO result = userService.getUser(id);
+        when(userDao.findById(userId)).thenReturn(Optional.empty());
 
-        assertNull(result);
+        assertThrows(UserNotFoundException.class, () -> userService.getUser(userId));
+        verify(userDao, times(1)).findById(userId);
     }
 
     @Test
-    @DisplayName("Test get user by username returns existing user")
-    void testGetUserByUsernameExistingUserReturnsUser() {
-        String username = "user";
+    @DisplayName("Test retrieving user by username")
+    void testGetUserByUsername() throws UserNotFoundException {
+        String username = "testUser";
         User user = new User();
+        user.setId(1L);
         user.setUsername(username);
+
         when(userDao.findByUsername(username)).thenReturn(Optional.of(user));
 
-        UserDTO result = userService.getUser(username);
+        UserDTO userDTO = userService.getUser(username);
 
-        assertEquals(user, result);
+        assertNotNull(userDTO);
+        assertEquals(1L, userDTO.getId());
+        assertEquals(username, userDTO.getUsername());
+        verify(userDao, times(1)).findByUsername(username);
     }
 
     @Test
-    @DisplayName("Test get user by username returns empty for non-existing user")
-    void testGetUserByUsernameNonExistingUserReturnsEmpty() {
-        String username = "nonExistingUser";
+    @DisplayName("Test user not found by username throws exception")
+    void testGetUserByUsernameNotFound() {
+        String username = "testUser";
+
         when(userDao.findByUsername(username)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> userService.getUser(username));
+        verify(userDao, times(1)).findByUsername(username);
     }
+
 }
