@@ -21,8 +21,10 @@ public class UserService {
 
     /**
      * Retrieves a user by their ID.
+     *
      * @param id ID of the user to retrieve
      * @return Optional containing the user if found, otherwise empty
+     * @throws UserNotFoundException if no user is found with the specified ID
      */
     public UserDTO getUser(Long id) throws UserNotFoundException{
         Optional<User> foundedUser = userDao.findById(id);
@@ -32,8 +34,10 @@ public class UserService {
 
     /**
      * Retrieves a user by their username.
+     *
      * @param username Username of the user to retrieve
      * @return Optional containing the user if found, otherwise empty
+     * @throws UserNotFoundException if no user is found with the specified username
      */
     public UserDTO getUser(String username) throws UserNotFoundException{
         Optional<User> foundedUser = userDao.findByUsername(username);

@@ -6,18 +6,18 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
+import org.example.aspects.AuditingAspect;
+import org.example.dao.AuditDao;
 import org.example.dao.BookingDao;
 import org.example.dao.UserDao;
 import org.example.dao.WorkspaceDao;
+import org.example.dao.impl.AuditDaoImpl;
 import org.example.dao.impl.BookingDaoImpl;
 import org.example.dao.impl.UserDaoImpl;
 import org.example.dao.impl.WorkspaceDaoImpl;
 import org.example.liquibase.LiquibaseManager;
+import org.example.service.*;
 import org.example.utils.JwtTokenUtil;
-import org.example.service.BookingService;
-import org.example.service.SecurityService;
-import org.example.service.UserService;
-import org.example.service.WorkspaceService;
 import org.example.utils.ConnectionManager;
 
 import java.io.FileNotFoundException;
@@ -84,10 +84,15 @@ public class ApplicationContextListener implements ServletContextListener {
         UserDao userDao = new UserDaoImpl(connectionManager);
         WorkspaceDao workspaceDao = new WorkspaceDaoImpl(connectionManager);
         BookingDao bookingDao = new BookingDaoImpl(connectionManager);
+        AuditDao auditDao = new AuditDaoImpl(connectionManager);
 
         UserService userService = new UserService(userDao);
         WorkspaceService workspaceService = new WorkspaceService(workspaceDao);
         BookingService bookingService = new BookingService(userService, workspaceService, bookingDao);
+        AuditService auditService = new AuditService(auditDao);
+
+        AuditingAspect auditingAspect = new AuditingAspect();
+        AuditingAspect.setAuditService(auditService);
 
         JwtTokenUtil jwtTokenUtil = new JwtTokenUtil(
                 properties.getProperty("jwt.secret"),
@@ -99,9 +104,11 @@ public class ApplicationContextListener implements ServletContextListener {
 
         servletContext.setAttribute("jwtTokenUtils", jwtTokenUtil);
         servletContext.setAttribute("userService", userService);
+        servletContext.setAttribute("auditService", auditService);
         servletContext.setAttribute("workspaceService", workspaceService);
         servletContext.setAttribute("bookingService", bookingService);
         servletContext.setAttribute("securityService", securityService);
+        servletContext.setAttribute("auditingAspect", auditingAspect);
     }
 
     private void loadMappers(ServletContext servletContext) {

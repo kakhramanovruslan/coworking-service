@@ -2,11 +2,13 @@ package org.example.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.annotations.Auditable;
 import org.example.annotations.Loggable;
 import org.example.dao.UserDao;
 import org.example.dto.TokenResponse;
 import org.example.dto.UserDTO;
 import org.example.entity.User;
+import org.example.entity.types.ActionType;
 import org.example.exceptions.AuthenticationException;
 import org.example.exceptions.NotValidArgumentException;
 import org.example.exceptions.RegisterException;
@@ -29,12 +31,13 @@ public class SecurityService {
     /**
      * Registers a new user with the provided login and password.
      *
-     * @param username    the user's login
+     * @param username the user's login
      * @param password the user's password
-     * @return the registered user
+     * @return the registered user DTO
      * @throws NotValidArgumentException if login or password is empty, blank, or does not meet length requirements
-     * @throws RegisterException         if a user with the same login already exists
+     * @throws RegisterException if a user with the same login already exists
      */
+    @Auditable(actionType = ActionType.REGISTRATION)
     public UserDTO register(String username, String password) {
 
         Optional<User> optionalUser = userDao.findByUsername(username);
@@ -52,13 +55,14 @@ public class SecurityService {
     }
 
     /**
-     * Authorizes a user with the provided login and password.
+     * Authenticate a user with the provided username and password.
      *
-     * @param username    the user's login
+     * @param username the user's name
      * @param password the user's password
-     * @return an optional containing the authorized user, or empty if authentication fails
+     * @return a token response containing the generated JWT token
      * @throws AuthenticationException if the user is not found or the password is incorrect
      */
+    @Auditable(actionType = ActionType.AUTHORIZATION)
     public TokenResponse authenticate(String username, String password) {
         Optional<User> optionalUser = userDao.findByUsername(username);
         if (optionalUser.isEmpty()) {

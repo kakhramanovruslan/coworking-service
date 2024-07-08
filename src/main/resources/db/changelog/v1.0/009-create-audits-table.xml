@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="009-create-audits-table" author="ruslan">
+        <createTable schemaName="coworking" tableName="audits">
+            <column name="id" type="bigint" defaultValueComputed="nextval('coworking.audit_id_seq')">
+                <constraints primaryKey="true" primaryKeyName="audit_pkey" nullable="false"/>
+            </column>
+            <column name="username" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="action_type" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="audit_type" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="audit_timestamp" type="timestamp" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <sql>COMMENT ON COLUMN coworking.audits.id IS 'this is audit id';</sql>
+        <sql>COMMENT ON COLUMN coworking.audits.username IS 'this is username';</sql>
+        <sql>COMMENT ON COLUMN coworking.audits.audit_type IS 'this is audit type';</sql>
+        <sql>COMMENT ON COLUMN coworking.audits.action_type IS 'this is action type';</sql>
+        <sql>COMMENT ON COLUMN coworking.audits.audit_timestamp IS 'timestamp of the audit';</sql>
+
+        <rollback>
+            <dropTable tableName="audits" schemaName="coworking"/>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

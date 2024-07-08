@@ -16,7 +16,7 @@ public class LoggingAspect {
 
     @Around("loggableMethods()")
     public Object loggableMethods(ProceedingJoinPoint joinPoint) throws Throwable {
-        String methodName = joinPoint.getSignature().getName();
+        String methodName = joinPoint.getSignature().toShortString();
         log.info("Calling method " + methodName);
 
         long startTime = System.currentTimeMillis();
@@ -24,7 +24,7 @@ public class LoggingAspect {
         long endTime = System.currentTimeMillis();
 
         log.info("Execution of method " + methodName +
-                " finished. Execution time is " + (endTime - startTime) + " ms");
+                " finished. Execution time is " + (endTime - startTime) + " ms.");
         return result;
     }
 }

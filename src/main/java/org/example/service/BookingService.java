@@ -1,11 +1,13 @@
 package org.example.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.annotations.Auditable;
 import org.example.dao.BookingDao;
 import org.example.dto.BookingRequest;
 import org.example.dto.UserDTO;
 import org.example.entity.Booking;
 import org.example.entity.Workspace;
+import org.example.entity.types.ActionType;
 import org.example.exceptions.UserNotFoundException;
 import org.example.exceptions.WorkspaceAlreadyBookedException;
 import org.example.exceptions.WorkspaceNotFoundException;
@@ -46,8 +48,13 @@ public class BookingService {
     /**
      * Books a workspace for a user within a specified time period.
      * @param bookingRequest DTO with info about booking
+     * @param username Username of the user booking the workspace
      * @return The booking entity that was created
+     * @throws WorkspaceNotFoundException If the specified workspace does not exist
+     * @throws UserNotFoundException If the user specified by username does not exist
+     * @throws WorkspaceAlreadyBookedException If the workspace is already booked for the specified period
      */
+    @Auditable(actionType = ActionType.BOOK_WORKSPACE)
     public Booking bookWorkspace(BookingRequest bookingRequest, String username) throws WorkspaceNotFoundException, UserNotFoundException, WorkspaceAlreadyBookedException {
         Optional<Workspace> workspace = workspaceService.getWorkspaceByName(bookingRequest.getWorkspaceName());
         if (workspace.isEmpty()) throw new WorkspaceNotFoundException("Workspace с таким именем не был найден");
@@ -97,6 +104,7 @@ public class BookingService {
      * Retrieves a list of bookings filtered by a specific username.
      * @param username Username of the user whose bookings are to be retrieved
      * @return List of bookings made by the specified user
+     * @throws UserNotFoundException If the specified user does not exist
      */
     public List<Booking> getFilteredBookingsByUsername(String username) throws UserNotFoundException {
         userService.getUser(username);
@@ -107,6 +115,7 @@ public class BookingService {
      * Retrieves a list of bookings filtered by a specific workspace name.
      * @param workspaceName Name of the workspace whose bookings are to be retrieved
      * @return List of bookings for the specified workspace
+     * @throws WorkspaceNotFoundException If the specified workspace does not exist
      */
     public List<Booking> getFilteredBookingsByWorkspace(String workspaceName) throws WorkspaceNotFoundException {
         workspaceService.getWorkspace(workspaceName);

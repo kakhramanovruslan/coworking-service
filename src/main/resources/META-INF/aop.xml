@@ -1,6 +1,7 @@
 <aspectj>
     <aspects>
         <aspect name="org.example.aspects.LoggingAspect" />
+        <aspect name="org.example.aspects.AuditingAspect" />
     </aspects>
     <weaver>
         <include within="org.example..*"/>
