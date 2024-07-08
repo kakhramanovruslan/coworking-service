@@ -166,13 +166,7 @@
 **Error Response:**
 - Access Denied
   - Code: `401 Unauthorized`
-  - Content-Type: `application/json
-  - **Body:**
-  ```json
-  {
-    "message": "string"
-  }
-  ```
+
 - Validation Errors, Workspace/User Not Found, Workspace Already Booked
   - Code: `400 Bad Request`
   - Content-Type: `application/json
@@ -239,13 +233,7 @@
 **Error Response:**
 - Access Denied
   - Code: `401 Unauthorized`
-  - Content-Type: `application/json
-  - **Body:**
-  ```json
-  {
-    "message": "string"
-  }
-  ```
+
 - Validation Errors, Workspace/User Not Found
   - Code: `400 Bad Request`
   - Content-Type: `application/json
@@ -293,13 +281,7 @@
 **Error Response:**
 - Access Denied
   - Code: `401 Unauthorized`
-  - Content-Type: `application/json
-  - **Body:**
-  ```json
-  {
-    "message": "string"
-  }
-  ```
+  
 - Server Error
   - Code: `500 Internal Server Error`
 
@@ -346,13 +328,7 @@
 **Error Response:**
 - Access Denied
   - Code: `401 Unauthorized`
-  - Content-Type: `application/json
-  - **Body:**
-  ```json
-  {
-    "message": "string"
-  }
-  ```
+  
 - Validation Errors
   - Code: `400 Bad Request`
   - Content-Type: `application/json
@@ -400,13 +376,7 @@
 **Error Response:**
 - Access Denied
   - Code: `401 Unauthorized`
-  - Content-Type: `application/json
-  - **Body:**
-  ```json
-  {
-    "message": "string"
-  }
-  ```
+
 - Server Error
   - Code: `500 Internal Server Error`
 
@@ -448,13 +418,7 @@
 **Error Response:**
 - Access Denied
   - Code: `401 Unauthorized`
-  - Content-Type: `application/json
-  - **Body:**
-  ```json
-  {
-    "message": "string"
-  }
-  ```
+
 - Validation Errors, Workspace Not Found
   - Code: `400 Bad Request`
   - Content-Type: `application/json
