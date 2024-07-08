@@ -1,0 +1,8 @@
+<aspectj>
+    <aspects>
+        <aspect name="org.example.aspects.LoggingAspect" />
+    </aspects>
+    <weaver>
+        <include within="org.example..*"/>
+    </weaver>
+</aspectj>

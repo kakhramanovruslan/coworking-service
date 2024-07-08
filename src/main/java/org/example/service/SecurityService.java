@@ -59,7 +59,6 @@ public class SecurityService {
      * @return an optional containing the authorized user, or empty if authentication fails
      * @throws AuthenticationException if the user is not found or the password is incorrect
      */
-    @Loggable
     public TokenResponse authenticate(String username, String password) {
         Optional<User> optionalUser = userDao.findByUsername(username);
         if (optionalUser.isEmpty()) {

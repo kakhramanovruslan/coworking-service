@@ -15,11 +15,9 @@ import org.example.dto.AuthRequest;
 import org.example.dto.ExceptionResponse;
 import org.example.dto.SuccessResponse;
 import org.example.dto.UserDTO;
-import org.example.entity.User;
 import org.example.exceptions.NotValidArgumentException;
 import org.example.exceptions.RegisterException;
 import org.example.service.SecurityService;
-import org.example.utils.PasswordUtil;
 
 import java.io.IOException;
 import java.util.Set;

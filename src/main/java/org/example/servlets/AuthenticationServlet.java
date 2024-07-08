@@ -7,9 +7,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
+import lombok.extern.slf4j.Slf4j;
+import org.example.annotations.Loggable;
 import org.example.dto.AuthRequest;
 import org.example.dto.ExceptionResponse;
 import org.example.dto.TokenResponse;
@@ -18,9 +17,9 @@ import org.example.exceptions.NotValidArgumentException;
 import org.example.service.SecurityService;
 
 import java.io.IOException;
-import java.util.Set;
 
 @WebServlet("/auth/login")
+@Slf4j
 public class AuthenticationServlet extends HttpServlet {
 
     private SecurityService securityService;
@@ -33,6 +32,7 @@ public class AuthenticationServlet extends HttpServlet {
         objectMapper = (ObjectMapper) getServletContext().getAttribute("objectMapper");
     }
 
+    @Loggable
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json");
