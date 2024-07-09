@@ -198,6 +198,7 @@ public class AuditDaoImpl implements AuditDao {
                 .id(resultSet.getLong("id"))
                 .auditType(auditType)
                 .actionType(actionType)
+                .auditTimestamp(resultSet.getTimestamp("audit_timestamp").toLocalDateTime())
                 .username(resultSet.getString("username"))
                 .build();
     }
