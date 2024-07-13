@@ -591,7 +591,54 @@
 
 
 
+### Endpoint: `/admin/audits`
 
+**Method:** `GET`
+
+**Description:** Get list of all audits.
+
+### Response
+
+**Success Response:**
+- Code: `200 OK`
+- Content-Type: `application/json
+  - **Body:**
+  ```json
+  [
+    {
+        "id": 44,
+        "username": "admin",
+        "auditType": "SUCCESS",
+        "actionType": "AUTHORIZATION",
+        "auditTimestamp": "2024-07-08T13:17:13.053227"
+    },
+    {
+        "id": 45,
+        "username": "admin",
+        "auditType": "SUCCESS",
+        "actionType": "AUTHORIZATION",
+        "auditTimestamp": "2024-07-08T13:17:13.832824"
+    }
+  ]
+  
+  ```
+
+**Error Response:**
+- Access Denied
+  - Code: `403 Forbidden`
+  - Content-Type: `application/json
+  - **Body:**
+  ```json
+  {
+    "message": "string"
+  }
+  ```
+  
+- Server Error
+  - Code: `500 Internal Server Error`
+
+
+***
 
 
 

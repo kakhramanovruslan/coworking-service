@@ -21,18 +21,22 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Audit {
+
     /**
      * The unique identifier for the audit entry.
      */
     private Long id;
+
     /**
      * The username of the user associated with the audit entry.
      */
     private String username;
+
     /**
      * The type of audit, indicating the success or failure of an action.
      */
     private AuditType auditType;
+
     /**
      * The type of action performed by the user.
      */
