@@ -1,10 +1,10 @@
-package org.example.dao;
+package org.example.repository;
 
 import org.example.entity.Audit;
 
 /**
- * The AuditDao interface provides methods for managing audit records in the database.
- * It inherits CRUD methods from the Dao interface.
+ * The AuditRepository interface provides methods for managing audit records in the database.
+ * It inherits CRUD methods from the Repository interface.
  */
-public interface AuditDao extends Dao<Long, Audit> {
+public interface AuditRepository extends Repository<Long, Audit> {
 }

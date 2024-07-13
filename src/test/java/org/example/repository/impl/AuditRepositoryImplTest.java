@@ -1,6 +1,6 @@
-package org.example.dao.impl;
+package org.example.repository.impl;
 
-import org.example.dao.AuditDao;
+import org.example.repository.AuditRepository;
 import org.example.entity.Audit;
 import org.example.entity.types.ActionType;
 import org.example.entity.types.AuditType;
@@ -9,21 +9,24 @@ import org.example.utils.ConnectionManager;
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AuditDaoImplTest {
+@Testcontainers
+public class AuditRepositoryImplTest {
     @Container
     public static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:16.2")
             .withDatabaseName("testdb")
             .withUsername("testuser")
             .withPassword("testpass");
 
-    private AuditDao auditDao;
-    private ConnectionManager connectionManager;
+    private AuditRepository auditRepository;
+    private Connection connection;
     private LiquibaseManager liquibaseManager = LiquibaseManager.getInstance();
 
     @BeforeAll
@@ -33,20 +36,21 @@ public class AuditDaoImplTest {
 
     @BeforeEach
     public void setUp(){
-        connectionManager = new ConnectionManager(
+        ConnectionManager connectionManager = new ConnectionManager();
+        connection = connectionManager.getConnection(
                 postgresContainer.getJdbcUrl(),
                 postgresContainer.getUsername(),
                 postgresContainer.getPassword(),
                 postgresContainer.getDriverClassName());
 
-        liquibaseManager.runMigrations(connectionManager.getConnection());
+        liquibaseManager.runMigrations(connection);
 
-        auditDao = new AuditDaoImpl(connectionManager);
+        auditRepository = new AuditRepositoryImpl(connectionManager);
     }
 
     @AfterEach
     public void reset(){
-        liquibaseManager.rollbackToCreateTables(connectionManager.getConnection());
+        liquibaseManager.rollbackToCreateTables(connection);
     }
 
     @AfterAll
@@ -59,9 +63,9 @@ public class AuditDaoImplTest {
     public void testSaveAndFindById() {
         Audit auditToSave = buildAudit("testUser", ActionType.AUTHORIZATION, AuditType.SUCCESS);
 
-        Audit savedAudit = auditDao.save(auditToSave);
+        Audit savedAudit = auditRepository.save(auditToSave);
 
-        Optional<Audit> foundAudit = auditDao.findById(savedAudit.getId());
+        Optional<Audit> foundAudit = auditRepository.findById(savedAudit.getId());
 
         assertTrue(foundAudit.isPresent());
         assertEquals(savedAudit.getId(), foundAudit.get().getId());
@@ -76,10 +80,10 @@ public class AuditDaoImplTest {
         Audit audit1 = buildAudit("testUser1", ActionType.AUTHORIZATION, AuditType.SUCCESS);
         Audit audit2 = buildAudit("testUser2", ActionType.AUTHORIZATION, AuditType.SUCCESS);
 
-        auditDao.save(audit1);
-        auditDao.save(audit2);
+        auditRepository.save(audit1);
+        auditRepository.save(audit2);
 
-        List<Audit> allAudits = auditDao.findAll();
+        List<Audit> allAudits = auditRepository.findAll();
 
         assertEquals(2, allAudits.size());
     }
@@ -88,15 +92,15 @@ public class AuditDaoImplTest {
     @DisplayName("Update record")
     public void testUpdate() {
         Audit auditToSave = buildAudit("testUser", ActionType.REGISTRATION, AuditType.SUCCESS);
-        Audit savedAudit = auditDao.save(auditToSave);
+        Audit savedAudit = auditRepository.save(auditToSave);
 
         savedAudit.setUsername("updatedUser");
         savedAudit.setActionType(ActionType.DELETE_WORKSPACE);
         savedAudit.setAuditType(AuditType.FAIL);
 
-        assertTrue(auditDao.update(savedAudit));
+        assertTrue(auditRepository.update(savedAudit));
 
-        Optional<Audit> updatedAudit = auditDao.findById(savedAudit.getId());
+        Optional<Audit> updatedAudit = auditRepository.findById(savedAudit.getId());
 
         assertTrue(updatedAudit.isPresent());
         assertEquals("updatedUser", updatedAudit.get().getUsername());
@@ -108,11 +112,11 @@ public class AuditDaoImplTest {
     @DisplayName("Delete record by ID")
     public void testDeleteById() {
         Audit auditToSave = buildAudit("testUser", ActionType.REGISTRATION, AuditType.SUCCESS);
-        Audit savedAudit = auditDao.save(auditToSave);
+        Audit savedAudit = auditRepository.save(auditToSave);
 
-        assertTrue(auditDao.deleteById(savedAudit.getId()));
+        assertTrue(auditRepository.deleteById(savedAudit.getId()));
 
-        Optional<Audit> deletedAudit = auditDao.findById(savedAudit.getId());
+        Optional<Audit> deletedAudit = auditRepository.findById(savedAudit.getId());
 
         assertFalse(deletedAudit.isPresent());
     }

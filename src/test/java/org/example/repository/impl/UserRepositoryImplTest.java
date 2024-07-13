@@ -1,6 +1,6 @@
-package org.example.dao.impl;
+package org.example.repository.impl;
 
-import org.example.dao.UserDao;
+import org.example.repository.UserRepository;
 import org.example.entity.User;
 import org.example.liquibase.LiquibaseManager;
 import org.example.utils.ConnectionManager;
@@ -8,12 +8,14 @@ import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.sql.Connection;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
-public class UserDaoImplTest {
+public class UserRepositoryImplTest {
 
     @Container
     public static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:16.2")
@@ -21,8 +23,8 @@ public class UserDaoImplTest {
             .withUsername("testuser")
             .withPassword("testpass");
 
-    private UserDao userDao;
-    private ConnectionManager connectionManager;
+    private UserRepository userRepository;
+    private Connection connection;
     private LiquibaseManager liquibaseManager = LiquibaseManager.getInstance();
     private User testUser;
 
@@ -33,19 +35,20 @@ public class UserDaoImplTest {
 
     @BeforeEach
     public void setUp(){
-        connectionManager = new ConnectionManager(
+        ConnectionManager connectionManager = new ConnectionManager();
+        connection = connectionManager.getConnection(
                 postgresContainer.getJdbcUrl(),
                 postgresContainer.getUsername(),
                 postgresContainer.getPassword(),
                 postgresContainer.getDriverClassName());
 
-        liquibaseManager.runMigrations(connectionManager.getConnection());
+        liquibaseManager.runMigrations(connection);
 
-        userDao = new UserDaoImpl(connectionManager);
+        userRepository = new UserRepositoryImpl(connectionManager);
 
-        userDao.deleteById(-1L); // delete admin
+        userRepository.deleteById(-1L); // delete admin
 
-        testUser = userDao.save(User.builder()
+        testUser = userRepository.save(User.builder()
                                     .username("ruslan")
                                     .password("123")
                                     .build());
@@ -53,7 +56,7 @@ public class UserDaoImplTest {
 
     @AfterEach
     public void reset(){
-        liquibaseManager.rollbackToCreateTables(connectionManager.getConnection());
+        liquibaseManager.rollbackToCreateTables(connection);
     }
 
     @AfterAll
@@ -64,8 +67,8 @@ public class UserDaoImplTest {
     @Test
     @DisplayName("Test findById method")
     public void testFindById(){
-        Optional<User> foundUser = userDao.findById(testUser.getId());
-        Optional<User> notFoundPlayer = userDao.findById(999L);
+        Optional<User> foundUser = userRepository.findById(testUser.getId());
+        Optional<User> notFoundPlayer = userRepository.findById(999L);
 
         assertAll(
                 () -> assertTrue(foundUser.isPresent()),
@@ -79,8 +82,8 @@ public class UserDaoImplTest {
     @Test
     @DisplayName("Test deleteById method")
     public void testDeleteById(){
-        assertTrue(userDao.deleteById(testUser.getId()));
-        assertTrue(userDao.findById(testUser.getId()).isEmpty());
+        assertTrue(userRepository.deleteById(testUser.getId()));
+        assertTrue(userRepository.findById(testUser.getId()).isEmpty());
     }
 
     @Test
@@ -90,10 +93,10 @@ public class UserDaoImplTest {
                 .username("ruslan2")
                 .password("123")
                 .build();
-        userDao.save(testUser2);
+        userRepository.save(testUser2);
 
-        assertTrue(userDao.deleteAll());
-        assertEquals(userDao.findAll().size(), 0);
+        assertTrue(userRepository.deleteAll());
+        assertEquals(userRepository.findAll().size(), 0);
     }
 
     @Test
@@ -103,10 +106,10 @@ public class UserDaoImplTest {
                 .username("ruslan2")
                 .password("123")
                 .build();
-        userDao.save(testUser2);
+        userRepository.save(testUser2);
 
-        assertEquals(userDao.findAll().size(), 2);
-        assertFalse(userDao.findAll().isEmpty());
+        assertEquals(userRepository.findAll().size(), 2);
+        assertFalse(userRepository.findAll().isEmpty());
     }
 
     @Test
@@ -116,14 +119,14 @@ public class UserDaoImplTest {
                 .username("ruslan2")
                 .password("123")
                 .build();
-        User savedUser = userDao.save(testUser2);
+        User savedUser = userRepository.save(testUser2);
 
         assertAll(
-                () -> assertTrue(userDao.findById(savedUser.getId()).isPresent()),
+                () -> assertTrue(userRepository.findById(savedUser.getId()).isPresent()),
                 () -> assertEquals(savedUser.getId(), testUser2.getId()),
                 () -> assertEquals(savedUser.getUsername(), testUser2.getUsername()),
                 () -> assertEquals(savedUser.getPassword(), testUser2.getPassword()),
-                () -> assertEquals(userDao.findAll().size(), 2)
+                () -> assertEquals(userRepository.findAll().size(), 2)
         );
     }
 
@@ -136,8 +139,8 @@ public class UserDaoImplTest {
     @Test
     @DisplayName("Test findByUsername method")
     public void testFindByUsername(){
-        Optional<User> foundUser = userDao.findByUsername(testUser.getUsername());
-        Optional<User> notFoundPlayer = userDao.findByUsername(" ");
+        Optional<User> foundUser = userRepository.findByUsername(testUser.getUsername());
+        Optional<User> notFoundPlayer = userRepository.findByUsername(" ");
 
         assertAll(
                 () -> assertTrue(foundUser.isPresent()),

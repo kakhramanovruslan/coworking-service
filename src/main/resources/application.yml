@@ -1,11 +1,14 @@
-db.url=jdbc:postgresql://localhost:5433/coworking_service_db
-db.username=ruslan
-db.password=123
-db.driver-class-name=org.postgresql.Driver
+db:
+  url: jdbc:postgresql://localhost:5433/coworking_service_db
+  username: ruslan
+  password: 123
+  driver-class-name: org.postgresql.Driver
 
-liquibase.changeLogFile=db/changelog/changelog.xml
-liquibase.schemaName=liquibase
-liquibase.enabled=true
+liquibase:
+  changeLogFile: db/changelog/changelog.xml
+  schemaName: liquibase
+  enabled: true
 
-jwt.secret=fdf203scdjkfkds9sdnfasb8ica12039r1mjkc1a
-jwt.lifetime=PT3H
+jwt:
+  secret: fdf203scdjkfkds9sdnfasb8ica12039r1mjkc1a
+  lifetime: PT3H

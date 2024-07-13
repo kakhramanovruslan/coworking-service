@@ -1,16 +1,23 @@
 package org.example.config;
 
+import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.filters.GlobalFilter;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
 
 /**
  * Configuration class for initializing and configuring a Spring MVC web application.
@@ -37,5 +44,24 @@ public class ApplicationConfig implements WebApplicationInitializer {
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", new DispatcherServlet(context));
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
+
+        FilterRegistration.Dynamic jwtTokenFilter = servletContext.addFilter("jwtTokenFilter", new DelegatingFilterProxy("jwtTokenFilter"));
+        jwtTokenFilter.addMappingForUrlPatterns(null, false, "/*");
+        jwtTokenFilter.setInitParameter("order", "1");
+
+        FilterRegistration.Dynamic globalFilter = servletContext.addFilter("globalFilter", GlobalFilter.class);
+        globalFilter.addMappingForUrlPatterns(null, false, "/*");
+        globalFilter.setInitParameter("order", "2");
     }
+
+    /**
+     * Configures the ObjectMapper bean.
+     *
+     * @return the ObjectMapper bean
+     */
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
+    }
+
 }

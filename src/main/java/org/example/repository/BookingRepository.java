@@ -1,4 +1,4 @@
-package org.example.dao;
+package org.example.repository;
 
 import org.example.entity.Booking;
 import org.example.entity.Workspace;
@@ -8,10 +8,10 @@ import java.util.List;
 
 /**
  * Interface for Booking Data Access Object (DAO).
- * Extends the base Dao interface for generic CRUD operations.
+ * Extends the base Repository interface for generic CRUD operations.
  * Additional method to find all available workspaces within a specified time range.
  */
-public interface BookingDao extends Dao<Long, Booking> {
+public interface BookingRepository extends Repository<Long, Booking> {
 
     /**
      * Finds all available workspaces within a specified time range.

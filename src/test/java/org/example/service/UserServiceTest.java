@@ -1,13 +1,9 @@
 package org.example.service;
 
-import org.example.dao.UserDao;
+import org.example.repository.UserRepository;
 import org.example.dto.UserDTO;
-import org.example.entity.Audit;
 import org.example.entity.User;
-import org.example.entity.types.ActionType;
-import org.example.entity.types.AuditType;
 import org.example.exceptions.UserNotFoundException;
-import org.example.mappers.UserMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +20,7 @@ import static org.mockito.Mockito.*;
 class UserServiceTest {
 
     @Mock
-    private UserDao userDao;
+    private UserRepository userRepository;
 
     @InjectMocks
     private UserService userService;
@@ -37,14 +33,14 @@ class UserServiceTest {
         user.setId(userId);
         user.setUsername("testUser");
 
-        when(userDao.findById(userId)).thenReturn(Optional.of(user));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
         UserDTO userDTO = userService.getUser(userId);
 
         assertNotNull(userDTO);
         assertEquals(userId, userDTO.getId());
         assertEquals("testUser", userDTO.getUsername());
-        verify(userDao, times(1)).findById(userId);
+        verify(userRepository, times(1)).findById(userId);
     }
 
     @Test
@@ -52,10 +48,10 @@ class UserServiceTest {
     void testGetUserByIdNotFound() {
         Long userId = 1L;
 
-        when(userDao.findById(userId)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> userService.getUser(userId));
-        verify(userDao, times(1)).findById(userId);
+        verify(userRepository, times(1)).findById(userId);
     }
 
     @Test
@@ -66,14 +62,14 @@ class UserServiceTest {
         user.setId(1L);
         user.setUsername(username);
 
-        when(userDao.findByUsername(username)).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
 
         UserDTO userDTO = userService.getUser(username);
 
         assertNotNull(userDTO);
         assertEquals(1L, userDTO.getId());
         assertEquals(username, userDTO.getUsername());
-        verify(userDao, times(1)).findByUsername(username);
+        verify(userRepository, times(1)).findByUsername(username);
     }
 
     @Test
@@ -81,10 +77,10 @@ class UserServiceTest {
     void testGetUserByUsernameNotFound() {
         String username = "testUser";
 
-        when(userDao.findByUsername(username)).thenReturn(Optional.empty());
+        when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> userService.getUser(username));
-        verify(userDao, times(1)).findByUsername(username);
+        verify(userRepository, times(1)).findByUsername(username);
     }
 
 }

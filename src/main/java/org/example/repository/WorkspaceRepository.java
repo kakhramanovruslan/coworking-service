@@ -1,4 +1,4 @@
-package org.example.dao;
+package org.example.repository;
 
 import org.example.entity.Workspace;
 
@@ -6,10 +6,10 @@ import java.util.Optional;
 
 /**
  * Interface for Workspace Data Access Object (DAO).
- * Extends the base Dao interface for generic CRUD operations.
+ * Extends the base Repository interface for generic CRUD operations.
  * Additional method to find a workspace by its name.
  */
-public interface WorkspaceDao extends Dao<Long, Workspace> {
+public interface WorkspaceRepository extends Repository<Long, Workspace> {
 
     /**
      * Finds a workspace by its name.

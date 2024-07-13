@@ -2,7 +2,8 @@ package org.example.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.annotations.Auditable;
-import org.example.dao.BookingDao;
+import org.example.exceptions.NotValidArgumentException;
+import org.example.repository.BookingRepository;
 import org.example.dto.BookingRequest;
 import org.example.dto.UserDTO;
 import org.example.entity.Booking;
@@ -11,20 +12,22 @@ import org.example.entity.types.ActionType;
 import org.example.exceptions.UserNotFoundException;
 import org.example.exceptions.WorkspaceAlreadyBookedException;
 import org.example.exceptions.WorkspaceNotFoundException;
+import org.example.utils.ValidationUtil;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 /**
  * Service class for managing bookings of workspaces.
  */
+@Service
 @RequiredArgsConstructor
 public class BookingService {
     private final UserService userService;
     private final WorkspaceService workspaceService;
-    private final BookingDao bookingDao;
+    private final BookingRepository bookingDao;
 
     /**
      * Retrieves a list of all available workspaces at the current time.
@@ -37,11 +40,18 @@ public class BookingService {
 
     /**
      * Retrieves a list of available workspaces for a specified time period.
-     * @param startTime Start time of the period
-     * @param endTime End time of the period
+     * @param startTimeStr Start time of the period
+     * @param endTimeStr End time of the period
      * @return List of available workspaces
      */
-    public List<Workspace> getAvailableWorkspacesForTimePeriod(LocalDateTime startTime, LocalDateTime endTime) {
+    public List<Workspace> getAvailableWorkspacesForTimePeriod(String startTimeStr, String endTimeStr) {
+        checkParamNotNullOrBlank(startTimeStr);
+        checkParamNotNullOrBlank(endTimeStr);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        LocalDateTime startTime = LocalDateTime.parse(startTimeStr, formatter);
+        LocalDateTime endTime = LocalDateTime.parse(endTimeStr, formatter);
+
         return bookingDao.findAllAvailableWorkspaces(startTime, endTime);
     }
 
@@ -56,24 +66,13 @@ public class BookingService {
      */
     @Auditable(actionType = ActionType.BOOK_WORKSPACE)
     public Booking bookWorkspace(BookingRequest bookingRequest, String username) throws WorkspaceNotFoundException, UserNotFoundException, WorkspaceAlreadyBookedException {
-        Optional<Workspace> workspace = workspaceService.getWorkspaceByName(bookingRequest.getWorkspaceName());
-        if (workspace.isEmpty()) throw new WorkspaceNotFoundException("Workspace with this name was not found.");
+        ValidationUtil.validate(bookingRequest);
+
+        Workspace workspace = workspaceService.getWorkspace(bookingRequest.getWorkspaceName());
         UserDTO user = userService.getUser(username);
 
-        // checking overlapping bookings.
-        boolean bookingExists = bookingDao.findAll().stream()
-                .anyMatch(booking -> booking.getWorkspaceId().equals(workspace.get().getId()) &&
-                        (booking.getEndTime().isAfter(bookingRequest.getStartTime()) ||
-                                booking.getEndTime().isEqual(bookingRequest.getStartTime())) &&
-                        (booking.getStartTime().isBefore(bookingRequest.getEndTime()) ||
-                                booking.getStartTime().isEqual(bookingRequest.getEndTime())));
-
-        if (bookingExists) {
-            throw new WorkspaceAlreadyBookedException("The workspace is already booked for the specified period.");
-        }
-
         Booking booking = bookingDao.save(Booking.builder()
-                    .workspaceId(workspace.get().getId())
+                    .workspaceId(workspace.getId())
                     .userId(user.getId())
                     .startTime(bookingRequest.getStartTime())
                     .endTime(bookingRequest.getEndTime())
@@ -92,11 +91,18 @@ public class BookingService {
 
     /**
      * Retrieves a list of bookings filtered by a specified time period.
-     * @param startTime Start time of the period
-     * @param endTime End time of the period
+     * @param startTimeStr Start time of the period
+     * @param endTimeStr End time of the period
      * @return List of bookings within the specified time period
      */
-    public List<Booking> getFilteredBookingsByTimePeriod(LocalDateTime startTime, LocalDateTime endTime) {
+    public List<Booking> getFilteredBookingsByTimePeriod(String startTimeStr, String endTimeStr) {
+        checkParamNotNullOrBlank(startTimeStr);
+        checkParamNotNullOrBlank(endTimeStr);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        LocalDateTime startTime = LocalDateTime.parse(startTimeStr, formatter);
+        LocalDateTime endTime = LocalDateTime.parse(endTimeStr, formatter);
+
         return bookingDao.getFilteredBookingsByTimePeriod(startTime, endTime);
     }
 
@@ -107,6 +113,7 @@ public class BookingService {
      * @throws UserNotFoundException If the specified user does not exist
      */
     public List<Booking> getFilteredBookingsByUsername(String username) throws UserNotFoundException {
+        checkParamNotNullOrBlank(username);
         userService.getUser(username);
         return bookingDao.getFilteredBookingsByUsername(username);
     }
@@ -118,8 +125,13 @@ public class BookingService {
      * @throws WorkspaceNotFoundException If the specified workspace does not exist
      */
     public List<Booking> getFilteredBookingsByWorkspace(String workspaceName) throws WorkspaceNotFoundException {
+        checkParamNotNullOrBlank(workspaceName);
         workspaceService.getWorkspace(workspaceName);
         return bookingDao.getFilteredBookingsByWorkspace(workspaceName);
+    }
+
+    private void checkParamNotNullOrBlank(String param){
+        if(param.isEmpty() || param.isBlank()) { throw new NotValidArgumentException("Param can not been null or blank"); }
     }
 
 }

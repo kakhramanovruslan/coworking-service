@@ -34,5 +34,5 @@ public enum ActionType {
     /**
      * Represents the action of updating workspace.
      */
-    UPDATE_WORKSPACE,
+    UPDATE_WORKSPACE, LOGOUT,
 }

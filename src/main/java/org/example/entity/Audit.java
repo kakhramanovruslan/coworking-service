@@ -1,11 +1,14 @@
 package org.example.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.entity.types.ActionType;
 import org.example.entity.types.AuditType;
+
+import java.time.LocalDateTime;
 
 /**
  * Represents an audit log entry capturing information about a user's actions.
@@ -34,4 +37,10 @@ public class Audit {
      * The type of action performed by the user.
      */
     private ActionType actionType;
+
+    /**
+     * The type of action performed by the user.
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime auditTimestamp;
 }

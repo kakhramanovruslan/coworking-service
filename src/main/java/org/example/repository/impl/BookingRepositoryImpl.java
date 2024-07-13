@@ -1,10 +1,12 @@
-package org.example.dao.impl;
+package org.example.repository.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.example.dao.BookingDao;
+import org.example.exceptions.WorkspaceAlreadyBookedException;
+import org.example.repository.BookingRepository;
 import org.example.entity.Booking;
 import org.example.entity.Workspace;
 import org.example.utils.ConnectionManager;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -13,10 +15,11 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Implementation of the BookingDao for managing Booking entities in the database.
+ * Implementation of the BookingRepository for managing Booking entities in the database.
  */
+@Repository
 @RequiredArgsConstructor
-public class BookingDaoImpl implements BookingDao {
+public class BookingRepositoryImpl implements BookingRepository {
     private final ConnectionManager connectionManager;
     /**
      * Retrieves all bookings from the database.
@@ -127,14 +130,18 @@ public class BookingDaoImpl implements BookingDao {
      */
     @Override
     public Booking save(Booking booking) {
-        if (isWorkspaceBooked(booking.getWorkspaceId(), booking.getStartTime(), booking.getEndTime())) {
-            return null;
-        }
-
         String sqlSave = """
-            INSERT INTO coworking.bookings(workspace_id, user_id, start_time, end_time)
-            VALUES (?,?,?,?);
-            """;
+        INSERT INTO coworking.bookings(workspace_id, user_id, start_time, end_time)
+        SELECT ?, ?, ?, ?
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM coworking.bookings
+            WHERE workspace_id = ?
+              AND ((start_time < ? AND end_time > ?)
+                   OR (start_time < ? AND end_time > ?)
+                   OR (start_time >= ? AND start_time <= ?))
+        );
+        """;
 
         try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlSave, Statement.RETURN_GENERATED_KEYS)) {
@@ -143,10 +150,20 @@ public class BookingDaoImpl implements BookingDao {
             preparedStatement.setObject(2, booking.getUserId());
             preparedStatement.setObject(3, booking.getStartTime());
             preparedStatement.setObject(4, booking.getEndTime());
+            preparedStatement.setObject(5, booking.getWorkspaceId());
+            preparedStatement.setObject(6, booking.getEndTime());
+            preparedStatement.setObject(7, booking.getStartTime());
+            preparedStatement.setObject(8, booking.getStartTime());
+            preparedStatement.setObject(9, booking.getEndTime());
+            preparedStatement.setObject(10, booking.getStartTime());
+            preparedStatement.setObject(11, booking.getEndTime());
 
-            preparedStatement.executeUpdate();
+            int affectedRows = preparedStatement.executeUpdate();
+            if (affectedRows == 0) {
+                throw new WorkspaceAlreadyBookedException("The workspace is already booked for the specified period.");
+            }
+
             ResultSet keys = preparedStatement.getGeneratedKeys();
-
             if (keys.next()) {
                 booking.setId(keys.getObject("id", Long.class));
             }
@@ -157,6 +174,7 @@ public class BookingDaoImpl implements BookingDao {
             return null;
         }
     }
+
 
     /**
      * Updates an existing booking entity in the database.
@@ -179,20 +197,26 @@ public class BookingDaoImpl implements BookingDao {
     @Override
     public List<Workspace> findAllAvailableWorkspaces(LocalDateTime startTime, LocalDateTime endTime) {
         String sqlQuery = """
-            SELECT w.id, w.name
-            FROM coworking.workspaces w
-            LEFT JOIN coworking.bookings b ON w.id = b.workspace_id
-            AND (b.start_time < ? AND b.end_time > ?)
-            WHERE b.workspace_id IS NULL;
-            """;
+        SELECT w.id, w.name
+        FROM coworking.workspaces w
+        LEFT JOIN coworking.bookings b ON w.id = b.workspace_id
+            AND ((b.start_time < ? AND b.end_time > ?)
+                OR (b.start_time < ? AND b.end_time > ?)
+                OR (b.start_time >= ? AND b.start_time <= ?))
+        WHERE b.workspace_id IS NULL;
+        """;
 
         List<Workspace> workspaces = new ArrayList<>();
 
         try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery)) {
 
-            preparedStatement.setTimestamp(1, Timestamp.valueOf(endTime));
-            preparedStatement.setTimestamp(2, Timestamp.valueOf(startTime));
+            preparedStatement.setTimestamp(1, Timestamp.valueOf(startTime));
+            preparedStatement.setTimestamp(2, Timestamp.valueOf(endTime));
+            preparedStatement.setTimestamp(3, Timestamp.valueOf(endTime));
+            preparedStatement.setTimestamp(4, Timestamp.valueOf(startTime));
+            preparedStatement.setTimestamp(5, Timestamp.valueOf(startTime));
+            preparedStatement.setTimestamp(6, Timestamp.valueOf(endTime));
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
@@ -220,12 +244,14 @@ public class BookingDaoImpl implements BookingDao {
     @Override
     public List<Booking> getFilteredBookingsByTimePeriod(LocalDateTime startTime, LocalDateTime endTime) {
         String sqlQuery = """
-                SELECT id, workspace_id, user_id, start_time, end_time
-                FROM coworking.bookings
-                WHERE (start_time BETWEEN ? AND ?)
-                OR (end_time BETWEEN ? AND ?)
-                OR (start_time <= ? AND end_time >= ?);
-                """;
+            SELECT id, workspace_id, user_id, start_time, end_time
+            FROM coworking.bookings
+            WHERE 
+                (start_time <= ? AND end_time >= ?) OR 
+                (start_time >= ? AND start_time <= ?) OR 
+                (end_time >= ? AND end_time <= ?) OR  
+                (start_time >= ? AND end_time <= ?);
+            """;
 
         List<Booking> bookings = new ArrayList<>();
 
@@ -238,6 +264,8 @@ public class BookingDaoImpl implements BookingDao {
             preparedStatement.setTimestamp(4, Timestamp.valueOf(endTime));
             preparedStatement.setTimestamp(5, Timestamp.valueOf(startTime));
             preparedStatement.setTimestamp(6, Timestamp.valueOf(endTime));
+            preparedStatement.setTimestamp(7, Timestamp.valueOf(startTime));
+            preparedStatement.setTimestamp(8, Timestamp.valueOf(endTime));
 
             ResultSet resultSet = preparedStatement.executeQuery();
 

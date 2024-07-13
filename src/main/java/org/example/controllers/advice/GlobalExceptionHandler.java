@@ -1,4 +1,4 @@
-package org.example.controllers;
+package org.example.controllers.advice;
 
 import org.example.dto.AppExceptionResponse;
 import org.example.exceptions.*;
@@ -31,6 +31,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     ResponseEntity<AppExceptionResponse> handleUserNotFoundException(UserNotFoundException exception) {
+        return buildExceptionResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    ResponseEntity<AppExceptionResponse> handleInvalidCredentialsException(InvalidCredentialsException exception) {
         return buildExceptionResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 

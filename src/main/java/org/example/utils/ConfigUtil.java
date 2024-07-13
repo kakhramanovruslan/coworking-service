@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Utility class for reading properties from the "application.properties" file.
+ * Utility class for reading properties from the "application.yml" file.
  */
 public final class ConfigUtil {
     private static final Properties properties = new Properties();
@@ -15,11 +15,11 @@ public final class ConfigUtil {
     }
 
     static {
-        try (InputStream input = ConfigUtil.class.getClassLoader().getResourceAsStream("application.properties")) {
+        try (InputStream input = ConfigUtil.class.getClassLoader().getResourceAsStream("application.yml")) {
             if (input != null)
                 properties.load(input);
             else
-                System.out.println("Sorry, unable to find application.properties");
+                System.out.println("Sorry, unable to find application.yml");
         } catch (IOException ex) {
             ex.printStackTrace();
         }

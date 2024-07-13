@@ -1,20 +1,22 @@
 package org.example.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.dao.AuditDao;
+import org.example.repository.AuditRepository;
 import org.example.entity.Audit;
 import org.example.entity.types.ActionType;
 import org.example.entity.types.AuditType;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
  * Service class for managing audits.
  */
+@Service
 @RequiredArgsConstructor
 public class AuditService {
 
-    private final AuditDao auditDao;
+    private final AuditRepository auditRepository;
 
     /**
      * Saves an audit record.
@@ -23,7 +25,7 @@ public class AuditService {
      * @return the saved audit record
      */
     public Audit save(Audit audit) {
-        return auditDao.save(audit);
+        return auditRepository.save(audit);
     }
 
     /**
@@ -32,7 +34,7 @@ public class AuditService {
      * @return the list of all audit records
      */
     public List<Audit> getAllAudits() {
-        return auditDao.findAll();
+        return auditRepository.findAll();
     }
 
     /**

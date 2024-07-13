@@ -1,6 +1,6 @@
 package org.example.service;
 
-import org.example.dao.AuditDao;
+import org.example.repository.AuditRepository;
 import org.example.entity.Audit;
 import org.example.entity.types.ActionType;
 import org.example.entity.types.AuditType;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class AuditServiceTest {
 
     @Mock
-    private AuditDao auditDao;
+    private AuditRepository auditRepository;
 
     @InjectMocks
     private AuditService auditService;
@@ -31,13 +31,13 @@ class AuditServiceTest {
     void testSaveAuditSuccess() {
         Audit audit = buildAudit("testUser", ActionType.REGISTRATION, AuditType.SUCCESS);
 
-        when(auditDao.save(audit)).thenReturn(audit);
+        when(auditRepository.save(audit)).thenReturn(audit);
 
         Audit savedAudit = auditService.save(audit);
 
         assertNotNull(savedAudit);
         assertEquals(audit, savedAudit);
-        verify(auditDao, times(1)).save(audit);
+        verify(auditRepository, times(1)).save(audit);
     }
 
     @Test
@@ -50,14 +50,14 @@ class AuditServiceTest {
 
         List<Audit> audits = Arrays.asList(audit1, audit2);
 
-        when(auditDao.findAll()).thenReturn(audits);
+        when(auditRepository.findAll()).thenReturn(audits);
 
         List<Audit> retrievedAudits = auditService.getAllAudits();
 
         assertNotNull(retrievedAudits);
         assertEquals(2, retrievedAudits.size());
         assertEquals(audits, retrievedAudits);
-        verify(auditDao, times(1)).findAll();
+        verify(auditRepository, times(1)).findAll();
     }
 
     @Test
@@ -70,7 +70,7 @@ class AuditServiceTest {
         Audit audit = buildAudit(username, actionType, auditType);
 
 
-        when(auditDao.save(any(Audit.class))).thenReturn(audit);
+        when(auditRepository.save(any(Audit.class))).thenReturn(audit);
 
         Audit recordedAudit = auditService.record(username, actionType, auditType);
 
@@ -78,7 +78,7 @@ class AuditServiceTest {
         assertEquals(username, recordedAudit.getUsername());
         assertEquals(actionType, recordedAudit.getActionType());
         assertEquals(auditType, recordedAudit.getAuditType());
-        verify(auditDao, times(1)).save(any(Audit.class));
+        verify(auditRepository, times(1)).save(any(Audit.class));
     }
 
     public Audit buildAudit(String username, ActionType actionType, AuditType auditType){

@@ -19,8 +19,8 @@ public class LiquibaseManager {
      * A singleton instance of the `LiquibaseManager` class.
      */
     private static final LiquibaseManager liquibaseManager = new LiquibaseManager();
-    private static final String CHANGELOG_PATH = ConfigUtil.getProperty("liquibase.changeLogFile");
-    private static final String LIQUIBASE_SCHEMA_NAME = ConfigUtil.getProperty("liquibase.schemaName");
+    private static final String CHANGELOG_PATH = "db/changelog/changelog.xml";
+    private static final String LIQUIBASE_SCHEMA_NAME = "liquibase";
     private static final String SQL_CREATE_LIQUIBASE_SCHEMA = "CREATE SCHEMA IF NOT EXISTS " + LIQUIBASE_SCHEMA_NAME;
 
     /**
@@ -49,7 +49,7 @@ public class LiquibaseManager {
             Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
             database.setLiquibaseSchemaName(LIQUIBASE_SCHEMA_NAME);
             Liquibase liquibase = new Liquibase(CHANGELOG_PATH, new ClassLoaderResourceAccessor(), database);
-            liquibase.rollback(9, null);
+            liquibase.rollback(5, null);
             System.out.println("Migrations successfully rolled back!");
         } catch (Exception e) {
             e.printStackTrace();

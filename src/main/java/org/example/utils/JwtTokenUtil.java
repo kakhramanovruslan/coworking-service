@@ -5,37 +5,31 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import lombok.RequiredArgsConstructor;
 import org.example.dto.UserDTO;
 import org.example.dto.Authentication;
 import org.example.exceptions.UserNotFoundException;
 import org.example.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 
 import java.nio.file.AccessDeniedException;
 import java.time.Duration;
-import java.time.ZonedDateTime;
 import java.util.Date;
 
 /**
  * Utility class for handling JWT token operations.
  */
+@Component
+@RequiredArgsConstructor
 public class JwtTokenUtil {
+    @Value("${jwt.secret}")
+    private String secret;
 
-    private final String secret;
-    private final Duration jwtLifetime;
+    @Value("${jwt.lifetime}")
+    private String jwtLifetime;
     private final UserService userService;
-
-    /**
-     * Constructor for JwtTokenUtils.
-     *
-     * @param secret the secret key for signing JWT
-     * @param jwtLifetime the lifetime of the JWT
-     * @param userService the user service for user operations
-     */
-    public JwtTokenUtil(String secret, Duration jwtLifetime, UserService userService) {
-        this.secret = secret;
-        this.jwtLifetime = jwtLifetime;
-        this.userService = userService;
-    }
 
     /**
      * Generates a JWT for the given login.
@@ -44,7 +38,7 @@ public class JwtTokenUtil {
      * @return the generated JWT
      */
     public String generateToken(String username){
-        Date expirationDate = Date.from(ZonedDateTime.now().plusMinutes(60).toInstant());
+        Date expirationDate = new Date(new Date().getTime() + Duration.parse(jwtLifetime).toMillis());
 
         return JWT.create()
                 .withSubject("user details")

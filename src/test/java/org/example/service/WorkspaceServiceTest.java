@@ -1,17 +1,15 @@
 package org.example.service;
 
-import org.example.dao.WorkspaceDao;
+import org.example.repository.WorkspaceRepository;
 import org.example.dto.WorkspaceRequest;
 import org.example.entity.Workspace;
 import org.example.exceptions.WorkspaceAlreadyExistException;
 import org.example.exceptions.WorkspaceNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
@@ -24,7 +22,7 @@ import static org.mockito.Mockito.*;
 public class WorkspaceServiceTest {
 
     @Mock
-    private WorkspaceDao workspaceDao;
+    private WorkspaceRepository workspaceRepository;
 
     @InjectMocks
     private WorkspaceService workspaceService;
@@ -37,31 +35,26 @@ public class WorkspaceServiceTest {
 
         Workspace newWorkspace = Workspace.builder().name(workspaceName).build();
 
-        when(workspaceDao.findByName(workspaceName)).thenReturn(Optional.empty());
-        when(workspaceDao.save(any(Workspace.class))).thenReturn(newWorkspace);
+        when(workspaceRepository.save(any(Workspace.class))).thenReturn(newWorkspace);
 
         Workspace createdWorkspace = workspaceService.createWorkspace(workspaceRequest);
 
         assertNotNull(createdWorkspace);
         assertEquals(workspaceName, createdWorkspace.getName());
-        verify(workspaceDao, times(1)).findByName(workspaceName);
-        verify(workspaceDao, times(1)).save(any(Workspace.class));
+        verify(workspaceRepository, times(1)).save(any(Workspace.class));
     }
 
     @Test
-    @DisplayName("Test: Create a new workspace - WorkspaceAlreadyExistException")
-    void testCreateWorkspaceAlreadyExists() {
-        String existingWorkspaceName = "Existing Workspace";
-        WorkspaceRequest workspaceRequest = buildWorkspaceRequest(existingWorkspaceName);
+    @DisplayName("Test create workspace throws WorkspaceAlreadyExistException")
+    void testCreateWorkspaceThrowsException() {
+        String workspaceName = "Existing Workspace";
+        WorkspaceRequest workspaceRequest = new WorkspaceRequest(workspaceName);
 
-        when(workspaceDao.findByName(existingWorkspaceName)).thenReturn(Optional.of(new Workspace()));
+        when(workspaceRepository.save(any(Workspace.class)))
+                .thenThrow(new WorkspaceAlreadyExistException("Workspace with name '" + workspaceName + "' already exists"));
 
-        assertThrows(WorkspaceAlreadyExistException.class, () -> {
-            workspaceService.createWorkspace(workspaceRequest);
-        });
-
-        verify(workspaceDao, times(1)).findByName(existingWorkspaceName);
-        verify(workspaceDao, never()).save(any(Workspace.class));
+        assertThrows(WorkspaceAlreadyExistException.class, () -> workspaceService.createWorkspace(workspaceRequest));
+        verify(workspaceRepository, times(1)).save(any(Workspace.class));
     }
 
     @Test
@@ -71,14 +64,14 @@ public class WorkspaceServiceTest {
         Workspace workspace = new Workspace();
         workspace.setName(workspaceName);
 
-        when(workspaceDao.findByName(workspaceName)).thenReturn(Optional.of(workspace));
-        when(workspaceDao.deleteByName(workspaceName)).thenReturn(true);
+        when(workspaceRepository.findByName(workspaceName)).thenReturn(Optional.of(workspace));
+        when(workspaceRepository.deleteByName(workspaceName)).thenReturn(true);
 
         boolean result = workspaceService.deleteWorkspace(workspaceName);
 
         assertTrue(result);
-        verify(workspaceDao, times(1)).findByName(workspaceName);
-        verify(workspaceDao, times(1)).deleteByName(workspaceName);
+        verify(workspaceRepository, times(1)).findByName(workspaceName);
+        verify(workspaceRepository, times(1)).deleteByName(workspaceName);
     }
 
     @Test
@@ -88,18 +81,17 @@ public class WorkspaceServiceTest {
         String newName = "Updated Workspace";
 
         Workspace existingWorkspace = Workspace.builder().name(oldName).build();
-        when(workspaceDao.findByName(oldName)).thenReturn(Optional.of(existingWorkspace));
+        when(workspaceRepository.findByName(oldName)).thenReturn(Optional.of(existingWorkspace));
 
-        when(workspaceDao.findByName(newName)).thenReturn(Optional.empty());
-        when(workspaceDao.update(any(Workspace.class))).thenReturn(true);
+        when(workspaceRepository.findByName(newName)).thenReturn(Optional.empty());
+        when(workspaceRepository.update(any(Workspace.class))).thenReturn(true);
 
-        Workspace updatedWorkspace = Workspace.builder().name(newName).build();
+        WorkspaceRequest updatedWorkspace = WorkspaceRequest.builder().name(newName).build();
         boolean result = workspaceService.updateWorkspace(oldName, updatedWorkspace);
 
         assertTrue(result);
-        verify(workspaceDao, times(1)).findByName(oldName);
-        verify(workspaceDao, times(1)).findByName(newName);
-        verify(workspaceDao, times(1)).update(updatedWorkspace);
+        verify(workspaceRepository, times(1)).findByName(oldName);
+        verify(workspaceRepository, times(1)).findByName(newName);
     }
 
     public WorkspaceRequest buildWorkspaceRequest(String name){

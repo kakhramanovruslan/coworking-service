@@ -1,10 +1,11 @@
-package org.example.dao.impl;
+package org.example.repository.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.example.dao.WorkspaceDao;
-import org.example.dto.WorkspaceRequest;
+import org.example.exceptions.WorkspaceAlreadyExistException;
+import org.example.repository.WorkspaceRepository;
 import org.example.entity.Workspace;
 import org.example.utils.ConnectionManager;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,10 +13,11 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Implementation of WorkspaceDao interface for interacting with Workspace entities in the database.
+ * Implementation of WorkspaceRepository interface for interacting with Workspace entities in the database.
  */
+@Repository
 @RequiredArgsConstructor
-public class WorkspaceDaoImpl implements WorkspaceDao {
+public class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
     private final ConnectionManager connectionManager;
 
@@ -121,20 +123,29 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
      * @return The saved workspace object
      */
     @Override
-    public Workspace save(Workspace workspace){
+    public Workspace save(Workspace workspace) {
         String sqlSave = """
-                INSERT INTO coworking.workspaces(name)
-                VALUES (?);
-                """;
+        INSERT INTO coworking.workspaces(name)
+        SELECT ?
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM coworking.workspaces
+            WHERE name = ?
+        );
+        """;
 
         try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlSave, Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setString(1, workspace.getName());
+            preparedStatement.setString(2, workspace.getName());
 
-            preparedStatement.executeUpdate();
+            int affectedRows = preparedStatement.executeUpdate();
+            if (affectedRows == 0) {
+                throw new WorkspaceAlreadyExistException("Workspace with this name already exists.");
+            }
+
             ResultSet keys = preparedStatement.getGeneratedKeys();
-
             if (keys.next()) {
                 workspace.setId(keys.getObject("id", Long.class));
             }

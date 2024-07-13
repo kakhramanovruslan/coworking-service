@@ -1,10 +1,11 @@
 package org.example.service;
 
-import org.example.dao.UserDao;
+import org.example.dto.AuthRequest;
+import org.example.exceptions.InvalidCredentialsException;
+import org.example.repository.UserRepository;
 import org.example.dto.TokenResponse;
 import org.example.dto.UserDTO;
 import org.example.entity.User;
-import org.example.exceptions.AuthenticationException;
 import org.example.exceptions.RegisterException;
 import org.example.utils.JwtTokenUtil;
 import org.example.utils.PasswordUtil;
@@ -24,7 +25,7 @@ import static org.mockito.Mockito.*;
 class SecurityServiceTest {
 
     @Mock
-    private UserDao userDao;
+    private UserRepository userRepository;
 
     @Mock
     private JwtTokenUtil jwtTokenUtil;
@@ -37,8 +38,9 @@ class SecurityServiceTest {
     void testRegisterUserSuccess() {
         String username = "newUser";
         String password = "password123";
+        AuthRequest authRequest = new AuthRequest(username, password);
 
-        when(userDao.findByUsername(username)).thenReturn(Optional.empty());
+        when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
 
         User newUser = User.builder()
                 .username(username)
@@ -51,12 +53,12 @@ class SecurityServiceTest {
                 .password(newUser.getPassword())
                 .build();
 
-        when(userDao.save(any(User.class))).thenReturn(savedUser);
+        when(userRepository.save(any(User.class))).thenReturn(savedUser);
 
-        UserDTO userDTO = securityService.register(username, password);
+        UserDTO userDTO = securityService.register(authRequest);
 
-        verify(userDao, times(1)).findByUsername(username);
-        verify(userDao, times(1)).save(any(User.class));
+        verify(userRepository, times(1)).findByUsername(username);
+        verify(userRepository, times(1)).save(any(User.class));
 
         assertNotNull(userDTO);
         assertEquals(1L, userDTO.getId());
@@ -68,14 +70,15 @@ class SecurityServiceTest {
     void testRegisterUserWithExistingUsername() {
         String username = "existingUser";
         String password = "password123";
+        AuthRequest authRequest = new AuthRequest(username, password);
         User existingUser = new User();
         existingUser.setUsername(username);
 
-        when(userDao.findByUsername(username)).thenReturn(Optional.of(existingUser));
+        when(userRepository.findByUsername(username)).thenReturn(Optional.of(existingUser));
 
-        assertThrows(RegisterException.class, () -> securityService.register(username, password));
-        verify(userDao, times(1)).findByUsername(username);
-        verify(userDao, never()).save(any(User.class));
+        assertThrows(RegisterException.class, () -> securityService.register(authRequest));
+        verify(userRepository, times(1)).findByUsername(username);
+        verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
@@ -83,20 +86,21 @@ class SecurityServiceTest {
     void testAuthenticateUserSuccess() {
         String username = "testUser";
         String password = "password123";
+        AuthRequest authRequest = new AuthRequest(username, password);
         String hashedPassword = PasswordUtil.hashPassword(password);
         User user = User.builder()
                 .username(username)
                 .password(hashedPassword)
                 .build();
 
-        when(userDao.findByUsername(username)).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
         when(jwtTokenUtil.generateToken(username)).thenReturn("testToken");
 
-        TokenResponse tokenResponse = securityService.authenticate(username, password);
+        TokenResponse tokenResponse = securityService.authenticate(authRequest);
 
         assertNotNull(tokenResponse);
         assertEquals("testToken", tokenResponse.token());
-        verify(userDao, times(1)).findByUsername(username);
+        verify(userRepository, times(1)).findByUsername(username);
         verify(jwtTokenUtil, times(1)).generateToken(username);
     }
 
@@ -105,11 +109,12 @@ class SecurityServiceTest {
     void testAuthenticateUserWithIncorrectUsername() {
         String username = "nonExistentUser";
         String password = "password123";
+        AuthRequest authRequest = new AuthRequest(username, password);
 
-        when(userDao.findByUsername(username)).thenReturn(Optional.empty());
+        when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
 
-        assertThrows(AuthenticationException.class, () -> securityService.authenticate(username, password));
-        verify(userDao, times(1)).findByUsername(username);
+        assertThrows(InvalidCredentialsException.class, () -> securityService.authenticate(authRequest));
+        verify(userRepository, times(1)).findByUsername(username);
         verify(jwtTokenUtil, never()).generateToken(anyString());
     }
 
@@ -118,16 +123,17 @@ class SecurityServiceTest {
     void testAuthenticateUserWithIncorrectPassword() {
         String username = "testUser";
         String password = "wrongPassword";
+        AuthRequest authRequest = new AuthRequest(username, password);
         String hashedPassword = PasswordUtil.hashPassword("correctPassword");
         User user = User.builder()
                 .username(username)
                 .password(hashedPassword)
                 .build();
 
-        when(userDao.findByUsername(username)).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
 
-        assertThrows(AuthenticationException.class, () -> securityService.authenticate(username, password));
-        verify(userDao, times(1)).findByUsername(username);
+        assertThrows(InvalidCredentialsException.class, () -> securityService.authenticate(authRequest));
+        verify(userRepository, times(1)).findByUsername(username);
         verify(jwtTokenUtil, never()).generateToken(anyString());
     }
 }

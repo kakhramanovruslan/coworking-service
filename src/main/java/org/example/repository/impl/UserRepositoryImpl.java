@@ -1,10 +1,11 @@
-package org.example.dao.impl;
+package org.example.repository.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.example.dao.UserDao;
+import org.example.repository.UserRepository;
 import org.example.entity.User;
 import org.example.entity.types.Role;
 import org.example.utils.ConnectionManager;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,10 +13,11 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Implementation of UserDao interface for interacting with User entities in the database.
+ * Implementation of UserRepository interface for interacting with User entities in the database.
  */
+@Repository
 @RequiredArgsConstructor
-public class UserDaoImpl implements UserDao {
+public class UserRepositoryImpl implements UserRepository {
 
     private final ConnectionManager connectionManager;
 

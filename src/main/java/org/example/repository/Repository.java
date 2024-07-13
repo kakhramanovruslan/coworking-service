@@ -1,4 +1,4 @@
-package org.example.dao;
+package org.example.repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,7 +8,7 @@ import java.util.Optional;
  * @param <U> the type of the entity's identifier
  * @param <T> the type of the entity
  */
-public interface Dao<U, T> {
+public interface Repository<U, T> {
 
     /**
      * Retrieves all entities of a specific type.

@@ -1,11 +1,12 @@
-package org.example.dao.impl;
+package org.example.repository.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.example.dao.AuditDao;
+import org.example.repository.AuditRepository;
 import org.example.entity.Audit;
 import org.example.entity.types.ActionType;
 import org.example.entity.types.AuditType;
 import org.example.utils.ConnectionManager;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,10 +14,11 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Implementation of the AuditDao interface for managing audit records.
+ * Implementation of the AuditRepository interface for managing audit records.
  */
+@Repository
 @RequiredArgsConstructor
-public class AuditDaoImpl implements AuditDao {
+public class AuditRepositoryImpl implements AuditRepository {
 
     private final ConnectionManager connectionManager;
 
@@ -197,6 +199,7 @@ public class AuditDaoImpl implements AuditDao {
         return Audit.builder()
                 .id(resultSet.getLong("id"))
                 .auditType(auditType)
+                .auditTimestamp(resultSet.getTimestamp("audit_timestamp").toLocalDateTime())
                 .actionType(actionType)
                 .username(resultSet.getString("username"))
                 .build();
