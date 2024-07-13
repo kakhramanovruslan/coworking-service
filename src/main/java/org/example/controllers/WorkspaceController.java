@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 
-
+/**
+ * Controller for managing workspaces.
+ */
 @RestController
 @RequestMapping("/workspaces")
 @RequiredArgsConstructor

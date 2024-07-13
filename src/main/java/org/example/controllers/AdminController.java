@@ -17,7 +17,9 @@ import javax.servlet.ServletContext;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 
-
+/**
+ * Controller for managing admin operations.
+ */
 @RestController
 @RequestMapping("/admin")
 @RequiredArgsConstructor

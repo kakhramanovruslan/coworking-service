@@ -1,19 +1,15 @@
 package org.example.filters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.Authentication;
 import org.example.dto.ExceptionResponse;
 import org.example.exceptions.AuthenticationException;
 import org.example.exceptions.UserNotFoundException;
 import org.example.utils.JwtTokenUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
-import javax.servlet.annotation.WebInitParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

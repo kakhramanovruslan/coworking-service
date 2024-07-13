@@ -9,7 +9,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.nio.file.AccessDeniedException;
 
-
+/**
+ * Global exception handler for handling exceptions across the whole application.
+ * This class provides methods to handle specific exceptions and return appropriate
+ * HTTP responses.
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

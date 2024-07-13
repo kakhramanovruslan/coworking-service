@@ -43,6 +43,8 @@
         <javax.validation.version>2.0.1.Final</javax.validation.version>
         <glassfish.version>3.0.1-b08</glassfish.version>
         <springfox.version>3.0.0</springfox.version>
+        <httpclient.version>4.5.13</httpclient.version>
+        <jsonpath.version>2.9.0</jsonpath.version>
     </properties>
 
     <build>
@@ -99,33 +101,17 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>${plugin.war.version}</version>
             </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>aspectj-maven-plugin</artifactId>
-                <version>${plugin.aspectj.version}</version>
-                <configuration>
-                    <complianceLevel>17</complianceLevel>
-                    <source>17</source>
-                    <target>17</target>
-                    <showWeaveInfo>true</showWeaveInfo>
-                    <verbose>true</verbose>
-                    <Xlint>ignore</Xlint>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>javax.validation</groupId>
@@ -151,6 +137,13 @@
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>${jsonpath.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -327,12 +320,6 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
             <version>${springfox.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>${jackson.version}</version>
         </dependency>
 
     </dependencies>

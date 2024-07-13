@@ -23,6 +23,11 @@ public class ConnectionManager {
     @Value("${db.password}")
     private String password;
 
+    /**
+     * Method for establishing connection with database using values from parameter.
+     * This method used for testing service and establish connection with test database.
+     * @return Connection class which may be used to work with database.
+     */
     public Connection getConnection(String url, String username, String password, String driver) {
         try {
             this.url = url;

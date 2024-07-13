@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletContext;
 
-/**
- * Controller class for handling authentication and authorization operations.
- */
+
 @Api(value = "User Controller")
 @RestController
 @RequestMapping("/user")

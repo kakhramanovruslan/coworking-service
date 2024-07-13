@@ -5,7 +5,6 @@ import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import org.example.utils.ConfigUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,7 +17,7 @@ public class LiquibaseManager {
     /**
      * A singleton instance of the `LiquibaseManager` class.
      */
-    private static final LiquibaseManager liquibaseManager = new LiquibaseManager();
+    private static LiquibaseManager liquibaseManager = new LiquibaseManager();
     private static final String CHANGELOG_PATH = "db/changelog/changelog.xml";
     private static final String LIQUIBASE_SCHEMA_NAME = "liquibase";
     private static final String SQL_CREATE_LIQUIBASE_SCHEMA = "CREATE SCHEMA IF NOT EXISTS " + LIQUIBASE_SCHEMA_NAME;

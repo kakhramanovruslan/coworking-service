@@ -15,6 +15,9 @@ import javax.servlet.ServletContext;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 
+/**
+ * Controller for managing workspace bookings.
+ */
 @RestController
 @RequestMapping("/workspaces/bookings")
 @RequiredArgsConstructor
