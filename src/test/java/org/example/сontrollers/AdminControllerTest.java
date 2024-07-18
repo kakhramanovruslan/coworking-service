@@ -99,14 +99,25 @@ public class AdminControllerTest {
     }
 
     @Test
-    @DisplayName("Test deleting workspace success")
-    public void testDeleteWorkspace() throws Exception {
+    @DisplayName("Test deleting workspace by name success")
+    public void testDeleteWorkspaceByName() throws Exception {
         String name = "Workspace1";
 
         when(servletContext.getAttribute("authentication")).thenReturn(new Authentication("admin", Role.ADMIN));
 
-        mockMvc.perform(delete("/admin/workspaces")
-                        .param("name", name)
+        mockMvc.perform(delete("/admin/workspaces/name/{name}", name)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Test deleting workspace by id success")
+    public void testDeleteWorkspaceById() throws Exception {
+        Long id = 1L;
+
+        when(servletContext.getAttribute("authentication")).thenReturn(new Authentication("admin", Role.ADMIN));
+
+        mockMvc.perform(delete("/admin/workspaces/id/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }

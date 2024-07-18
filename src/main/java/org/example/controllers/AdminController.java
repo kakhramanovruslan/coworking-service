@@ -48,11 +48,20 @@ public class AdminController {
     }
 
     @ApiImplicitParam(name = "Authorization", value = "Bearer token", required = true, dataTypeClass = String.class, paramType = "header")
-    @ApiOperation(value = "Delete workspace")
-    @DeleteMapping("/workspaces")
-    public ResponseEntity<Void> deleteWorkspace(@RequestParam String name) throws AccessDeniedException {
+    @ApiOperation(value = "Delete workspace by name")
+    @DeleteMapping("/workspaces/name/{name}")
+    public ResponseEntity<Void> deleteWorkspaceByName(@PathVariable("name") String name) throws AccessDeniedException {
         isAdmin();
         workspaceService.deleteWorkspace(name);
+        return ResponseEntity.ok().build();
+    }
+
+    @ApiImplicitParam(name = "Authorization", value = "Bearer token", required = true, dataTypeClass = String.class, paramType = "header")
+    @ApiOperation(value = "Delete workspace by id")
+    @DeleteMapping("/workspaces/id/{id}")
+    public ResponseEntity<Void> deleteWorkspaceById(@PathVariable("id") Long id) throws AccessDeniedException {
+        isAdmin();
+        workspaceService.deleteWorkspace(id);
         return ResponseEntity.ok().build();
     }
 

@@ -123,7 +123,7 @@ public class AuditRepositoryImplTest {
 
 
 
-    public Audit buildAudit(String username, ActionType actionType, AuditType auditType){
+    private Audit buildAudit(String username, ActionType actionType, AuditType auditType){
         return Audit.builder()
                 .username(username)
                 .actionType(actionType)

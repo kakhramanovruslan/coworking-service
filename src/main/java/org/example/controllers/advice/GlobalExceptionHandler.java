@@ -17,47 +17,100 @@ import java.nio.file.AccessDeniedException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-
+    /**
+     * Handles AuthenticationException and returns an HTTP 401 (Unauthorized) response.
+     *
+     * @param exception the exception to handle
+     * @return ResponseEntity with HTTP status 401 and the exception message
+     */
     @ExceptionHandler(AuthenticationException.class)
     ResponseEntity<AppExceptionResponse> handleAuthenticationException(AuthenticationException exception) {
         return buildExceptionResponse(HttpStatus.UNAUTHORIZED, exception.getMessage());
     }
 
+    /**
+     * Handles NotValidArgumentException and returns an HTTP 400 (Bad Request) response.
+     *
+     * @param exception the exception to handle
+     * @return ResponseEntity with HTTP status 400 and the exception message
+     */
     @ExceptionHandler(NotValidArgumentException.class)
     ResponseEntity<AppExceptionResponse> handleNotValidArgumentException(NotValidArgumentException exception) {
         return buildExceptionResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
+    /**
+     * Handles RegisterException and returns an HTTP 400 (Bad Request) response.
+     *
+     * @param exception the exception to handle
+     * @return ResponseEntity with HTTP status 400 and the exception message
+     */
     @ExceptionHandler(RegisterException.class)
     ResponseEntity<AppExceptionResponse> handleRegisterException(RegisterException exception) {
         return buildExceptionResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
+    /**
+     * Handles UserNotFoundException and returns an HTTP 400 (Bad Request) response.
+     *
+     * @param exception the exception to handle
+     * @return ResponseEntity with HTTP status 400 and the exception message
+     */
     @ExceptionHandler(UserNotFoundException.class)
     ResponseEntity<AppExceptionResponse> handleUserNotFoundException(UserNotFoundException exception) {
         return buildExceptionResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
+    /**
+     * Handles InvalidCredentialsException and returns an HTTP 400 (Bad Request) response.
+     *
+     * @param exception the exception to handle
+     * @return ResponseEntity with HTTP status 400 and the exception message
+     */
     @ExceptionHandler(InvalidCredentialsException.class)
     ResponseEntity<AppExceptionResponse> handleInvalidCredentialsException(InvalidCredentialsException exception) {
         return buildExceptionResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
+    /**
+     * Handles WorkspaceAlreadyBookedException and returns an HTTP 400 (Bad Request) response.
+     *
+     * @param exception the exception to handle
+     * @return ResponseEntity with HTTP status 400 and the exception message
+     */
     @ExceptionHandler(WorkspaceAlreadyBookedException.class)
     ResponseEntity<AppExceptionResponse> handleWorkspaceAlreadyBookedException(WorkspaceAlreadyBookedException exception) {
         return buildExceptionResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
+    /**
+     * Handles WorkspaceAlreadyExistException and returns an HTTP 400 (Bad Request) response.
+     *
+     * @param exception the exception to handle
+     * @return ResponseEntity with HTTP status 400 and the exception message
+     */
     @ExceptionHandler(WorkspaceAlreadyExistException.class)
     ResponseEntity<AppExceptionResponse> handleWorkspaceAlreadyExistException(WorkspaceAlreadyExistException exception) {
         return buildExceptionResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
+    /**
+     * Handles WorkspaceNotFoundException and returns an HTTP 400 (Bad Request) response.
+     *
+     * @param exception the exception to handle
+     * @return ResponseEntity with HTTP status 400 and the exception message
+     */
     @ExceptionHandler(WorkspaceNotFoundException.class)
-    ResponseEntity<AppExceptionResponse> handleWorkspaceAlreadyExistException(WorkspaceNotFoundException exception) {
+    ResponseEntity<AppExceptionResponse> handleWorkspaceNotFoundException(WorkspaceNotFoundException exception) {
         return buildExceptionResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
+    /**
+     * Handles AccessDeniedException and returns an HTTP 403 (Forbidden) response.
+     *
+     * @param exception the exception to handle
+     * @return ResponseEntity with HTTP status 403 and the exception message
+     */
     @ExceptionHandler(AccessDeniedException.class)
     ResponseEntity<AppExceptionResponse> handleAccessDeniedException(AccessDeniedException exception) {
         return buildExceptionResponse(HttpStatus.FORBIDDEN, exception.getMessage());

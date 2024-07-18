@@ -151,21 +151,21 @@ class BookingServiceTest {
         verify(bookingDao, times(1)).getFilteredBookingsByWorkspace(workspaceName);
     }
 
-    public UserDTO buildUserDTO(Long id, String username){
+    private UserDTO buildUserDTO(Long id, String username){
         return UserDTO.builder()
                 .id(id)
                 .username(username)
                 .build();
     }
 
-    public Workspace buildWorkspace(Long id, String name){
+    private Workspace buildWorkspace(Long id, String name){
         return Workspace.builder()
                 .id(id)
                 .name(name)
                 .build();
     }
 
-    public BookingRequest buildBookingRequest(String workspaceName, LocalDateTime startTime, LocalDateTime endTime){
+    private BookingRequest buildBookingRequest(String workspaceName, LocalDateTime startTime, LocalDateTime endTime){
         return BookingRequest.builder()
                 .workspaceName(workspaceName)
                 .startTime(startTime)
@@ -173,7 +173,7 @@ class BookingServiceTest {
                 .build();
     }
 
-    public Booking buildBooking(Long userId, Long workspaceId, LocalDateTime startTime, LocalDateTime endTime){
+    private Booking buildBooking(Long userId, Long workspaceId, LocalDateTime startTime, LocalDateTime endTime){
         return Booking.builder()
                 .userId(userId)
                 .workspaceId(workspaceId)

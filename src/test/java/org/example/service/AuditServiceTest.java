@@ -81,7 +81,7 @@ class AuditServiceTest {
         verify(auditRepository, times(1)).save(any(Audit.class));
     }
 
-    public Audit buildAudit(String username, ActionType actionType, AuditType auditType){
+    private Audit buildAudit(String username, ActionType actionType, AuditType auditType){
         return Audit.builder()
                 .username(username)
                 .actionType(actionType)

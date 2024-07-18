@@ -94,7 +94,7 @@ public class WorkspaceServiceTest {
         verify(workspaceRepository, times(1)).findByName(newName);
     }
 
-    public WorkspaceRequest buildWorkspaceRequest(String name){
+    private WorkspaceRequest buildWorkspaceRequest(String name){
         return WorkspaceRequest.builder()
                 .name(name)
                 .build();

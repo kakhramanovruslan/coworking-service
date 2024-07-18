@@ -135,7 +135,7 @@ public class BookingControllerTest {
 
 
 
-    public BookingRequest buildBookingRequest(String workspaceName, String startTime, String endTime){
+    private BookingRequest buildBookingRequest(String workspaceName, String startTime, String endTime){
         return BookingRequest.builder()
                 .workspaceName(workspaceName)
                 .startTime(LocalDateTime.parse(startTime))
@@ -143,7 +143,7 @@ public class BookingControllerTest {
                 .build();
     }
 
-    public Booking buildBooking(Long userId, Long workspaceId, String startTime, String endTime){
+    private Booking buildBooking(Long userId, Long workspaceId, String startTime, String endTime){
         return Booking.builder()
                 .userId(userId)
                 .workspaceId(workspaceId)

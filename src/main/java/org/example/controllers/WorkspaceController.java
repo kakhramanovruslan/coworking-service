@@ -44,9 +44,8 @@ public class WorkspaceController {
     @ApiImplicitParam(name = "Authorization", value = "Bearer token", required = true, dataTypeClass = String.class, paramType = "header")
     @ApiOperation(value = "Get workspace by id", response = Workspace.class)
     @GetMapping("/id/{id}")
-    public ResponseEntity<Workspace> getWorkspaceById(@PathVariable("id") String id) throws AccessDeniedException {
-        Workspace workspaces = workspaceService.getWorkspace(Long.parseLong(id));
-        return ResponseEntity.ok(workspaces);
+    public ResponseEntity<Workspace> getWorkspaceById(@PathVariable("id") Long id) throws AccessDeniedException {
+        return ResponseEntity.ok(workspaceService.getWorkspace(id));
     }
 
     @ApiImplicitParam(name = "Authorization", value = "Bearer token", required = true, dataTypeClass = String.class, paramType = "header")
