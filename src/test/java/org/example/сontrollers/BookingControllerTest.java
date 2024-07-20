@@ -1,13 +1,12 @@
 package org.example.сontrollers;
 
+import jakarta.servlet.ServletContext;
 import org.example.controllers.BookingController;
 import org.example.dto.Authentication;
 import org.example.dto.BookingRequest;
-import org.example.dto.WorkspaceRequest;
 import org.example.entity.Booking;
 import org.example.entity.types.Role;
 import org.example.exceptions.WorkspaceAlreadyBookedException;
-import org.example.exceptions.WorkspaceAlreadyExistException;
 import org.example.service.BookingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,8 +17,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import javax.servlet.ServletContext;
 
 import java.time.LocalDateTime;
 

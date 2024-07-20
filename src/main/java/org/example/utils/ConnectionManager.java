@@ -1,7 +1,8 @@
 package org.example.utils;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -14,14 +15,13 @@ import java.sql.SQLException;
 @Component
 public class ConnectionManager {
 
-    @Value("${db.url}")
-    private String url;
-    @Value("${db.driver-class-name}")
-    private String driver;
-    @Value("${db.username}")
-    private String username;
-    @Value("${db.password}")
-    private String password;
+
+    private String url = "jdbc:postgresql://localhost:5433/coworking_service_db";
+    private String driverClassName = "org.postgresql.Driver";
+
+    private String username = "ruslan";
+
+    private String password = "123";
 
     /**
      * Method for establishing connection with database using values from parameter.
@@ -31,7 +31,7 @@ public class ConnectionManager {
     public Connection getConnection(String url, String username, String password, String driver) {
         try {
             this.url = url;
-            this.driver = driver;
+            this.driverClassName = driver;
             this.password = password;
             this.username = username;
             Class.forName(driver);
@@ -49,7 +49,7 @@ public class ConnectionManager {
      */
     public Connection getConnection() {
         try {
-            Class.forName(driver);
+            Class.forName(driverClassName);
 
             return DriverManager.getConnection(
                     url,

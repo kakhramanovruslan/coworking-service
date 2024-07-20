@@ -11,6 +11,7 @@ import org.example.dto.Authentication;
 import org.example.exceptions.UserNotFoundException;
 import org.example.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
@@ -24,11 +25,8 @@ import java.util.Date;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenUtil {
-    @Value("${jwt.secret}")
-    private String secret;
-
-    @Value("${jwt.lifetime}")
-    private String jwtLifetime;
+    private String secret = "fdf203scdjkfkds9sdnfasb8ica12039r1mjkc1a";
+    private String lifetime = "PT3H";
     private final UserService userService;
 
     /**
@@ -38,7 +36,7 @@ public class JwtTokenUtil {
      * @return the generated JWT
      */
     public String generateToken(String username){
-        Date expirationDate = new Date(new Date().getTime() + Duration.parse(jwtLifetime).toMillis());
+        Date expirationDate = new Date(new Date().getTime() + Duration.parse(lifetime).toMillis());
 
         return JWT.create()
                 .withSubject("user details")

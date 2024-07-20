@@ -1,6 +1,11 @@
 package org.example.filters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.Authentication;
 import org.example.dto.ExceptionResponse;
@@ -11,10 +16,8 @@ import org.example.utils.JwtTokenUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
 
 /**
  * A filter that intercepts all incoming HTTP requests and checks for the presence of a JWT in the Authorization header.

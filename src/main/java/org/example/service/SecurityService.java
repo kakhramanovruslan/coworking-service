@@ -65,7 +65,7 @@ public class SecurityService {
      * @return a token response containing the generated JWT token
      * @throws InvalidCredentialsException if the user is not found or the password is incorrect
      */
-    @Auditable(actionType = ActionType.AUTHORIZATION)
+//    @Auditable(actionType = ActionType.AUTHORIZATION)
     public TokenResponse authenticate(AuthRequest request) {
         String username = request.username();
         String password = request.password();

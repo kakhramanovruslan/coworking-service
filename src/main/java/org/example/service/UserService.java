@@ -1,5 +1,6 @@
 package org.example.service;
 
+import jakarta.servlet.ServletContext;
 import lombok.RequiredArgsConstructor;
 import org.example.annotations.Auditable;
 import org.example.entity.types.ActionType;
@@ -11,7 +12,6 @@ import org.example.mappers.UserMapper;
 import org.springframework.stereotype.Service;
 
 
-import javax.servlet.ServletContext;
 import java.util.Optional;
 
 
